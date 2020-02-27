@@ -1,0 +1,307 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.multithread.SingleProcessor_Refinement</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.multithread.SingleProcessor_Refinement</h1>
+
+<div class="code">
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Maps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.ASTExtra.html#"><span class="id" title="library">ASTExtra</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Floats</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Memory</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Events</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Globalenvs</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Smallstep</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Asm</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Conventions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Machregs</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AuxLemma.html#"><span class="id" title="library">AuxLemma</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.logic.PTreeModules</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compcertx.MemWithData</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compcertx.Stencil</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatData</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatPrimSem</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatLayers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatExternalCalls</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Decision</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#"><span class="id" title="library">GlobIdent</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatGenSem</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LAsmModuleSemEvent.html#"><span class="id" title="library">LAsmModuleSemEvent</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.LAsmAbsDataProperty.html#"><span class="id" title="library">LAsmAbsDataProperty</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.RegsetLessdef.html#"><span class="id" title="library">RegsetLessdef</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.CommonTactic.html#"><span class="id" title="library">CommonTactic</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.Constant.html#"><span class="id" title="library">Constant</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#"><span class="id" title="library">PrimSemantics</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#"><span class="id" title="library">LRegSet</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#"><span class="id" title="library">AuxStateDataType</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AsmImplLemma.html#"><span class="id" title="library">AsmImplLemma</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#"><span class="id" title="library">AsmImplTactic</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracle.html#"><span class="id" title="library">GlobalOracle</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.AlgebraicMem.html#"><span class="id" title="library">AlgebraicMem</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.LAsmAbsDataProperty.html#"><span class="id" title="library">LAsmAbsDataProperty</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.RegsetLessdef.html#"><span class="id" title="library">RegsetLessdef</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#"><span class="id" title="library">SingleOracle</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#"><span class="id" title="library">AbstractDataType</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.objects.ObjMultiprocessor.html#"><span class="id" title="library">ObjMultiprocessor</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AuxFunctions.html#"><span class="id" title="library">AuxFunctions</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatLayers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.RealParams.html#"><span class="id" title="library">RealParams</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#"><span class="id" title="library">AbstractDataType</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.flatmem.FlatMemory.html#"><span class="id" title="library">FlatMemory</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">CompatExternalCalls</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">MakeProgram</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LAsmModuleSem.html#"><span class="id" title="library">LAsmModuleSem</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">I64Layer</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.Soundness.html#"><span class="id" title="library">Soundness</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LinkTactic.html#"><span class="id" title="library">LinkTactic</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">MakeProgramImpl</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">StencilImpl</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LAsmModuleSemAux.html#"><span class="id" title="library">LAsmModuleSemAux</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.HAsm.html#"><span class="id" title="library">HAsm</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.TAsm.html#"><span class="id" title="library">TAsm</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.EAsm.html#"><span class="id" title="library">EAsm</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.IIEAsm.html#"><span class="id" title="library">IIEAsm</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#"><span class="id" title="library">LAsm</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.multithread.highrefins.AsmPHThread2T.html#"><span class="id" title="library">AsmPHThread2T</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.AsmT2IIE.html#"><span class="id" title="library">AsmT2IIE</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.AsmIIE2IIE.html#"><span class="id" title="library">AsmIIE2IIE</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.AsmIIE2E.html#"><span class="id" title="library">AsmIIE2E</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.multithread.lowrefins.AsmE2L.html#"><span class="id" title="library">AsmE2L</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#"><span class="id" title="library">GlobalOracleProp</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.AlgebraicMemImpl.html#"><span class="id" title="library">AlgebraicMemImpl</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#"><span class="id" title="library">SingleOracle</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#"><span class="id" title="library">SingleConfiguration</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.multithread.phbthread.SingleOracleImpl.html#"><span class="id" title="library">SingleOracleImpl</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ipc.PHThread.html#"><span class="id" title="library">PHThread</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.multithread.phbthread.PHBThread.html#"><span class="id" title="library">PHBThread</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.proc.PBThread.html#"><span class="id" title="library">PBThread</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.multithread.highrefins.PHThread2TGenDef.html#"><span class="id" title="library">PHThread2TGenDef</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.multithread.highrefins.PHThread2TGen.html#"><span class="id" title="library">PHThread2TGen</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.multithread.lowrefins.E2PBThreadGenDef.html#"><span class="id" title="library">E2PBThreadGenDef</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.multithread.lowrefins.E2PBThreadGen.html#"><span class="id" title="library">E2PBThreadGen</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="SingleProcessorRefinementTheorem"><span class="id" title="section">SingleProcessorRefinementTheorem</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">multi_oracle_prop</span> : <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleProp"><span class="id" title="class">MultiOracleProp</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">s_oracle_ops</span> : <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#SingleOracleOps"><span class="id" title="class">SingleOracleOps</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">s_threads_ops</span>:  <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#ThreadsConfigurationOps"><span class="id" title="class">ThreadsConfigurationOps</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">real_params</span> : <a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">s_threads_prf</span>: !<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#ThreadsConfiguration"><span class="id" title="class">ThreadsConfiguration</span></a> (<span class="id" title="var">s_oracle</span> := <a class="idref" href="mcertikos.multithread.lowrefins.E2PBThreadGen.html#s_oracle_prf"><span class="id" title="instance">s_oracle_prf</span></a>)}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">s_oracle_basic_prop_prf</span>: !<a class="idref" href="mcertikos.multithread.phbthread.SingleOracleImpl.html#SingleOracleBasicProp"><span class="id" title="class">SingleOracleBasicProp</span></a> (<span class="id" title="var">single_oracle_prf</span> := <a class="idref" href="mcertikos.multithread.lowrefins.E2PBThreadGen.html#s_oracle_prf"><span class="id" title="instance">s_oracle_prf</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">s_threads_ops</span> := <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#SingleProcessorRefinementTheorem.s_threads_ops"><span class="id" title="variable">s_threads_ops</span></a>)}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hmem</span>: <span class="id" title="class">Mem.MemoryModelX</span>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">builtin_idents_norepet_prf</span>: <span class="id" title="class">CompCertBuiltins.BuiltinIdentsNorepet</span>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">Existing</span> <span class="id" title="keyword">Instance</span> <span class="id" title="var">SingleOracleImpl.s_oracle_prf</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">Existing</span> <span class="id" title="keyword">Instance</span> <span class="id" title="var">SingleOracleImpl.s_oracle_prop_prf</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">Existing</span> <span class="id" title="keyword">Instance</span> <span class="id" title="var">SingleOracleImpl.s_config</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">s_oracle_basic_link_prop_prf</span>: !<a class="idref" href="mcertikos.multithread.phbthread.SingleOracleImpl.html#SingleOracleBasicLinkProp"><span class="id" title="class">SingleOracleBasicLinkProp</span></a> (<span class="id" title="var">single_oracle_prf</span> := <a class="idref" href="mcertikos.multithread.lowrefins.E2PBThreadGen.html#s_oracle_prf"><span class="id" title="instance">s_oracle_prf</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">s_threads_ops</span> := <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#SingleProcessorRefinementTheorem.s_threads_ops"><span class="id" title="variable">s_threads_ops</span></a>)}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">Existing</span> <span class="id" title="keyword">Instance</span> <span class="id" title="var">SingleOracleImpl.s_link_config</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hmwd</span>: <span class="id" title="class">UseMemWithData</span> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#SingleProcessorRefinementTheorem.mem"><span class="id" title="variable">mem</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">acc_def</span>: !<a class="idref" href="mcertikos.layerlib.LAsm.html#AccessorsDefined"><span class="id" title="class">AccessorsDefined</span></a> (<span class="id" title="var">stencil</span> := <span class="id" title="record">stencil</span>) (<a class="idref" href="mcertikos.multithread.phbthread.PHBThread.html#phbthread"><span class="id" title="definition">phbthread</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>)}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">extcallsx</span>: !<span class="id" title="class">ExternalCallsXDefined</span> (<a class="idref" href="mcertikos.multithread.phbthread.PHBThread.html#phbthread"><span class="id" title="definition">phbthread</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>)}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span>&nbsp;<span class="id" title="keyword">Instance</span> <a name="ec_ops"><span class="id" title="instance">ec_ops</span></a> : <span class="id" title="class">ExternalCallsOps</span> (<span class="id" title="definition">mwd</span> (<span class="id" title="definition">cdata</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#PData"><span class="id" title="definition">PData</span></a>)) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;:= <span class="id" title="instance">CompatExternalCalls.compatlayer_extcall_ops</span> (<a class="idref" href="mcertikos.multithread.phbthread.PHBThread.html#phbthread"><span class="id" title="definition">phbthread</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span>&nbsp;<span class="id" title="keyword">Instance</span> <a name="lcfg_ops"><span class="id" title="instance">lcfg_ops</span></a> : <a class="idref" href="mcertikos.layerlib.LAsm.html#LayerConfigurationOps"><span class="id" title="class">LayerConfigurationOps</span></a> := <a class="idref" href="mcertikos.layerlib.LAsm.html#compatlayer_configuration_ops"><span class="id" title="instance">compatlayer_configuration_ops</span></a> (<a class="idref" href="mcertikos.multithread.phbthread.PHBThread.html#phbthread"><span class="id" title="definition">phbthread</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">tasm_primcall_props</span>: !<span class="id" title="class">PrimcallProperties</span> <a class="idref" href="mcertikos.conlib.conmtlib.TAsm.html#sprimitive_call"><span class="id" title="inductive">TAsm.sprimitive_call</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">ieasm_primcall_props</span>: !<span class="id" title="class">PrimcallProperties</span> <a class="idref" href="mcertikos.conlib.conmtlib.IIEAsm.html#sprimitive_call"><span class="id" title="inductive">IIEAsm.sprimitive_call</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">easm_primcall_props</span>: !<span class="id" title="class">PrimcallProperties</span> <a class="idref" href="mcertikos.conlib.conmtlib.EAsm.html#sprimitive_call"><span class="id" title="inductive">EAsm.sprimitive_call</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">phthread2tgen_prop</span>: !<a class="idref" href="mcertikos.multithread.highrefins.PHThread2TGenDef.html#PHThraed2TGenProp"><span class="id" title="class">PHThraed2TGenProp</span></a> <a class="idref" href="mcertikos.multithread.lowrefins.E2PBThreadGen.html#s_oracle_prf"><span class="id" title="instance">s_oracle_prf</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">Existing</span> <span class="id" title="keyword">Instance</span> <span class="id" title="var">PHThread2TGen.abs_relT</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="HThread2T_backward_simulation"><span class="id" title="lemma">HThread2T_backward_simulation</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">s</span>: <span class="id" title="record">stencil</span>) (<span class="id" title="var">CTXT</span>: <a class="idref" href="mcertikos.layerlib.LAsm.html#module"><span class="id" title="definition">LAsm.module</span></a>) (<span class="id" title="var">ph</span>: <span class="id" title="record">AST.program</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#fundef"><span class="id" title="definition">fundef</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hmakep</span>: <span class="id" title="definition">make_program</span> (<span class="id" title="var">module_ops</span>:= <a class="idref" href="mcertikos.layerlib.LAsm.html#module_ops"><span class="id" title="instance">LAsm.module_ops</span></a>) <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#s"><span class="id" title="variable">s</span></a> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#CTXT"><span class="id" title="variable">CTXT</span></a> (<a class="idref" href="mcertikos.multithread.phbthread.PHBThread.html#phbthread"><span class="id" title="definition">phbthread</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="constructor">OK</span> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="record">backward_simulation</span>    <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.conlib.conmtlib.HAsm.html#semantics"><span class="id" title="definition">HAsm.semantics</span></a> (<a class="idref" href="mcertikos.ipc.PHThread.html#phthread"><span class="id" title="definition">phthread</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>) <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.conlib.conmtlib.TAsm.html#tsemantics"><span class="id" title="definition">TAsm.tsemantics</span></a> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> @<a class="idref" href="mcertikos.multithread.highrefins.AsmPHThread2T.html#cl_backward_simulation"><span class="id" title="lemma">AsmPHThread2T.cl_backward_simulation</span></a> <span class="id" title="keyword">with</span> (<span class="id" title="var">s</span>:= <span class="id" title="var">s</span>) (<span class="id" title="var">CTXT</span> := <span class="id" title="var">CTXT</span>); <span class="id" title="tactic">try</span> <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.multithread.highrefins.PHThread2TGen.html#abs_relT"><span class="id" title="instance">PHThread2TGen.abs_relT</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="T2IIE_backward_simulation"><span class="id" title="lemma">T2IIE_backward_simulation</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">s</span>: <span class="id" title="record">stencil</span>) (<span class="id" title="var">CTXT</span>: <a class="idref" href="mcertikos.layerlib.LAsm.html#module"><span class="id" title="definition">LAsm.module</span></a>) (<span class="id" title="var">ph</span>: <span class="id" title="record">AST.program</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#fundef"><span class="id" title="definition">fundef</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hmakep</span>: <span class="id" title="definition">make_program</span> (<span class="id" title="var">module_ops</span>:= <a class="idref" href="mcertikos.layerlib.LAsm.html#module_ops"><span class="id" title="instance">LAsm.module_ops</span></a>) <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#s"><span class="id" title="variable">s</span></a> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#CTXT"><span class="id" title="variable">CTXT</span></a> (<a class="idref" href="mcertikos.multithread.phbthread.PHBThread.html#phbthread"><span class="id" title="definition">phbthread</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="constructor">OK</span> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="record">backward_simulation</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.conlib.conmtlib.TAsm.html#tsemantics"><span class="id" title="definition">TAsm.tsemantics</span></a> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.conlib.conmtlib.IIEAsm.html#iesemantics"><span class="id" title="definition">IIEAsm.iesemantics</span></a> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#current_thread"><span class="id" title="method">current_thread</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>) <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> @<a class="idref" href="mcertikos.conlib.conmtlib.AsmT2IIE.html#cl_backward_simulation"><span class="id" title="lemma">AsmT2IIE.cl_backward_simulation</span></a> <span class="id" title="keyword">with</span> (<span class="id" title="var">s</span> := <span class="id" title="var">s</span>) (<span class="id" title="var">CTXT</span> := <span class="id" title="var">CTXT</span>); <span class="id" title="tactic">try</span> <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">typeclasses</span> <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">Existing</span> <span class="id" title="keyword">Instance</span> <span class="id" title="var">algebraicmem</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">ie2ie_rel</span>: !<a class="idref" href="mcertikos.conlib.conmtlib.AsmIIE2IIE.html#IE2IERel"><span class="id" title="class">IE2IERel</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="IIE2IIE_backward_simulation"><span class="id" title="lemma">IIE2IIE_backward_simulation</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">s</span>: <span class="id" title="record">stencil</span>) (<span class="id" title="var">CTXT</span>: <a class="idref" href="mcertikos.layerlib.LAsm.html#module"><span class="id" title="definition">LAsm.module</span></a>) (<span class="id" title="var">ph</span>: <span class="id" title="record">AST.program</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#fundef"><span class="id" title="definition">fundef</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hmakep</span>: <span class="id" title="definition">make_program</span> (<span class="id" title="var">module_ops</span>:= <a class="idref" href="mcertikos.layerlib.LAsm.html#module_ops"><span class="id" title="instance">LAsm.module_ops</span></a>) <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#s"><span class="id" title="variable">s</span></a> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#CTXT"><span class="id" title="variable">CTXT</span></a> (<a class="idref" href="mcertikos.multithread.phbthread.PHBThread.html#phbthread"><span class="id" title="definition">phbthread</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="constructor">OK</span> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="record">backward_simulation</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.conlib.conmtlib.IIEAsm.html#iesemantics"><span class="id" title="definition">IIEAsm.iesemantics</span></a> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#current_thread"><span class="id" title="method">current_thread</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>) <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.conlib.conmtlib.IIEAsm.html#iesemantics"><span class="id" title="definition">IIEAsm.iesemantics</span></a> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#full_thread_list"><span class="id" title="method">full_thread_list</span></a>) <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> @<a class="idref" href="mcertikos.conlib.conmtlib.AsmIIE2IIE.html#cl_backward_simulation"><span class="id" title="lemma">AsmIIE2IIE.cl_backward_simulation</span></a> <span class="id" title="keyword">with</span> (<span class="id" title="var">s</span> := <span class="id" title="var">s</span>) (<span class="id" title="var">CTXT</span> := <span class="id" title="var">CTXT</span>); <span class="id" title="tactic">try</span> <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">typeclasses</span> <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">lasm_abs_data</span>: !<a class="idref" href="mcertikos.conlib.conmtlib.LAsmAbsDataProperty.html#LAsmAbsDataProp"><span class="id" title="class">LAsmAbsDataProp</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="IIE2E_backward_simulation"><span class="id" title="lemma">IIE2E_backward_simulation</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">s</span>: <span class="id" title="record">stencil</span>) (<span class="id" title="var">CTXT</span>: <a class="idref" href="mcertikos.layerlib.LAsm.html#module"><span class="id" title="definition">LAsm.module</span></a>) (<span class="id" title="var">ph</span>: <span class="id" title="record">AST.program</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#fundef"><span class="id" title="definition">fundef</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hs</span>: <span class="id" title="method">genv_next</span> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#s"><span class="id" title="variable">s</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#init_nb"><span class="id" title="method">init_nb</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hph</span>: <a class="idref" href="mcertikos.conlib.conmtlib.AlgebraicMem.html#noglobvar"><span class="id" title="definition">noglobvar</span></a> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hmakep</span>: <span class="id" title="definition">make_program</span> (<span class="id" title="var">module_ops</span>:= <a class="idref" href="mcertikos.layerlib.LAsm.html#module_ops"><span class="id" title="instance">LAsm.module_ops</span></a>) <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#s"><span class="id" title="variable">s</span></a> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#CTXT"><span class="id" title="variable">CTXT</span></a> (<a class="idref" href="mcertikos.multithread.phbthread.PHBThread.html#phbthread"><span class="id" title="definition">phbthread</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="constructor">OK</span> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="record">backward_simulation</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.conlib.conmtlib.IIEAsm.html#iesemantics"><span class="id" title="definition">IIEAsm.iesemantics</span></a> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#full_thread_list"><span class="id" title="method">full_thread_list</span></a>) <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.conlib.conmtlib.EAsm.html#esemantics"><span class="id" title="definition">EAsm.esemantics</span></a> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#full_thread_list"><span class="id" title="method">full_thread_list</span></a>) <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> @<a class="idref" href="mcertikos.conlib.conmtlib.AsmIIE2E.html#cl_backward_simulation"><span class="id" title="lemma">AsmIIE2E.cl_backward_simulation</span></a> <span class="id" title="keyword">with</span> (<span class="id" title="var">s</span> := <span class="id" title="var">s</span>) (<span class="id" title="var">CTXT</span> := <span class="id" title="var">CTXT</span>); <span class="id" title="tactic">try</span> <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">typeclasses</span> <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">e2pbthread_gen_prop</span>: !<a class="idref" href="mcertikos.multithread.lowrefins.E2PBThreadGenDef.html#E2PBThreadGenProp"><span class="id" title="class">E2PBThreadGenProp</span></a> <a class="idref" href="mcertikos.multithread.lowrefins.E2PBThreadGen.html#s_oracle_prf"><span class="id" title="instance">s_oracle_prf</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="var">Existing</span> <span class="id" title="keyword">Instance</span> <span class="id" title="var">E2PBThreadGen.abs_rel</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="var">Existing</span> <span class="id" title="keyword">Instance</span> <span class="id" title="var">LAsm.asm_init_default</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="E2BThread_backward_simulation"><span class="id" title="lemma">E2BThread_backward_simulation</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">s</span>: <span class="id" title="record">stencil</span>) (<span class="id" title="var">CTXT</span>: <a class="idref" href="mcertikos.layerlib.LAsm.html#module"><span class="id" title="definition">LAsm.module</span></a>) (<span class="id" title="var">ph</span>: <span class="id" title="record">AST.program</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#fundef"><span class="id" title="definition">fundef</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hmakep</span>: <span class="id" title="definition">make_program</span> (<span class="id" title="var">module_ops</span>:= <a class="idref" href="mcertikos.layerlib.LAsm.html#module_ops"><span class="id" title="instance">LAsm.module_ops</span></a>) <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#s"><span class="id" title="variable">s</span></a> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#CTXT"><span class="id" title="variable">CTXT</span></a> (<a class="idref" href="mcertikos.multithread.phbthread.PHBThread.html#phbthread"><span class="id" title="definition">phbthread</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="constructor">OK</span> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="record">backward_simulation</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.conlib.conmtlib.EAsm.html#esemantics"><span class="id" title="definition">EAsm.esemantics</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#full_thread_list"><span class="id" title="method">full_thread_list</span></a> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.layerlib.LAsm.html#semantics"><span class="id" title="definition">LAsm.semantics</span></a> (<span class="id" title="var">lcfg_ops</span> := <a class="idref" href="mcertikos.layerlib.LAsmModuleSemDef.html#LC"><span class="id" title="instance">LC</span></a> (<a class="idref" href="mcertikos.proc.PBThread.html#pbthread"><span class="id" title="definition">pbthread</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>)) <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> @<a class="idref" href="mcertikos.multithread.lowrefins.AsmE2L.html#cl_backward_simulation"><span class="id" title="lemma">AsmE2L.cl_backward_simulation</span></a> <span class="id" title="keyword">with</span> (<span class="id" title="var">s</span> := <span class="id" title="var">s</span>) (<span class="id" title="var">multi_oracle_prop</span> := <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#SingleProcessorRefinementTheorem.multi_oracle_prop"><span class="id" title="variable">multi_oracle_prop</span></a>) (<span class="id" title="var">CTXT</span> := <span class="id" title="var">CTXT</span>) (<span class="id" title="var">ph</span> := <span class="id" title="var">ph</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.multithread.lowrefins.E2PBThreadGen.html#abs_rel"><span class="id" title="instance">E2PBThreadGen.abs_rel</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="SingleCore_backward_simulation"><span class="id" title="lemma">SingleCore_backward_simulation</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">s</span>: <span class="id" title="record">stencil</span>) (<span class="id" title="var">CTXT</span>: <a class="idref" href="mcertikos.layerlib.LAsm.html#module"><span class="id" title="definition">LAsm.module</span></a>) (<span class="id" title="var">ph</span>: <span class="id" title="record">AST.program</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#fundef"><span class="id" title="definition">fundef</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hs</span>: <span class="id" title="method">genv_next</span> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#s"><span class="id" title="variable">s</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#init_nb"><span class="id" title="method">init_nb</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hph</span>: <a class="idref" href="mcertikos.conlib.conmtlib.AlgebraicMem.html#noglobvar"><span class="id" title="definition">noglobvar</span></a> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">Hmakep</span>: <span class="id" title="definition">make_program</span> (<span class="id" title="var">module_ops</span>:= <a class="idref" href="mcertikos.layerlib.LAsm.html#module_ops"><span class="id" title="instance">LAsm.module_ops</span></a>) <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#s"><span class="id" title="variable">s</span></a> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#CTXT"><span class="id" title="variable">CTXT</span></a> (<a class="idref" href="mcertikos.multithread.phbthread.PHBThread.html#phbthread"><span class="id" title="definition">phbthread</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="constructor">OK</span> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="record">backward_simulation</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.conlib.conmtlib.HAsm.html#semantics"><span class="id" title="definition">HAsm.semantics</span></a> (<a class="idref" href="mcertikos.ipc.PHThread.html#phthread"><span class="id" title="definition">phthread</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>) <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.layerlib.LAsm.html#semantics"><span class="id" title="definition">LAsm.semantics</span></a> (<span class="id" title="var">lcfg_ops</span> := <a class="idref" href="mcertikos.layerlib.LAsmModuleSemDef.html#LC"><span class="id" title="instance">LC</span></a> (<a class="idref" href="mcertikos.proc.PBThread.html#pbthread"><span class="id" title="definition">pbthread</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>)) <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#ph"><span class="id" title="variable">ph</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="lemma">compose_backward_simulation</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.layerlib.LAsmModuleSemEvent.html#LAsm_single_events"><span class="id" title="lemma">LAsmModuleSemEvent.LAsm_single_events</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="var">Decision.decision</span> | <span class="id" title="tactic">assumption</span> ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#HThread2T_backward_simulation"><span class="id" title="lemma">HThread2T_backward_simulation</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <span class="id" title="lemma">compose_backward_simulation</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.layerlib.LAsmModuleSemEvent.html#LAsm_single_events"><span class="id" title="lemma">LAsmModuleSemEvent.LAsm_single_events</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="var">Decision.decision</span> | <span class="id" title="tactic">assumption</span> ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#T2IIE_backward_simulation"><span class="id" title="lemma">T2IIE_backward_simulation</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <span class="id" title="lemma">compose_backward_simulation</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.layerlib.LAsmModuleSemEvent.html#LAsm_single_events"><span class="id" title="lemma">LAsmModuleSemEvent.LAsm_single_events</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="var">Decision.decision</span> | <span class="id" title="tactic">assumption</span> ].<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#IIE2IIE_backward_simulation"><span class="id" title="lemma">IIE2IIE_backward_simulation</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">eapply</span> <span class="id" title="lemma">compose_backward_simulation</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.layerlib.LAsmModuleSemEvent.html#LAsm_single_events"><span class="id" title="lemma">LAsmModuleSemEvent.LAsm_single_events</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[ <span class="id" title="var">Decision.decision</span> | <span class="id" title="tactic">assumption</span> ]. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#IIE2E_backward_simulation"><span class="id" title="lemma">IIE2E_backward_simulation</span></a>; <span class="id" title="tactic">eauto</span>. }<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#E2BThread_backward_simulation"><span class="id" title="lemma">E2BThread_backward_simulation</span></a>; <span class="id" title="tactic">eauto</span>. }<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.multithread.SingleProcessor_Refinement.html#SingleProcessorRefinementTheorem"><span class="id" title="section">SingleProcessorRefinementTheorem</span></a>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

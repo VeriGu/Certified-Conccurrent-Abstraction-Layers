@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.devdrivers.ConsoleBuffIntroGenLinkSource</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.devdrivers.ConsoleBuffIntroGenLinkSource</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#"><span class="id" title="library">LinkSourceTemplate</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ticketlog.MQTicketLock.html#"><span class="id" title="library">MQTicketLock</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.devdrivers.MQTicketLockCSource.html#"><span class="id" title="library">MQTicketLockCSource</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#"><span class="id" title="library">CDataTypes</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="DConsoleBuffIntro_module"><span class="id" title="definition">DConsoleBuffIntro_module</span></a>: <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_module"><span class="id" title="record">link_module</span></a> :=<br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lm_cfun</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">:=</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lcf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">cons_buf_init</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">f_cons_buf_init</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lcf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">cons_buf_write</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">f_cons_buf_write</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lcf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">cons_buf_read</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">f_cons_buf_read</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lcf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">cons_buf_wpos</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">f_cons_buf_wpos</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">nil</span></a><a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lm_asmfun</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">:=</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">nil</span></a><a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lm_gvar</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">:=</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lgv</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">cons_buf_LOC</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">cons_buf_loc_type</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">nil</span></a><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="DConsoleBuffIntro_impl"><span class="id" title="definition">DConsoleBuffIntro_impl</span></a> `{<a class="idref" href="mcertikos.layerlib.CompCertiKOSproof.html#CompCertiKOS"><span class="id" title="class">CompCertiKOS</span></a>} `{<a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>} `{<a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleProp"><span class="id" title="class">MultiOracleProp</span></a>} `{<a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracle.html#WaitTime"><span class="id" title="class">WaitTime</span></a>} `{<a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracle.html#WaitTime"><span class="id" title="class">WaitTime</span></a>} :=<br/>
+&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_impl"><span class="id" title="definition">link_impl</span></a> <a class="idref" href="mcertikos.devdrivers.ConsoleBuffIntroGenLinkSource.html#DConsoleBuffIntro_module"><span class="id" title="definition">DConsoleBuffIntro_module</span></a> <a class="idref" href="mcertikos.ticketlog.MQTicketLock.html#mqticketlock"><span class="id" title="definition">mqticketlock</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

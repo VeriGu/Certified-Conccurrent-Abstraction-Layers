@@ -1,0 +1,195 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.ipc.PIPCIntroCSource</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.ipc.PIPCIntroCSource</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">AST</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Cop</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Clight</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#"><span class="id" title="library">CDataTypes</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Ctypes</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+<pre>
+      extern void syncsendto_chan_pre(unsigned int);
+      extern unsigned int ipc_send_body(unsigned int, unsigned int, unsigned int);
+      extern void release_lock_CHAN(unsigned int);
+
+      unsigned int
+      syncsendto_chan(unsigned int chid, unsigned int vaddr, unsigned int scount)
+      {
+        unsigned int res;
+        syncsendto_chan_pre(chid);
+        chid = SLEEP_Q_START + chid;
+        res = ipc_send_body(chid, vaddr, scount);
+        release_lock_CHAN(chid);
+        return res;
+      }
+
+</pre>
+ 
+<div class="paragraph"> </div>
+
+ Function parameters and local temporaries used in the function 
+</div>
+<div class="code">
+<span class="id" title="keyword">Local</span>&nbsp;<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">positive_scope</span>.<br/>
+<span class="id" title="keyword">Let</span> <a name="_chid"><span class="id" title="variable">_chid</span></a>: <span class="id" title="definition">ident</span> := 1.<br/>
+<span class="id" title="keyword">Let</span> <a name="_vaddr"><span class="id" title="variable">_vaddr</span></a>: <span class="id" title="definition">ident</span> := 2.<br/>
+<span class="id" title="keyword">Let</span> <a name="_scount"><span class="id" title="variable">_scount</span></a>: <span class="id" title="definition">ident</span> := 3.<br/>
+<span class="id" title="keyword">Let</span> <a name="_res"><span class="id" title="variable">_res</span></a>: <span class="id" title="definition">ident</span> := 4.<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span>&nbsp;<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">Z_scope</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="syncsendto_chan_body"><span class="id" title="definition">syncsendto_chan_body</span></a> : <span class="id" title="inductive">statement</span> := <br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Scall</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#syncsendto_chan_pre"><span class="id" title="definition">syncsendto_chan_pre</span></a> (<span class="id" title="constructor">Tfunction</span> (<span class="id" title="constructor">Tcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <span class="id" title="constructor">Tnil</span>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tvoid"><span class="id" title="abbreviation">tvoid</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">cc_default</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_chid"><span class="id" title="definition">_chid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>))<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sset</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_chid"><span class="id" title="definition">_chid</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span> (<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 0) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> <a class="idref" href="mcertikos.layerlib.Constant.html#TOTAL_CPU"><span class="id" title="abbreviation">TOTAL_CPU</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> <a class="idref" href="mcertikos.layerlib.Constant.html#TOTAL_CPU"><span class="id" title="abbreviation">TOTAL_CPU</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_chid"><span class="id" title="definition">_chid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Scall</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_res"><span class="id" title="definition">_res</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#ipc_send_body"><span class="id" title="definition">ipc_send_body</span></a> (<span class="id" title="constructor">Tfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Tcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Tcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> (<span class="id" title="constructor">Tcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <span class="id" title="constructor">Tnil</span>))) <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">cc_default</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_chid"><span class="id" title="definition">_chid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_vaddr"><span class="id" title="definition">_vaddr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_scount"><span class="id" title="definition">_scount</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Scall</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#release_lock_CHAN"><span class="id" title="definition">release_lock_CHAN</span></a> (<span class="id" title="constructor">Tfunction</span> (<span class="id" title="constructor">Tcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <span class="id" title="constructor">Tnil</span>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tvoid"><span class="id" title="abbreviation">tvoid</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">cc_default</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_chid"><span class="id" title="definition">_chid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_res"><span class="id" title="definition">_res</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>))))))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_syncsendto_chan"><span class="id" title="definition">f_syncsendto_chan</span></a> := {|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chid</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_vaddr</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_scount</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_res</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">syncsendto_chan_body</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<pre>
+
+extern unsigned int get_curid(void);
+extern unsigned int tryreceive_chan(unsigned int, unsigned int);
+extern void acquire_lock_CHAN(unsigned int);
+extern void release_lock_CHAN(unsigned int);
+
+unsigned int
+syncreceive_chan(unsigned int chid, unsigned int vaddr, unsigned int rcount)
+{
+  unsigned int res, chanid;
+  chanid = SLEEP_Q_START + chid;
+  acquire_lock_CHAN(chanid);
+  res = tryreceive_chan(chid, vaddr, rcount);
+  release_lock_CHAN(chanid);
+  return res;
+}
+
+</pre>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Local</span>&nbsp;<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">positive_scope</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="_rcount"><span class="id" title="definition">_rcount</span></a> : <span class="id" title="definition">ident</span> := 8.<br/>
+<span class="id" title="keyword">Definition</span> <a name="_curid"><span class="id" title="definition">_curid</span></a> : <span class="id" title="definition">ident</span> := 11.<br/>
+<span class="id" title="keyword">Definition</span> <a name="_chanid"><span class="id" title="definition">_chanid</span></a> : <span class="id" title="definition">ident</span> := 111.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="syncreceive_chan_body"><span class="id" title="definition">syncreceive_chan_body</span></a> : <span class="id" title="inductive">statement</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sset</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_chanid"><span class="id" title="definition">_chanid</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span> (<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 0) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 8) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 8) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_chid"><span class="id" title="definition">_chid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>))<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Scall</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#acquire_lock_CHAN"><span class="id" title="definition">acquire_lock_CHAN</span></a> (<span class="id" title="constructor">Tfunction</span> (<span class="id" title="constructor">Tcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <span class="id" title="constructor">Tnil</span>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tvoid"><span class="id" title="abbreviation">tvoid</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">cc_default</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_chanid"><span class="id" title="definition">_chanid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Scall</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_res"><span class="id" title="definition">_res</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#tryreceive_chan"><span class="id" title="definition">tryreceive_chan</span></a> (<span class="id" title="constructor">Tfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Tcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Tcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> (<span class="id" title="constructor">Tcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <span class="id" title="constructor">Tnil</span>))) <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">cc_default</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_chid"><span class="id" title="definition">_chid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_vaddr"><span class="id" title="definition">_vaddr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_rcount"><span class="id" title="definition">_rcount</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Scall</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#release_lock_CHAN"><span class="id" title="definition">release_lock_CHAN</span></a> (<span class="id" title="constructor">Tfunction</span> (<span class="id" title="constructor">Tcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <span class="id" title="constructor">Tnil</span>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tvoid"><span class="id" title="abbreviation">tvoid</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">cc_default</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_chanid"><span class="id" title="definition">_chanid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.ipc.PIPCIntroCSource.html#_res"><span class="id" title="definition">_res</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>))))))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_syncreceive_chan"><span class="id" title="definition">f_syncreceive_chan</span></a> :=<br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chid</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_vaddr</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_rcount</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_res</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_chanid</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">syncreceive_chan_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

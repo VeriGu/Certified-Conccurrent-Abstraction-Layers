@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.clib.CalRealSMSPool</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.clib.CalRealSMSPool</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#"><span class="id" title="library">AuxStateDataType</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.Constant.html#"><span class="id" title="library">Constant</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Maps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.XOmega.html#"><span class="id" title="library">XOmega</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CLemmas.html#"><span class="id" title="library">CLemmas</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="Real_SMSPOOL"><span class="id" title="section">Real_SMSPOOL</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Function</span> <span class="id" title="var">Calculate_smsp_inner_at_j</span> (<span class="id" title="var">i</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">j</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">smsp</span>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#SharedMemSTPool"><span class="id" title="definition">SharedMemSTPool</span></a>) : <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#SharedMemSTPool"><span class="id" title="definition">SharedMemSTPool</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">ZMap.set</span> <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#i"><span class="id" title="variable">i</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="definition">ZMap.set</span> <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#j"><span class="id" title="variable">j</span></a> (<a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#SHRDValid"><span class="id" title="constructor">SHRDValid</span></a> <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#SHRDDEAD"><span class="id" title="constructor">SHRDDEAD</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> 0) (<span class="id" title="definition">ZMap.get</span> <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#i"><span class="id" title="variable">i</span></a> <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#smsp"><span class="id" title="variable">smsp</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CalRealSMSPool.html#smsp"><span class="id" title="variable">smsp</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Fixpoint</span> <a name="Calculate_smsp_inner"><span class="id" title="definition">Calculate_smsp_inner</span></a> (<span class="id" title="var">i</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">j</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) (<span class="id" title="var">smsp</span>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#SharedMemSTPool"><span class="id" title="definition">SharedMemSTPool</span></a>) : <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#SharedMemSTPool"><span class="id" title="definition">SharedMemSTPool</span></a> := <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#j"><span class="id" title="variable">j</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#O"><span class="id" title="constructor">O</span></a> ⇒ <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#Calculate_smsp_inner_at_j"><span class="id" title="definition">Calculate_smsp_inner_at_j</span></a> <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#i"><span class="id" title="variable">i</span></a> 0 <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#smsp"><span class="id" title="variable">smsp</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">k</span> ⇒ <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#Calculate_smsp_inner_at_j"><span class="id" title="definition">Calculate_smsp_inner_at_j</span></a> <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#i"><span class="id" title="variable">i</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.of_nat"><span class="id" title="definition">Z.of_nat</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">k</span>)) (<a class="idref" href="mcertikos.clib.CalRealSMSPool.html#Calculate_smsp_inner"><span class="id" title="definition">Calculate_smsp_inner</span></a> <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#i"><span class="id" title="variable">i</span></a> <span class="id" title="var">k</span> <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#smsp"><span class="id" title="variable">smsp</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Function</span> <span class="id" title="var">Calculate_smsp_at_i</span> (<span class="id" title="var">i</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">smsp</span>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#SharedMemSTPool"><span class="id" title="definition">SharedMemSTPool</span></a>) : <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#SharedMemSTPool"><span class="id" title="definition">SharedMemSTPool</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CalRealSMSPool.html#Calculate_smsp_inner"><span class="id" title="definition">Calculate_smsp_inner</span></a> <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#i"><span class="id" title="variable">i</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.to_nat"><span class="id" title="definition">Z.to_nat</span></a> (<a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#239a40728d107295b3cb2c790f57f9e9"><span class="id" title="notation">-</span></a> 1)) <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#smsp"><span class="id" title="variable">smsp</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Fixpoint</span> <a name="Calculate_smsp"><span class="id" title="definition">Calculate_smsp</span></a> (<span class="id" title="var">i</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>) (<span class="id" title="var">smsp</span>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#SharedMemSTPool"><span class="id" title="definition">SharedMemSTPool</span></a>) : <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#SharedMemSTPool"><span class="id" title="definition">SharedMemSTPool</span></a> := <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#i"><span class="id" title="variable">i</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#O"><span class="id" title="constructor">O</span></a> ⇒ <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#Calculate_smsp_at_i"><span class="id" title="definition">Calculate_smsp_at_i</span></a> 0 <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#smsp"><span class="id" title="variable">smsp</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">k</span> ⇒ <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#Calculate_smsp_at_i"><span class="id" title="definition">Calculate_smsp_at_i</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.of_nat"><span class="id" title="definition">Z.of_nat</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <span class="id" title="var">k</span>)) (<a class="idref" href="mcertikos.clib.CalRealSMSPool.html#Calculate_smsp"><span class="id" title="definition">Calculate_smsp</span></a> <span class="id" title="var">k</span> <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#smsp"><span class="id" title="variable">smsp</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="real_smspool"><span class="id" title="definition">real_smspool</span></a> (<span class="id" title="var">smsp</span>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#SharedMemSTPool"><span class="id" title="definition">SharedMemSTPool</span></a>) := <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#Calculate_smsp"><span class="id" title="definition">Calculate_smsp</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.to_nat"><span class="id" title="definition">Z.to_nat</span></a> (<a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#239a40728d107295b3cb2c790f57f9e9"><span class="id" title="notation">-</span></a> 1)) <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#smsp"><span class="id" title="variable">smsp</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#Real_SMSPOOL"><span class="id" title="section">Real_SMSPOOL</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

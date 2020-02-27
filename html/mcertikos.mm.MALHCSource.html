@@ -1,0 +1,532 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.mm.MALHCSource</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.mm.MALHCSource</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">AST</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Cop</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Clight</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#"><span class="id" title="library">CDataTypes</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Ctypes</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+<pre>
+      #define NUM_PROC 64
+
+      extern void set_cr3 (char ** );
+
+      extern char * PTPool_LOC[NUM_PROC][1024];
+
+      void set_pt(unsigned int index)
+      {
+          set_cr3(PTPool_LOC[index]);
+      }
+</pre>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Let</span> <a name="tsetpt_index"><span class="id" title="variable">tsetpt_index</span></a>: <span class="id" title="definition">ident</span> := 1 % <span class="id" title="var">positive</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="set_pt_body"><span class="id" title="definition">set_pt_body</span></a> : <span class="id" title="inductive">statement</span> := <br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Scall</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#set_cr3"><span class="id" title="definition">set_cr3</span></a> (<span class="id" title="constructor">Tfunction</span> (<span class="id" title="constructor">Tcons</span> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tvoid"><span class="id" title="abbreviation">tvoid</span></a>) <span class="id" title="constructor">Tnil</span>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tvoid"><span class="id" title="abbreviation">tvoid</span></a> <span class="id" title="definition">cc_default</span>))<br/>
+&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#PTPool_LOC"><span class="id" title="definition">PTPool_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024) 64))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tsetpt_index"><span class="id" title="definition">tsetpt_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>))<br/>
+.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_pt"><span class="id" title="definition">f_set_pt</span></a> := {|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">Tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">tsetpt_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">set_pt_body</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<pre>
+      #define NUM_PROC 64
+
+      extern char * PTPool_LOC[NUM_PROC][1024];
+
+      unsigned int get_PDE(unsigned int proc_index, unsigned int pde_index)
+      {
+          unsigned int pde;
+          pde = (unsigned int)PTPool_LOC[proc_index][pde_index] / 4096;
+          return pde;
+      }
+</pre>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Let</span> <a name="tproc_index"><span class="id" title="variable">tproc_index</span></a>: <span class="id" title="definition">ident</span> := 1 % <span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Let</span> <a name="tpde_index"><span class="id" title="variable">tpde_index</span></a>: <span class="id" title="definition">ident</span> := 2 % <span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Let</span> <a name="tpde"><span class="id" title="variable">tpde</span></a>: <span class="id" title="definition">ident</span> := 3 % <span class="id" title="var">positive</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="get_PDE_body"><span class="id" title="definition">get_PDE_body</span></a> : <span class="id" title="inductive">statement</span> := <br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sset</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpde"><span class="id" title="definition">tpde</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Odiv</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ecast</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#PTPool_LOC"><span class="id" title="definition">PTPool_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024) 64))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tproc_index"><span class="id" title="definition">tproc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpde_index"><span class="id" title="definition">tpde_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>))) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 4096) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpde"><span class="id" title="definition">tpde</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))))<br/>
+.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_get_PDE"><span class="id" title="definition">f_get_PDE</span></a> := {|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">tproc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tpde_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">tpde</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">get_PDE_body</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+<pre>
+     #define NUM_PROC 64
+     #define PT_PERM_PTU 7
+
+     extern char * PTPool_LOC[NUM_PROC][1024];
+     extern unsigned int IDPMap_LOC[1024][1024];
+
+     void set_PDE(unsigned int proc_index, unsigned int pde_index)
+     {
+         PTPool_LOC[proc_index][pde_index] = ((char * )(IDPMap_LOC[pde_index])) + PT_PERM_PTU;
+     }
+</pre>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="set_pde_body"><span class="id" title="definition">set_pde_body</span></a>: <span class="id" title="inductive">statement</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#PTPool_LOC"><span class="id" title="definition">PTPool_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024) 64))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tproc_index"><span class="id" title="definition">tproc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpde_index"><span class="id" title="definition">tpde_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>))) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>))<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ecast</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#IDPMap_LOC"><span class="id" title="definition">IDPMap_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> 1024) 1024))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpde_index"><span class="id" title="definition">tpde_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> 1024)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> 1024)) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>)) (<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 7) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_pde"><span class="id" title="definition">f_set_pde</span></a> := {|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">Tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">tproc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tpde_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">set_pde_body</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+<pre>
+     #define NUM_PROC 64
+     #define PT_PERM_UP 0
+
+     extern char * PTPool_LOC[NUM_PROC][1024];
+
+     void rmv_PDE(unsigned int proc_index, unsigned int pde_index)
+     {
+         PTPool_LOC[proc_index][pde_index] = (char * )PT_PERM_UP;
+     }
+</pre>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="rmv_pde_body"><span class="id" title="definition">rmv_pde_body</span></a>: <span class="id" title="inductive">statement</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#PTPool_LOC"><span class="id" title="definition">PTPool_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024) 64))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tproc_index"><span class="id" title="definition">tproc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpde_index"><span class="id" title="definition">tpde_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>))) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>))<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ecast</span> (<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 0) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_rmv_pde"><span class="id" title="definition">f_rmv_pde</span></a> := {|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">Tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">tproc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tpde_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">rmv_pde_body</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+<pre>
+     #define NUM_PROC 64
+     #define PT_PERM_PTU 7
+
+     extern char * PTPool_LOC[NUM_PROC][1024];
+
+     void set_PDEU(unsigned int proc_index, unsigned int pde_index, unsigned int pi)
+     {
+         PTPool_LOC[proc_index][pde_index] = (char * )(pi * 4096 + PT_PERM_PTU);
+     }
+</pre>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Let</span> <a name="tpi"><span class="id" title="variable">tpi</span></a>: <span class="id" title="definition">ident</span> := 4 % <span class="id" title="var">positive</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="set_pdeu_body"><span class="id" title="definition">set_pdeu_body</span></a>: <span class="id" title="inductive">statement</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#PTPool_LOC"><span class="id" title="definition">PTPool_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024) 64))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tproc_index"><span class="id" title="definition">tproc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpde_index"><span class="id" title="definition">tpde_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>))) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>))<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ecast</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Omul</span> (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpi"><span class="id" title="definition">tpi</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 4096) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 7) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_pdeu"><span class="id" title="definition">f_set_pdeu</span></a> := {|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">Tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">tproc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tpde_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tpi</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">set_pdeu_body</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+<pre>
+     #define NUM_PROC 64
+     #define PT_PERM_PTU 7
+
+     extern char * PTPool_LOC[NUM_PROC][1024];
+     extern unsigned int fload(unsigned int);
+
+     unsigned int get_PTE(unsigned int proc_index, unsigned int pde_index, unsigned int vadr)
+     {
+         unsigned int pte;
+         unsigned int offset;
+         offset = ((unsigned int)PTPool_LOC[proc_index][pde_index] - PT_PERM_PTU) / 4096;
+         pte = fload(offset * 1024 + vadr);
+         return pte;
+     }
+</pre>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Let</span> <a name="tpte"><span class="id" title="variable">tpte</span></a>: <span class="id" title="definition">ident</span> := 5 % <span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Let</span> <a name="toffset"><span class="id" title="variable">toffset</span></a>: <span class="id" title="definition">ident</span> := 6 % <span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Let</span> <a name="tvadr"><span class="id" title="variable">tvadr</span></a>: <span class="id" title="definition">ident</span> := 7 % <span class="id" title="var">positive</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="get_pte_body"><span class="id" title="definition">get_pte_body</span></a>: <span class="id" title="inductive">statement</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sset</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#toffset"><span class="id" title="definition">toffset</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Odiv</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Osub</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ecast</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#PTPool_LOC"><span class="id" title="definition">PTPool_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024) 64))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tproc_index"><span class="id" title="definition">tproc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpde_index"><span class="id" title="definition">tpde_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>))) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 7) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 4096) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Scall</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> 13%<span class="id" title="var">positive</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#fload"><span class="id" title="definition">fload</span></a> (<span class="id" title="constructor">Tfunction</span> (<span class="id" title="constructor">Tcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> <span class="id" title="constructor">Tnil</span>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> <span class="id" title="definition">cc_default</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Omul</span> (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#toffset"><span class="id" title="definition">toffset</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 1024) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tvadr"><span class="id" title="definition">tvadr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sset</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpte"><span class="id" title="definition">tpte</span></a> (<span class="id" title="constructor">Etempvar</span> 13%<span class="id" title="var">positive</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpte"><span class="id" title="definition">tpte</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_get_pte"><span class="id" title="definition">f_get_pte</span></a> := {|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">tproc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tpde_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tvadr</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">toffset</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tpte</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(13%</span><span class="id" title="constructor">positive</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">get_pte_body</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+<pre>
+     #define NUM_PROC 64
+     #define PT_PERM_PTU 7
+
+     extern char * PTPool_LOC[NUM_PROC][1024];
+     extern void fstore(unsigned int, unsigned int);
+
+     void set_PTE(unsigned int proc_index, unsigned int pde_index, unsigned int vadr, unsigned int padr, unsigned int perm)
+     {
+         unsigned int offset;
+         offset = ((unsigned int)PTPool_LOC[proc_index][pde_index] - PT_PERM_PTU) / 4096;
+         fstore(offset * 1024 + vadr, padr * 4096 + perm);
+     }
+</pre>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Let</span> <a name="tpadr"><span class="id" title="variable">tpadr</span></a>: <span class="id" title="definition">ident</span> := 8 % <span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Let</span> <a name="tperm"><span class="id" title="variable">tperm</span></a>: <span class="id" title="definition">ident</span> := 9 % <span class="id" title="var">positive</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="set_pte_body"><span class="id" title="definition">set_pte_body</span></a>: <span class="id" title="inductive">statement</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sset</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#toffset"><span class="id" title="definition">toffset</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Odiv</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Osub</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ecast</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#PTPool_LOC"><span class="id" title="definition">PTPool_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024) 64))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tproc_index"><span class="id" title="definition">tproc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpde_index"><span class="id" title="definition">tpde_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>))) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 7) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 4096) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Scall</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#fstore"><span class="id" title="definition">fstore</span></a> (<span class="id" title="constructor">Tfunction</span> (<span class="id" title="constructor">Tcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> (<span class="id" title="constructor">Tcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> <span class="id" title="constructor">Tnil</span>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#tvoid"><span class="id" title="abbreviation">tvoid</span></a> <span class="id" title="definition">cc_default</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Omul</span> (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#toffset"><span class="id" title="definition">toffset</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 1024) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tvadr"><span class="id" title="definition">tvadr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Omul</span> (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpadr"><span class="id" title="definition">tpadr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 4096) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tperm"><span class="id" title="definition">tperm</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_pte"><span class="id" title="definition">f_set_pte</span></a> := {|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">Tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">tproc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tpde_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tvadr</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tpadr</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tperm</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">toffset</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">set_pte_body</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+<pre>
+     #define NUM_PROC 64
+     #define PT_PERM_PTU 7
+
+     extern char * PTPool_LOC[NUM_PROC][1024];
+     extern void fstore(unsigned int, unsigned int);
+
+     void rmv_PTE(unsigned int proc_index, unsigned int pde_index, unsigned int vadr)
+     {
+         unsigned int offset;
+         offset = ((unsigned int)PTPool_LOC[proc_index][pde_index] - PT_PERM_PTU) / 4096;
+         fstore(offset * 1024 + vadr, 0);
+     }
+</pre>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="rmv_pte_body"><span class="id" title="definition">rmv_pte_body</span></a>: <span class="id" title="inductive">statement</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sset</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#toffset"><span class="id" title="definition">toffset</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Odiv</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Osub</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ecast</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#PTPool_LOC"><span class="id" title="definition">PTPool_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024) 64))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tproc_index"><span class="id" title="definition">tproc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>) 1024)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpde_index"><span class="id" title="definition">tpde_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>))) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 7) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 4096) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Scall</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#fstore"><span class="id" title="definition">fstore</span></a> (<span class="id" title="constructor">Tfunction</span> (<span class="id" title="constructor">Tcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> (<span class="id" title="constructor">Tcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> <span class="id" title="constructor">Tnil</span>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#tvoid"><span class="id" title="abbreviation">tvoid</span></a> <span class="id" title="definition">cc_default</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Omul</span> (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#toffset"><span class="id" title="definition">toffset</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 1024) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tvadr"><span class="id" title="definition">tvadr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">(</span></a><span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 0) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_rmv_pte"><span class="id" title="definition">f_rmv_pte</span></a> := {|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">Tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">tproc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tpde_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tvadr</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">toffset</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">rmv_pte_body</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+<pre>
+     extern unsigned int IDPMap_LOC[1024][1024];
+
+     void set_IDPTE(unsigned int pde_index, unsigned int vadr, unsigned int perm)
+     {
+         IDPMap_LOC[pde_index][vadr] = (pde_index * 1024 + vadr) * 4096 + perm;
+     }
+</pre>
+ 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="set_idpte_body"><span class="id" title="definition">set_idpte_body</span></a>: <span class="id" title="inductive">statement</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#IDPMap_LOC"><span class="id" title="definition">IDPMap_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> 1024) 1024))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpde_index"><span class="id" title="definition">tpde_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> 1024)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> 1024)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tvadr"><span class="id" title="definition">tvadr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Omul</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Omul</span> (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tpde_index"><span class="id" title="definition">tpde_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 1024) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tvadr"><span class="id" title="definition">tvadr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 4096) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MALHCSource.html#tperm"><span class="id" title="definition">tperm</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_idpte"><span class="id" title="definition">f_set_idpte</span></a> := {|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">Tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">tpde_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tvadr</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tperm</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">set_idpte_body</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

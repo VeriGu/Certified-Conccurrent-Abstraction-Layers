@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.objects.dev.Oracle</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.objects.dev.Oracle</h1>
+
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Lists.List.html#"><span class="id" title="library">List</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Bool.Bool.html#"><span class="id" title="library">Bool</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <span class="id" title="keyword">Type</span> <a name="Event"><span class="id" title="module">Event</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Parameter</span> <a name="Event.T"><span class="id" title="axiom">T</span></a>: <span class="id" title="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Parameter</span> <a name="Event.d"><span class="id" title="axiom">d</span></a>: <a class="idref" href="mcertikos.objects.dev.Oracle.html#Event.T"><span class="id" title="axiom">T</span></a>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.objects.dev.Oracle.html#Event"><span class="id" title="module">Event</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Module</span> <span class="id" title="keyword">Type</span> <a name="Oracle"><span class="id" title="module">Oracle</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Parameter</span> <span class="id" title="keyword">Time</span>: <span class="id" title="keyword">Set</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Parameter</span> <a name="Oracle.Entry"><span class="id" title="axiom">Entry</span></a>: <span class="id" title="keyword">Type</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Parameter</span> <a name="Oracle.Tape"><span class="id" title="axiom">Tape</span></a>: <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Parameter</span> <a name="Oracle.span"><span class="id" title="axiom">span</span></a>: <span class="id" title="keyword">Time</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Parameter</span> <a name="Oracle.tlt"><span class="id" title="axiom">tlt</span></a>: <span class="id" title="keyword">Time</span> → <span class="id" title="keyword">Time</span> → <span class="id" title="keyword">Prop</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Parameter</span> <a name="Oracle.tle"><span class="id" title="axiom">tle</span></a>: <span class="id" title="keyword">Time</span> → <span class="id" title="keyword">Time</span> → <span class="id" title="keyword">Prop</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Parameter</span> <a name="Oracle.empty"><span class="id" title="axiom">empty</span></a>: <a class="idref" href="mcertikos.objects.dev.Oracle.html#Oracle.Tape"><span class="id" title="axiom">Tape</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Parameter</span> <a name="Oracle.default"><span class="id" title="axiom">default</span></a>: <a class="idref" href="mcertikos.objects.dev.Oracle.html#Oracle.Entry"><span class="id" title="axiom">Entry</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Parameter</span> <a name="Oracle.get"><span class="id" title="axiom">get</span></a>: <span class="id" title="keyword">Time</span> → <a class="idref" href="mcertikos.objects.dev.Oracle.html#Oracle.Tape"><span class="id" title="axiom">Tape</span></a> → <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="mcertikos.objects.dev.Oracle.html#Oracle.Entry"><span class="id" title="axiom">Entry</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Parameter</span> <a name="Oracle.valid"><span class="id" title="axiom">valid</span></a>: <a class="idref" href="mcertikos.objects.dev.Oracle.html#Oracle.Tape"><span class="id" title="axiom">Tape</span></a> → <span class="id" title="keyword">Prop</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Axiom</span> <a name="Oracle.empty_def"><span class="id" title="axiom">empty_def</span></a>: <span class="id" title="keyword">∀</span> <span class="id" title="var">t</span>:<span class="id" title="keyword">Time</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.objects.dev.Oracle.html#Oracle.get"><span class="id" title="axiom">get</span></a> <a class="idref" href="mcertikos.objects.dev.Oracle.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="mcertikos.objects.dev.Oracle.html#Oracle.empty"><span class="id" title="axiom">empty</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Axiom</span> <a name="Oracle.order"><span class="id" title="axiom">order</span></a>: <span class="id" title="keyword">∀</span> <span class="id" title="var">a</span> <span class="id" title="var">b</span>: <span class="id" title="keyword">Time</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#5bf2050e90b21ebc82dc5463d1ba338e"><span class="id" title="notation">{</span></a><a class="idref" href="mcertikos.objects.dev.Oracle.html#Oracle.tlt"><span class="id" title="axiom">tlt</span></a> <a class="idref" href="mcertikos.objects.dev.Oracle.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="mcertikos.objects.dev.Oracle.html#b"><span class="id" title="variable">b</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#5bf2050e90b21ebc82dc5463d1ba338e"><span class="id" title="notation">}</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#5bf2050e90b21ebc82dc5463d1ba338e"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#5bf2050e90b21ebc82dc5463d1ba338e"><span class="id" title="notation">{</span></a><a class="idref" href="mcertikos.objects.dev.Oracle.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="mcertikos.objects.dev.Oracle.html#b"><span class="id" title="variable">b</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#5bf2050e90b21ebc82dc5463d1ba338e"><span class="id" title="notation">}</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#f54393d7670a5aa26d6e138373d42f1c"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#f54393d7670a5aa26d6e138373d42f1c"><span class="id" title="notation">{</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#611abc97cba304de784fa909dbdea1fa"><span class="id" title="notation">¬</span></a><a class="idref" href="mcertikos.objects.dev.Oracle.html#Oracle.tle"><span class="id" title="axiom">tle</span></a> <a class="idref" href="mcertikos.objects.dev.Oracle.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="mcertikos.objects.dev.Oracle.html#b"><span class="id" title="variable">b</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#f54393d7670a5aa26d6e138373d42f1c"><span class="id" title="notation">}</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Axiom</span> <a name="Oracle.valid_range"><span class="id" title="axiom">valid_range</span></a>: <span class="id" title="keyword">∀</span> (<span class="id" title="var">t</span>: <span class="id" title="keyword">Time</span>) (<span class="id" title="var">l</span>: <a class="idref" href="mcertikos.objects.dev.Oracle.html#Oracle.Tape"><span class="id" title="axiom">Tape</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.objects.dev.Oracle.html#Oracle.valid"><span class="id" title="axiom">valid</span></a> <a class="idref" href="mcertikos.objects.dev.Oracle.html#l"><span class="id" title="variable">l</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.objects.dev.Oracle.html#Oracle.tlt"><span class="id" title="axiom">tlt</span></a> <a class="idref" href="mcertikos.objects.dev.Oracle.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="mcertikos.objects.dev.Oracle.html#Oracle.span"><span class="id" title="axiom">span</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">∃</span></a> <span class="id" title="var">e</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">,</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.objects.dev.Oracle.html#Oracle.get"><span class="id" title="axiom">get</span></a> <a class="idref" href="mcertikos.objects.dev.Oracle.html#t"><span class="id" title="variable">t</span></a> <a class="idref" href="mcertikos.objects.dev.Oracle.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="mcertikos.objects.dev.Oracle.html#e"><span class="id" title="variable">e</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.objects.dev.Oracle.html#Oracle"><span class="id" title="module">Oracle</span></a>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

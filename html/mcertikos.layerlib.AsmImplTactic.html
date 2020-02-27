@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.layerlib.AsmImplTactic</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.layerlib.AsmImplTactic</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+This file provide the contextual refinement proof between MPTInit layer and MPTBit layer
+</div>
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Asm</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.CommonTactic.html#"><span class="id" title="library">CommonTactic</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">AST</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Smallstep</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatLayers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#"><span class="id" title="library">LAsm</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Logic.FunctionalExtensionality.html#"><span class="id" title="library">FunctionalExtensionality</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AsmImplLemma.html#"><span class="id" title="library">AsmImplLemma</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#"><span class="id" title="library">LRegSet</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Conventions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AuxLemma.html#"><span class="id" title="library">AuxLemma</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Local</span>&nbsp;<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">string_scope</span>.<br/>
+<span class="id" title="keyword">Local</span>&nbsp;<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">error_monad_scope</span>.<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">store_split</span>:=<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">H</span>: <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">∧</span></a> <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="var">_</span> |- <span class="id" title="var">_</span> ⇒ <span class="id" title="tactic">destruct</span> <span class="id" title="var">H</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">H</span> ?]; <span class="id" title="tactic">subst</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">one_step_forward&acute;</span>:=<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="inductive">star</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="lemma">star_left</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="inductive">plus</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">econstructor</span><br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>;<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <a class="idref" href="mcertikos.layerlib.LAsm.html#step"><span class="id" title="inductive">step</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">try</span> <span class="id" title="var">eassumption</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> ⇒ <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>; <span class="id" title="tactic">simpl</span>.<br/>
+
+<br/>
+&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">one_step_forward</span> <span class="id" title="var">n</span>:=<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="inductive">star</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="lemma">star_left</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="inductive">plus</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">econstructor</span><br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>;<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <a class="idref" href="mcertikos.layerlib.LAsm.html#step"><span class="id" title="inductive">step</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">try</span> <span class="id" title="var">eassumption</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">H</span>: <span class="id" title="var">_</span> <span class="id" title="constructor">PC</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="constructor">Vptr</span> ?<span class="id" title="var">b</span> <span class="id" title="var">_</span> |- <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="constructor">Vptr</span> ?<span class="id" title="var">b</span> <span class="id" title="var">_</span> ⇒ <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="definition">find_instr</span> ?<span class="id" title="var">num</span> <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="var">_</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">replace</span> <span class="id" title="var">num</span> <span class="id" title="keyword">with</span> <span class="id" title="var">n</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[<span class="id" title="var">pc_add_simpl</span>; <span class="id" title="tactic">simpl</span>| <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>]<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> ⇒ <span class="id" title="tactic">simpl</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> ⇒ <span class="id" title="tactic">idtac</span><br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;<span class="id" title="keyword">Lemma</span> <a name="val_add_vptr"><span class="id" title="lemma">val_add_vptr</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">n</span> <span class="id" title="var">b</span> <span class="id" title="var">ofs</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">Int.repr</span> <a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#n"><span class="id" title="variable">n</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="definition">Int.add</span> <a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#ofs"><span class="id" title="variable">ofs</span></a> <span class="id" title="definition">Int.one</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">Val.add</span> (<span class="id" title="constructor">Vptr</span> <a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#b"><span class="id" title="variable">b</span></a> <a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#ofs"><span class="id" title="variable">ofs</span></a>) <span class="id" title="definition">Vone</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="constructor">Vptr</span> <a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#b"><span class="id" title="variable">b</span></a> (<span class="id" title="definition">Int.repr</span> <a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#n"><span class="id" title="variable">n</span></a>).<br/>
+&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">congruence</span>.<br/>
+&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">Lregset_simpl_tac</span>:=<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="keyword">context</span> [<span class="id" title="definition">undef_regs</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Lists.List.html#map"><span class="id" title="definition">map</span></a> <span class="id" title="var">_</span> <span class="id" title="definition">destroyed_at_call</span>) (<a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold"><span class="id" title="definition">Lregset_fold</span></a> <span class="id" title="var">_</span>)] ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_destroyed"><span class="id" title="lemma">Lregset_fold_destroyed</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="keyword">context</span>[(<a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold"><span class="id" title="definition">Lregset_fold</span></a> <span class="id" title="var">_</span>) <span class="id" title="var">_</span>] ⇒ <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_get"><span class="id" title="lemma">Lregset_fold_get</span></a>; <span class="id" title="tactic">simpl</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="keyword">context</span> [<span class="id" title="definition">nextinstr</span> (<a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold"><span class="id" title="definition">Lregset_fold</span></a> <span class="id" title="var">_</span>)] ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_nextinstr"><span class="id" title="lemma">Lregset_fold_nextinstr</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="keyword">context</span> [<span class="id" title="definition">nextinstr_nf</span> (<a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold"><span class="id" title="definition">Lregset_fold</span></a> <span class="id" title="var">_</span>)] ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_nextinstr_nf"><span class="id" title="lemma">Lregset_fold_nextinstr_nf</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="keyword">context</span>[<span class="id" title="notation">(</span><a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold"><span class="id" title="definition">Lregset_fold</span></a> <span class="id" title="var">_</span><span class="id" title="notation">)</span> <span class="id" title="notation">#</span> <span class="id" title="constructor">RA</span> <span class="id" title="notation">&lt;-</span> <span class="id" title="var">_</span> ] ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_ra"><span class="id" title="lemma">Lregset_fold_ra</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="keyword">context</span>[<span class="id" title="notation">(</span><a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold"><span class="id" title="definition">Lregset_fold</span></a> <span class="id" title="var">_</span><span class="id" title="notation">)</span> <span class="id" title="notation">#</span> <span class="id" title="constructor">PC</span> <span class="id" title="notation">&lt;-</span> <span class="id" title="var">_</span> ] ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_pc"><span class="id" title="lemma">Lregset_fold_pc</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="keyword">context</span>[<span class="id" title="notation">(</span><a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold"><span class="id" title="definition">Lregset_fold</span></a> <span class="id" title="var">_</span><span class="id" title="notation">)</span> <span class="id" title="notation">#</span> <span class="id" title="notation">(</span><span class="id" title="constructor">IR</span> ?<span class="id" title="var">i</span><span class="id" title="notation">)</span> <span class="id" title="notation">&lt;-</span> <span class="id" title="var">_</span> ] ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">i</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="constructor">EAX</span> ⇒ <span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_eax"><span class="id" title="lemma">Lregset_fold_eax</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="constructor">EDX</span> ⇒ <span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_edx"><span class="id" title="lemma">Lregset_fold_edx</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="constructor">ESP</span> ⇒ <span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_esp"><span class="id" title="lemma">Lregset_fold_esp</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="constructor">ECX</span> ⇒ <span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_ecx"><span class="id" title="lemma">Lregset_fold_ecx</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="constructor">EDI</span> ⇒ <span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_edi"><span class="id" title="lemma">Lregset_fold_edi</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="constructor">ESI</span> ⇒ <span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_esi"><span class="id" title="lemma">Lregset_fold_esi</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="constructor">EBX</span> ⇒ <span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_ebx"><span class="id" title="lemma">Lregset_fold_ebx</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="constructor">EBP</span> ⇒ <span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_ebp"><span class="id" title="lemma">Lregset_fold_ebp</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="keyword">context</span>[<span class="id" title="notation">(</span><a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold"><span class="id" title="definition">Lregset_fold</span></a> <span class="id" title="var">_</span><span class="id" title="notation">)</span> <span class="id" title="notation">#</span> <span class="id" title="notation">(</span><span class="id" title="constructor">CR</span> ?<span class="id" title="var">i</span><span class="id" title="notation">)</span> <span class="id" title="notation">&lt;-</span> <span class="id" title="var">_</span> ] ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="var">i</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="constructor">ZF</span> ⇒ <span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_zf"><span class="id" title="lemma">Lregset_fold_zf</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="constructor">CF</span> ⇒ <span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_cf"><span class="id" title="lemma">Lregset_fold_cf</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="constructor">PF</span> ⇒ <span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_pf"><span class="id" title="lemma">Lregset_fold_pf</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="constructor">SF</span> ⇒ <span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_sf"><span class="id" title="lemma">Lregset_fold_sf</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="constructor">OF</span> ⇒ <span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.layerlib.LRegSet.html#Lregset_fold_of"><span class="id" title="lemma">Lregset_fold_of</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">Lregset_simpl_tac&acute;</span> <span class="id" title="var">n</span> :=<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="var">Lregset_simpl_tac</span>;<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| |- <span class="id" title="keyword">context</span> [<span class="id" title="definition">Val.add</span> (<span class="id" title="constructor">Vptr</span> ?<span class="id" title="var">b</span> ?<span class="id" title="var">ofs</span>) <span class="id" title="definition">Vone</span>] ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#val_add_vptr"><span class="id" title="lemma">val_add_vptr</span></a> <span class="id" title="var">n</span> <span class="id" title="var">b</span> <span class="id" title="var">ofs</span>); [| <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>]<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;<span class="id" title="keyword">Lemma</span> <a name="reg_false"><span class="id" title="lemma">reg_false</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">reg</span>: <span class="id" title="inductive">preg</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">PC</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">EBP</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">EBX</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">ESI</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">EDI</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">ESP</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">RA</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">EAX</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">ECX</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">EDX</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">OF</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">SF</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">PF</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">CF</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">ZF</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">XMM7</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">XMM6</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">XMM5</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">XMM4</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">XMM3</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">XMM2</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">XMM1</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">XMM0</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#reg"><span class="id" title="variable">reg</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#32263a1c8b01baecdff9deb038955bc9"><span class="id" title="notation">≠</span></a> <span class="id" title="constructor">ST0</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#False"><span class="id" title="inductive">False</span></a>.<br/>
+&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">reg</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">congruence</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">i</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">congruence</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">f</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">congruence</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">c</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">congruence</span>.<br/>
+&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">link_nextblock_asm</span> :=<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">Hstore</span>: <span class="id" title="method">Mem.store</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> ?<span class="id" title="var">fm</span> |- <span class="id" title="keyword">context</span>[<span class="id" title="method">Mem.nextblock</span> ?<span class="id" title="var">fm</span>] ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> (<span class="id" title="method">Mem.nextblock_store</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">Hstore</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+
+<br/>
+&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">link_inject_neutral_asm</span> :=<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="keyword">match</span> <span class="id" title="keyword">goal</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">Hstore</span>: <span class="id" title="method">Mem.store</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> ?<span class="id" title="var">fm</span> |- <span class="id" title="method">Mem.inject_neutral</span> <span class="id" title="var">_</span> ?<span class="id" title="var">fm</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="method">Mem.store_inject_neutral</span>; <span class="id" title="tactic">eauto</span> 1<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;<span class="id" title="keyword">Lemma</span> <a name="inv_reg_le"><span class="id" title="lemma">inv_reg_le</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">rs</span>: <span class="id" title="definition">regset</span>) <span class="id" title="var">a</span> <span class="id" title="var">b</span>,        <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">∀</span> <span class="id" title="var">r</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="inductive">val_inject</span> (<span class="id" title="definition">Mem.flat_inj</span> <a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#a"><span class="id" title="variable">a</span></a>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#rs"><span class="id" title="variable">rs</span></a> <a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#r"><span class="id" title="variable">r</span></a>) (<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#rs"><span class="id" title="variable">rs</span></a> <a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#r"><span class="id" title="variable">r</span></a>)) →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#a"><span class="id" title="variable">a</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.PArith.BinPos.html#0af097a55db0240a031a15b1e23ba4ca"><span class="id" title="notation">≤</span></a> <a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#b"><span class="id" title="variable">b</span></a>)%<span class="id" title="var">positive</span> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">∀</span> <span class="id" title="var">r</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="inductive">val_inject</span> (<span class="id" title="definition">Mem.flat_inj</span> <a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#b"><span class="id" title="variable">b</span></a>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#rs"><span class="id" title="variable">rs</span></a> <a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#r"><span class="id" title="variable">r</span></a>) (<a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#rs"><span class="id" title="variable">rs</span></a> <a class="idref" href="mcertikos.layerlib.AsmImplTactic.html#r"><span class="id" title="variable">r</span></a>)).<br/>
+&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="tactic">eapply</span> <span class="id" title="lemma">val_inject_incr</span>; [|<span class="id" title="tactic">eauto</span>].<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.layerlib.AuxLemma.html#flat_inj_inject_incr"><span class="id" title="lemma">flat_inj_inject_incr</span></a>; <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

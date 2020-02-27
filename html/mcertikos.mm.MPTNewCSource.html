@@ -1,0 +1,348 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.mm.MPTNewCSource</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.mm.MPTNewCSource</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">AST</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Cop</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Clight</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#"><span class="id" title="library">CDataTypes</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Ctypes</span>.<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Let</span> <a name="smsp_struct"><span class="id" title="variable">smsp_struct</span></a>: <span class="id" title="definition">ident</span> := 3400%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Let</span> <a name="smsp_state"><span class="id" title="variable">smsp_state</span></a>: <span class="id" title="definition">ident</span> := 3500%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Let</span> <a name="smsp_seen"><span class="id" title="variable">smsp_seen</span></a>: <span class="id" title="definition">ident</span> := 3600%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Let</span> <a name="smsp_loc"><span class="id" title="variable">smsp_loc</span></a>: <span class="id" title="definition">ident</span> := 3700%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Let</span> <a name="t_smsp_struct"><span class="id" title="variable">t_smsp_struct</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#smsp_struct"><span class="id" title="definition">smsp_struct</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#smsp_loc"><span class="id" title="definition">smsp_loc</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#smsp_state"><span class="id" title="definition">smsp_state</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#smsp_seen"><span class="id" title="definition">smsp_seen</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> <span class="id" title="constructor">Fnil</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">noattr</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="smspool_loc_type"><span class="id" title="definition">smspool_loc_type</span></a> : <span class="id" title="record">globvar</span> <span class="id" title="inductive">type</span> :=<br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">t_smsp_struct</span> <span class="id" title="constructor">num_proc</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">num_proc</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">num_proc</span> <span class="id" title="constructor">×</span> <span class="id" title="constructor">num_proc</span> <span class="id" title="constructor">×</span> <span class="id" title="constructor">12))::</span><span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="_source"><span class="id" title="definition">_source</span></a> : <span class="id" title="definition">ident</span> := 1%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="_dest"><span class="id" title="definition">_dest</span></a> : <span class="id" title="definition">ident</span> := 2%<span class="id" title="var">positive</span>.<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<pre>
+    void clear_shared_mem(int source, int dest)
+    {
+        array[source][dest].smsp_loc = 0;
+        array[source][dest].smsp_state = 2;
+        array[source][dest].smsp_seen = 1;
+    }
+
+</pre>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="clear_shared_mem_body"><span class="id" title="definition">clear_shared_mem_body</span></a>: <span class="id" title="inductive">statement</span> :=<br/>
+(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SHRDMEMPOOL_LOC"><span class="id" title="definition">SHRDMEMPOOL_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>) <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_source"><span class="id" title="definition">_source</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> 64)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_dest"><span class="id" title="definition">_dest</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>)) <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>) <a class="idref" href="mcertikos.mm.MPTNewCSource.html#smsp_loc"><span class="id" title="definition">smsp_loc</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 0) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SHRDMEMPOOL_LOC"><span class="id" title="definition">SHRDMEMPOOL_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>) <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_source"><span class="id" title="definition">_source</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_dest"><span class="id" title="definition">_dest</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>)) <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>) <a class="idref" href="mcertikos.mm.MPTNewCSource.html#smsp_state"><span class="id" title="definition">smsp_state</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 2) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SHRDMEMPOOL_LOC"><span class="id" title="definition">SHRDMEMPOOL_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>) <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_source"><span class="id" title="definition">_source</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> 64)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_dest"><span class="id" title="definition">_dest</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>)) <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>) <a class="idref" href="mcertikos.mm.MPTNewCSource.html#smsp_seen"><span class="id" title="definition">smsp_seen</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>) (<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 1) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))))<br/>
+.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_clear_shared_mem"><span class="id" title="definition">f_clear_shared_mem</span></a> := {|<br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_source</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_dest</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">clear_shared_mem_body</span><br/>
+|}.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="get_shared_mem_loc_body"><span class="id" title="definition">get_shared_mem_loc_body</span></a>: <span class="id" title="inductive">statement</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">arr</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SHRDMEMPOOL_LOC"><span class="id" title="definition">SHRDMEMPOOL_LOC</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>) <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_source"><span class="id" title="definition">_source</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)) <span class="id" title="keyword">in</span><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MPTNewCSource.html#arr"><span class="id" title="variable">arr</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_dest"><span class="id" title="definition">_dest</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MPTNewCSource.html#smsp_loc"><span class="id" title="definition">smsp_loc</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_get_shared_mem_loc"><span class="id" title="definition">f_get_shared_mem_loc</span></a> := {|<br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_source</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_dest</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">get_shared_mem_loc_body</span><br/>
+<br/>
+|}.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="_loc"><span class="id" title="definition">_loc</span></a> : <span class="id" title="definition">ident</span> := 3%<span class="id" title="var">positive</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="set_shared_mem_loc_body"><span class="id" title="definition">set_shared_mem_loc_body</span></a>: <span class="id" title="inductive">statement</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SHRDMEMPOOL_LOC"><span class="id" title="definition">SHRDMEMPOOL_LOC</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_source"><span class="id" title="definition">_source</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_dest"><span class="id" title="definition">_dest</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MPTNewCSource.html#smsp_loc"><span class="id" title="definition">smsp_loc</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_loc"><span class="id" title="definition">_loc</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_shared_mem_loc"><span class="id" title="definition">f_set_shared_mem_loc</span></a> := {|<br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_source</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_dest</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_loc</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">set_shared_mem_loc_body</span><br/>
+|}.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="get_shared_mem_state_body"><span class="id" title="definition">get_shared_mem_state_body</span></a>: <span class="id" title="inductive">statement</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">arr</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SHRDMEMPOOL_LOC"><span class="id" title="definition">SHRDMEMPOOL_LOC</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>) <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_source"><span class="id" title="definition">_source</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)) <span class="id" title="keyword">in</span><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MPTNewCSource.html#arr"><span class="id" title="variable">arr</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_dest"><span class="id" title="definition">_dest</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MPTNewCSource.html#smsp_state"><span class="id" title="definition">smsp_state</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_get_shared_mem_state"><span class="id" title="definition">f_get_shared_mem_state</span></a> := {|<br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_source</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_dest</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">get_shared_mem_state_body</span><br/>
+<br/>
+|}.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="_state"><span class="id" title="definition">_state</span></a> : <span class="id" title="definition">ident</span> := 4%<span class="id" title="var">positive</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="set_shared_mem_state_body"><span class="id" title="definition">set_shared_mem_state_body</span></a>: <span class="id" title="inductive">statement</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SHRDMEMPOOL_LOC"><span class="id" title="definition">SHRDMEMPOOL_LOC</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_source"><span class="id" title="definition">_source</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_dest"><span class="id" title="definition">_dest</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MPTNewCSource.html#smsp_state"><span class="id" title="definition">smsp_state</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_state"><span class="id" title="definition">_state</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_shared_mem_state"><span class="id" title="definition">f_set_shared_mem_state</span></a> := {|<br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_source</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_dest</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_state</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">set_shared_mem_state_body</span><br/>
+|}.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="get_shared_mem_seen_body"><span class="id" title="definition">get_shared_mem_seen_body</span></a>: <span class="id" title="inductive">statement</span> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">let</span> <span class="id" title="var">arr</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SHRDMEMPOOL_LOC"><span class="id" title="definition">SHRDMEMPOOL_LOC</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>) <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_source"><span class="id" title="definition">_source</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)) <span class="id" title="keyword">in</span><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MPTNewCSource.html#arr"><span class="id" title="variable">arr</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_dest"><span class="id" title="definition">_dest</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MPTNewCSource.html#smsp_seen"><span class="id" title="definition">smsp_seen</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_get_shared_mem_seen"><span class="id" title="definition">f_get_shared_mem_seen</span></a> := {|<br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_source</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_dest</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">get_shared_mem_seen_body</span><br/>
+<br/>
+|}.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="_seen"><span class="id" title="definition">_seen</span></a> : <span class="id" title="definition">ident</span> := 5%<span class="id" title="var">positive</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="set_shared_mem_seen_body"><span class="id" title="definition">set_shared_mem_seen_body</span></a>: <span class="id" title="inductive">statement</span> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SHRDMEMPOOL_LOC"><span class="id" title="definition">SHRDMEMPOOL_LOC</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_source"><span class="id" title="definition">_source</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_dest"><span class="id" title="definition">_dest</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MPTNewCSource.html#t_smsp_struct"><span class="id" title="definition">t_smsp_struct</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MPTNewCSource.html#smsp_seen"><span class="id" title="definition">smsp_seen</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.mm.MPTNewCSource.html#_seen"><span class="id" title="definition">_seen</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_shared_mem_seen"><span class="id" title="definition">f_set_shared_mem_seen</span></a> := {|<br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_source</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_dest</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_seen</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">set_shared_mem_seen_body</span><br/>
+|}.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

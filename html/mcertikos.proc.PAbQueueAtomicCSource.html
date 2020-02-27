@@ -1,0 +1,458 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.proc.PAbQueueAtomicCSource</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.proc.PAbQueueAtomicCSource</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">AST</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Cop</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Clight</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#"><span class="id" title="library">CDataTypes</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Ctypes</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="_ih"><span class="id" title="abbreviation">_ih</span></a> := 65%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_in_head"><span class="id" title="abbreviation">_in_head</span></a> := 40%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_out_head"><span class="id" title="abbreviation">_out_head</span></a> := 38%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_to"><span class="id" title="abbreviation">_to</span></a> := 46%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_count"><span class="id" title="abbreviation">_count</span></a> := 44%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_cv"><span class="id" title="abbreviation">_cv</span></a> := 49%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_va"><span class="id" title="abbreviation">_va</span></a> := 59%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_pid"><span class="id" title="abbreviation">_pid</span></a> := 58%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_paddr"><span class="id" title="abbreviation">_paddr</span></a> := 45%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_kpa"><span class="id" title="abbreviation">_kpa</span></a> := 60%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_idq"><span class="id" title="abbreviation">_idq</span></a>  := 50%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_struct_cv_t"><span class="id" title="abbreviation">_struct_cv_t</span></a> := 43%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_chanid"><span class="id" title="abbreviation">_chanid</span></a> := 53%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_struct_chpool_t"><span class="id" title="abbreviation">_struct_chpool_t</span></a> := 47%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_struct_idQ_t"><span class="id" title="abbreviation">_struct_idQ_t</span></a> := 36%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_in_tail"><span class="id" title="abbreviation">_in_tail</span></a> := 39%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_out_tail"><span class="id" title="abbreviation">_out_tail</span></a> := 37%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_max"><span class="id" title="abbreviation">_max</span></a> := 42%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_front"><span class="id" title="abbreviation">_front</span></a> := 41%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_next"><span class="id" title="abbreviation">_next</span></a> := 34%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_prev"><span class="id" title="abbreviation">_prev</span></a> := 35%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_struct_sync_chpool_t"><span class="id" title="abbreviation">_struct_sync_chpool_t</span></a> := 51%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_chpool"><span class="id" title="abbreviation">_chpool</span></a> := 48%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_kpa&acute;"><span class="id" title="abbreviation">_kpa&acute;</span></a> := 79%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_n_to"><span class="id" title="abbreviation">_n_to</span></a> := 100%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_n_paddr"><span class="id" title="abbreviation">_n_paddr</span></a> := 101%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_n_count"><span class="id" title="abbreviation">_n_count</span></a> := 101%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_busy"><span class="id" title="abbreviation">_busy</span></a> := 111%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="_n_busy"><span class="id" title="abbreviation">_n_busy</span></a> := 112%<span class="id" title="var">positive</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_struct_chpool_t"><span class="id" title="abbreviation">_struct_chpool_t</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_to"><span class="id" title="abbreviation">_to</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> (<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_paddr"><span class="id" title="abbreviation">_paddr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> (<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_count"><span class="id" title="abbreviation">_count</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> (<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_busy"><span class="id" title="abbreviation">_busy</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <span class="id" title="constructor">Fnil</span>)))) <span class="id" title="definition">noattr</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="syncchpool_loc_type"><span class="id" title="definition">syncchpool_loc_type</span></a> : <span class="id" title="record">globvar</span> <span class="id" title="inductive">type</span> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">t_struct_chpool_t</span> <span class="id" title="constructor">num_chan</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">num_chan</span> <span class="id" title="constructor">×</span> <span class="id" title="constructor">16)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+unsigned int
+get_sync_chan_to(unsigned int chanid)
+{
+  return SYNCCHPOOL_LOC<span class="inlinecode"><span class="id" title="var">chanid</span></span>.to;
+}
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_get_sync_chan_to_body"><span class="id" title="definition">f_get_sync_chan_to_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SYNCCHPOOL_LOC"><span class="id" title="definition">SYNCCHPOOL_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_chanid"><span class="id" title="abbreviation">_chanid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_to"><span class="id" title="abbreviation">_to</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_get_sync_chan_to"><span class="id" title="definition">f_get_sync_chan_to</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chanid</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_get_sync_chan_to_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+unsigned int
+get_sync_chan_paddr(unsigned int chanid)
+{
+  return SYNCCHPOOL_LOC.chpool<span class="inlinecode"><span class="id" title="var">chanid</span></span>.paddr;
+}
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_get_sync_chan_paddr_body"><span class="id" title="definition">f_get_sync_chan_paddr_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SYNCCHPOOL_LOC"><span class="id" title="definition">SYNCCHPOOL_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_chanid"><span class="id" title="abbreviation">_chanid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_paddr"><span class="id" title="abbreviation">_paddr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_get_sync_chan_paddr"><span class="id" title="definition">f_get_sync_chan_paddr</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chanid</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_get_sync_chan_paddr_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+unsigned int
+get_sync_chan_count(unsigned int chanid)
+{
+  return SYNCCHPOOL_LOC<span class="inlinecode"><span class="id" title="var">chanid</span></span>.count;
+}
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_get_sync_chan_count_body"><span class="id" title="definition">f_get_sync_chan_count_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SYNCCHPOOL_LOC"><span class="id" title="definition">SYNCCHPOOL_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_chanid"><span class="id" title="abbreviation">_chanid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_count"><span class="id" title="abbreviation">_count</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_get_sync_chan_count"><span class="id" title="definition">f_get_sync_chan_count</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chanid</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_get_sync_chan_count_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+unsigned int
+get_sync_chan_busy(unsigned int chanid)
+{
+  return SYNCCHPOOL_LOC<span class="inlinecode"><span class="id" title="var">chanid</span></span>.busy;
+}
+
+<div class="paragraph"> </div>
+
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_get_sync_chan_busy_body"><span class="id" title="definition">f_get_sync_chan_busy_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SYNCCHPOOL_LOC"><span class="id" title="definition">SYNCCHPOOL_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_chanid"><span class="id" title="abbreviation">_chanid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_busy"><span class="id" title="abbreviation">_busy</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_get_sync_chan_busy"><span class="id" title="definition">f_get_sync_chan_busy</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chanid</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_get_sync_chan_busy_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+void
+set_sync_chan_to(unsigned int chanid, unsigned int n_to)
+{
+  SYNCCHPOOL_LOC<span class="inlinecode"><span class="id" title="var">chanid</span></span>.to = n_to;
+} 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_sync_chan_to_body"><span class="id" title="definition">f_set_sync_chan_to_body</span></a> :=<br/>
+(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SYNCCHPOOL_LOC"><span class="id" title="definition">SYNCCHPOOL_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_chanid"><span class="id" title="abbreviation">_chanid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>)) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_to"><span class="id" title="abbreviation">_to</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_n_to"><span class="id" title="abbreviation">_n_to</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_sync_chan_to"><span class="id" title="definition">f_set_sync_chan_to</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chanid</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_n_to</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_set_sync_chan_to_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+void
+set_sync_chan_paddr(unsigned int chanid, unsigned int n_paddr)
+{
+  SYNCCHPOOL_LOC<span class="inlinecode"><span class="id" title="var">chanid</span></span>.paddr = n_paddr;
+} 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_sync_chan_paddr_body"><span class="id" title="definition">f_set_sync_chan_paddr_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SYNCCHPOOL_LOC"><span class="id" title="definition">SYNCCHPOOL_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_chanid"><span class="id" title="abbreviation">_chanid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>)) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_paddr"><span class="id" title="abbreviation">_paddr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_n_paddr"><span class="id" title="abbreviation">_n_paddr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_sync_chan_paddr"><span class="id" title="definition">f_set_sync_chan_paddr</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chanid</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_n_paddr</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_set_sync_chan_paddr_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+void
+set_sync_chan_count(unsigned int chanid, unsigned int n_count)
+{
+  SYNCCHPOOL_LOC<span class="inlinecode"><span class="id" title="var">chanid</span></span>.count = n_count;
+} 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_sync_chan_count_body"><span class="id" title="definition">f_set_sync_chan_count_body</span></a> :=<br/>
+(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SYNCCHPOOL_LOC"><span class="id" title="definition">SYNCCHPOOL_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_chanid"><span class="id" title="abbreviation">_chanid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>)) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_count"><span class="id" title="abbreviation">_count</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_n_count"><span class="id" title="abbreviation">_n_count</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)).<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_sync_chan_count"><span class="id" title="definition">f_set_sync_chan_count</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chanid</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_n_count</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_set_sync_chan_count_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+void
+set_sync_chan_busy(unsigned int chanid, unsigned int n_busy)
+{
+  SYNCCHPOOL_LOC<span class="inlinecode"><span class="id" title="var">chanid</span></span>.busy = n_busy;
+} 
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_sync_chan_busy_body"><span class="id" title="definition">f_set_sync_chan_busy_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SYNCCHPOOL_LOC"><span class="id" title="definition">SYNCCHPOOL_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_chanid"><span class="id" title="abbreviation">_chanid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>)) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_busy"><span class="id" title="abbreviation">_busy</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_n_busy"><span class="id" title="abbreviation">_n_busy</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)).<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_set_sync_chan_busy"><span class="id" title="definition">f_set_sync_chan_busy</span></a> :=<br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chanid</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_n_busy</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_set_sync_chan_busy_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+void
+init_sync_chan(unsigned int chanid)
+{
+  SYNCCHPOOL_LOC<span class="inlinecode"><span class="id" title="var">chanid</span></span>.to = num_chan;
+  SYNCCHPOOL_LOC<span class="inlinecode"><span class="id" title="var">chanid</span></span>.paddr = 0;
+  SYNCCHPOOL_LOC<span class="inlinecode"><span class="id" title="var">chanid</span></span>.count = 0;
+  SYNCCHPOOL_LOC<span class="inlinecode"><span class="id" title="var">chanid</span></span>.busy = 0;
+}
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_init_sync_chan_body"><span class="id" title="definition">f_init_sync_chan_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SYNCCHPOOL_LOC"><span class="id" title="definition">SYNCCHPOOL_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_chanid"><span class="id" title="abbreviation">_chanid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_to"><span class="id" title="abbreviation">_to</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SYNCCHPOOL_LOC"><span class="id" title="definition">SYNCCHPOOL_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_chanid"><span class="id" title="abbreviation">_chanid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_paddr"><span class="id" title="abbreviation">_paddr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 0) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SYNCCHPOOL_LOC"><span class="id" title="definition">SYNCCHPOOL_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_chanid"><span class="id" title="abbreviation">_chanid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_count"><span class="id" title="abbreviation">_count</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 0) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#SYNCCHPOOL_LOC"><span class="id" title="definition">SYNCCHPOOL_LOC</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_chanid"><span class="id" title="abbreviation">_chanid</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#t_struct_chpool_t"><span class="id" title="definition">t_struct_chpool_t</span></a>) <a class="idref" href="mcertikos.proc.PAbQueueAtomicCSource.html#_busy"><span class="id" title="abbreviation">_busy</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 0) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_init_sync_chan"><span class="id" title="definition">f_init_sync_chan</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chanid</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_init_sync_chan_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+
+<div class="paragraph"> </div>
+
+extern unsigned int pt_read(unsigned int pid, unsigned int vaddr);
+
+<div class="paragraph"> </div>
+
+unsigned int
+get_kernel_pa(unsigned int pid, unsigned int va)
+{
+  unsigned int kpa = pt_read(pid, va);
+  kpa = kpa / PAGESIZE * PAGESIZE + va 
+</div>
+<div class="code">
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.proc.PKContextNew</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.proc.PKContextNew</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+This file defines the abstract data and the primitives for the PKContext layer, 
+which will introduce abstraction of kernel context
+</div>
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Maps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.ASTExtra.html#"><span class="id" title="library">ASTExtra</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Floats</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Memory</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Events</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Stacklayout</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Globalenvs</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">AsmX</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Smallstep</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#"><span class="id" title="library">AuxStateDataType</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.Constant.html#"><span class="id" title="library">Constant</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#"><span class="id" title="library">GlobIdent</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.flatmem.FlatMemory.html#"><span class="id" title="library">FlatMemory</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.CommonTactic.html#"><span class="id" title="library">CommonTactic</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AuxLemma.html#"><span class="id" title="library">AuxLemma</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.RealParams.html#"><span class="id" title="library">RealParams</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#"><span class="id" title="library">PrimSemantics</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#"><span class="id" title="library">LAsm</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.flatmem.LoadStoreSem2.html#"><span class="id" title="library">LoadStoreSem2</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.XOmega.html#"><span class="id" title="library">XOmega</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.logic.PTreeModules</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.logic.LayerLogicImpl</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatLayers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatGenSem</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CalRealPTPool.html#"><span class="id" title="library">CalRealPTPool</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CalRealPT.html#"><span class="id" title="library">CalRealPT</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CalRealIDPDE.html#"><span class="id" title="library">CalRealIDPDE</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CalRealInitPTE.html#"><span class="id" title="library">CalRealInitPTE</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#"><span class="id" title="library">CalRealSMSPool</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.invariants.INVLemmaMemory.html#"><span class="id" title="library">INVLemmaMemory</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.invariants.INVLemmaThread.html#"><span class="id" title="library">INVLemmaThread</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.invariants.INVLemmaContainer.html#"><span class="id" title="library">INVLemmaContainer</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.proc.PKContext.html#"><span class="id" title="library">PKContext</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#"><span class="id" title="library">AbstractDataType</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#"><span class="id" title="library">INVLemmaQLock</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.invariants.INVLemmaInterrupt.html#"><span class="id" title="library">INVLemmaInterrupt</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.invariants.INVLemmaDriver.html#"><span class="id" title="library">INVLemmaDriver</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.DeviceStateDataType.html#"><span class="id" title="library">DeviceStateDataType</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.FutureTactic.html#"><span class="id" title="library">FutureTactic</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab562"></a><h1 class="section">Abstract Data and Primitives at MPMap layer</h1>
+ The abstract data at MPMap layer is the same with MPTNew layer
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <a name="WITHMEM"><span class="id" title="section">WITHMEM</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span>&nbsp;<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">Z_scope</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">oracle_prop</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleProp"><span class="id" title="class">MultiOracleProp</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">real_params</span>: <a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hstencil</span>: <span class="id" title="class">Stencil</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hmem</span>: <span class="id" title="class">Mem.MemoryModelX</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hmwd</span>: <span class="id" title="class">UseMemWithData</span> <a class="idref" href="mcertikos.proc.PKContextNew.html#WITHMEM.mem"><span class="id" title="variable">mem</span></a>}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab563"></a><h1 class="section">Proofs that the primitives satisfies the invariants at this layer</h1>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Section</span> <a name="WITHMEM.INV"><span class="id" title="section">INV</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="kctxt_new_inv"><span class="id" title="instance">kctxt_new_inv</span></a>: <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#DNewInvariants"><span class="id" title="class">DNewInvariants</span></a> <a class="idref" href="mcertikos.objects.ObjThread.html#kctxt_new_spec"><span class="id" title="definition">ObjThread.kctxt_new_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="var">inv</span> <span class="id" title="var">H0</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="mcertikos.objects.ObjThread.html#kctxt_new_spec"><span class="id" title="definition">ObjThread.kctxt_new_spec</span></a> <span class="id" title="keyword">in</span> *;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">subdestruct</span>; <span class="id" title="var">inv</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">trivial</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="keyword">in</span> ×.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaThread.html#kctxt_inject_neutral_gss_flatinj&acute;"><span class="id" title="lemma">kctxt_inject_neutral_gss_flatinj&acute;</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaThread.html#kctxt_inject_neutral_gss_flatinj"><span class="id" title="lemma">kctxt_inject_neutral_gss_flatinj</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">eauto</span> 2; <span class="id" title="tactic">try</span> <span class="id" title="tactic">congruence</span>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">exploit</span> <a class="idref" href="mcertikos.invariants.INVLemmaContainer.html#split_container_valid"><span class="id" title="lemma">split_container_valid</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span>. <span class="id" title="tactic">omega</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Hdestruct3</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">destruct</span> (<span class="id" title="definition">zeq</span> 0 (<span class="id" title="var">id</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#88e34ed7a73f02772126289867960764"><span class="id" title="notation">×</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#max_children"><span class="id" title="abbreviation">max_children</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a3448b794f7a26d611ad36492b5d640b"><span class="id" title="notation">+</span></a> 1 <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a3448b794f7a26d611ad36492b5d640b"><span class="id" title="notation">+</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.of_nat"><span class="id" title="definition">Z.of_nat</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> (<a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#cchildren"><span class="id" title="projection">cchildren</span></a> (<span class="id" title="definition">ZMap.get</span> <span class="id" title="var">id</span> (<a class="idref" href="mcertikos.objects.AbstractDataType.html#AC"><span class="id" title="projection">AC</span></a> <span class="id" title="var">d</span>)))))); <span class="id" title="tactic">subst</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">e</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">ZMap.gss</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">split</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">ZMap.gso</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<span class="id" title="definition">zeq</span> 0 <span class="id" title="var">id</span>); <span class="id" title="tactic">subst</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">ZMap.gss</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">ZMap.gso</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.proc.PKContextNew.html#WITHMEM.INV"><span class="id" title="section">INV</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab564"></a><h1 class="section">Layer Definition</h1>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="pkcontextnew_fresh"><span class="id" title="definition">pkcontextnew_fresh</span></a> : <span class="id" title="record">compatlayer</span> (<span class="id" title="definition">cdata</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#RData"><span class="id" title="record">RData</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.GlobIdent.html#kctxt_new"><span class="id" title="definition">kctxt_new</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#dnew_compatsem"><span class="id" title="definition">dnew_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjThread.html#kctxt_new_spec"><span class="id" title="definition">ObjThread.kctxt_new_spec</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="pkcontextnew_passthrough"><span class="id" title="definition">pkcontextnew_passthrough</span></a> : <span class="id" title="record">compatlayer</span> (<span class="id" title="definition">cdata</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#RData"><span class="id" title="record">RData</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.GlobIdent.html#fload"><span class="id" title="definition">fload</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#fload_spec"><span class="id" title="definition">fload_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#fstore"><span class="id" title="definition">fstore</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#fstore_spec"><span class="id" title="definition">fstore_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#page_copy"><span class="id" title="definition">page_copy</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#page_copy_spec"><span class="id" title="definition">page_copy_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#page_copy_back"><span class="id" title="definition">page_copy_back</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#page_copy_back_spec"><span class="id" title="definition">page_copy_back_spec</span></a><br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#vmxinfo_get"><span class="id" title="definition">vmxinfo_get</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjCPU.html#vmxinfo_get_spec"><span class="id" title="definition">vmxinfo_get_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#palloc"><span class="id" title="definition">palloc</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjLMM0.html#palloc_spec"><span class="id" title="definition">palloc_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#set_pt"><span class="id" title="definition">set_pt</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjLMM1.html#setPT_spec"><span class="id" title="definition">setPT_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#pt_read"><span class="id" title="definition">pt_read</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjVMMFun.html#ptRead_spec"><span class="id" title="definition">ptRead_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#pt_resv"><span class="id" title="definition">pt_resv</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjLMM0.html#ptResv_spec"><span class="id" title="definition">ptResv_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#shared_mem_init"><span class="id" title="definition">shared_mem_init</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjShareMem.html#sharedmem_init_spec"><span class="id" title="definition">sharedmem_init_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#shared_mem_status"><span class="id" title="definition">shared_mem_status</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjShareMem.html#shared_mem_status_spec"><span class="id" title="definition">ObjShareMem.shared_mem_status_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#offer_shared_mem"><span class="id" title="definition">offer_shared_mem</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjShareMem.html#offer_shared_mem_spec"><span class="id" title="definition">ObjShareMem.offer_shared_mem_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#pt_in"><span class="id" title="definition">pt_in</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_general_compatsem&acute;"><span class="id" title="definition">primcall_general_compatsem&acute;</span></a> <a class="idref" href="mcertikos.objects.ObjLMM1.html#ptin_spec"><span class="id" title="definition">ptin_spec</span></a> (<span class="id" title="var">prim_ident</span>:= <a class="idref" href="mcertikos.layerlib.GlobIdent.html#pt_in"><span class="id" title="definition">pt_in</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#pt_out"><span class="id" title="definition">pt_out</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_general_compatsem&acute;"><span class="id" title="definition">primcall_general_compatsem&acute;</span></a> <a class="idref" href="mcertikos.objects.ObjVMMGetSet.html#ptout_spec"><span class="id" title="definition">ptout_spec</span></a> (<span class="id" title="var">prim_ident</span>:= <a class="idref" href="mcertikos.layerlib.GlobIdent.html#pt_out"><span class="id" title="definition">pt_out</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#container_get_nchildren"><span class="id" title="definition">container_get_nchildren</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_get_nchildren_spec"><span class="id" title="definition">container_get_nchildren_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#container_get_quota"><span class="id" title="definition">container_get_quota</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_get_quota_spec"><span class="id" title="definition">container_get_quota_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#container_get_usage"><span class="id" title="definition">container_get_usage</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_get_usage_spec"><span class="id" title="definition">container_get_usage_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#container_can_consume"><span class="id" title="definition">container_can_consume</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_can_consume_spec"><span class="id" title="definition">container_can_consume_spec</span></a><br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#get_CPU_ID"><span class="id" title="definition">get_CPU_ID</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjMultiprocessor.html#get_CPU_ID_spec"><span class="id" title="definition">get_CPU_ID_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#get_curid"><span class="id" title="definition">get_curid</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjMultiprocessor.html#get_curid_spec"><span class="id" title="definition">get_curid_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#set_curid"><span class="id" title="definition">set_curid</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjMultiprocessor.html#set_curid_spec"><span class="id" title="definition">set_curid_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#set_curid_init"><span class="id" title="definition">set_curid_init</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjMultiprocessor.html#set_curid_init_spec"><span class="id" title="definition">set_curid_init_spec</span></a><br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#release_lock"><span class="id" title="definition">release_lock</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.MultiProcessorSemantics.html#primcall_release_lock_compatsem"><span class="id" title="definition">primcall_release_lock_compatsem</span></a> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#release_lock"><span class="id" title="definition">release_lock</span></a> <a class="idref" href="mcertikos.objects.ObjQLock.html#release_lock_spec1"><span class="id" title="abbreviation">release_lock_spec1</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#acquire_lock"><span class="id" title="definition">acquire_lock</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.MultiProcessorSemantics.html#primcall_acquire_lock_compatsem"><span class="id" title="definition">primcall_acquire_lock_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjQLock.html#acquire_lock_spec1"><span class="id" title="abbreviation">acquire_lock_spec1</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#cli"><span class="id" title="definition">cli</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptController.html#cli_spec"><span class="id" title="definition">cli_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#sti"><span class="id" title="definition">sti</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptController.html#sti_spec"><span class="id" title="definition">sti_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#serial_intr_disable"><span class="id" title="definition">serial_intr_disable</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptManagement.html#serial_intr_disable_spec"><span class="id" title="definition">serial_intr_disable_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#serial_intr_enable"><span class="id" title="definition">serial_intr_enable</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptManagement.html#serial_intr_enable_spec"><span class="id" title="definition">serial_intr_enable_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#serial_putc"><span class="id" title="definition">serial_putc</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.dev.ObjSerialDriver.html#serial_putc_spec"><span class="id" title="definition">serial_putc_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#cons_buf_read"><span class="id" title="definition">cons_buf_read</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.dev.ObjConsole.html#cons_buf_read_spec"><span class="id" title="definition">cons_buf_read_spec</span></a>      <br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#trap_in"><span class="id" title="definition">trap_in</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_general_compatsem"><span class="id" title="definition">primcall_general_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#trapin_spec"><span class="id" title="definition">trapin_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#trap_out"><span class="id" title="definition">trap_out</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_general_compatsem"><span class="id" title="definition">primcall_general_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#trapout_spec"><span class="id" title="definition">trapout_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#host_in"><span class="id" title="definition">host_in</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_general_compatsem"><span class="id" title="definition">primcall_general_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#hostin_spec"><span class="id" title="definition">hostin_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#host_out"><span class="id" title="definition">host_out</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_general_compatsem"><span class="id" title="definition">primcall_general_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#hostout_spec"><span class="id" title="definition">hostout_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#proc_create_postinit"><span class="id" title="definition">proc_create_postinit</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjCPU.html#proc_create_postinit_spec"><span class="id" title="definition">proc_create_postinit_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#trap_get"><span class="id" title="definition">trap_get</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_trap_info_get_compatsem"><span class="id" title="definition">primcall_trap_info_get_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#trap_info_get_spec"><span class="id" title="definition">trap_info_get_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#trap_set"><span class="id" title="definition">trap_set</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_trap_info_ret_compatsem"><span class="id" title="definition">primcall_trap_info_ret_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#trap_info_ret_spec"><span class="id" title="definition">trap_info_ret_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#kctxt_switch"><span class="id" title="definition">kctxt_switch</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_kctxt_switch_compatsem"><span class="id" title="definition">primcall_kctxt_switch_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjThread.html#kctxt_switch_spec"><span class="id" title="definition">kctxt_switch_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <span class="id" title="constructor">accessors</span> <span class="id" title="notation">↦</span> <span class="id" title="notation">{|</span> <span class="id" title="constructor">exec_load</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(@</span><span class="id" title="constructor">exec_loadex</span>  <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">Hmwd</span><span class="id" title="constructor">);</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">exec_store</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(@</span><span class="id" title="constructor">exec_storeex</span>  <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">Hmwd</span><span class="id" title="constructor">)</span> <span class="id" title="notation">|}</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="pkcontextnew"><span class="id" title="definition">pkcontextnew</span></a> : <span class="id" title="record">compatlayer</span> (<span class="id" title="definition">cdata</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#RData"><span class="id" title="record">RData</span></a>) := <a class="idref" href="mcertikos.proc.PKContextNew.html#pkcontextnew_fresh"><span class="id" title="definition">pkcontextnew_fresh</span></a> <span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.proc.PKContextNew.html#pkcontextnew_passthrough"><span class="id" title="definition">pkcontextnew_passthrough</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.proc.PKContextNew.html#WITHMEM"><span class="id" title="section">WITHMEM</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

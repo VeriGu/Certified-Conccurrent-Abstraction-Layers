@@ -1,0 +1,596 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.clib.CDataTypes</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.clib.CDataTypes</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Maps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">AST</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Floats</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Memory</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Events</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Events</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Globalenvs</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Locations</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#"><span class="id" title="library">LAsm</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Clight</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Smallstep</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">ClightBigstep</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Ctypes</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Cop</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.Zwf.html#"><span class="id" title="library">ZArith.Zwf</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#"><span class="id" title="library">GlobIdent</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.layerlib.Constant.html#"><span class="id" title="library">Constant</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#"><span class="id" title="library">AuxStateDataType</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracle.html#"><span class="id" title="library">GlobalOracle</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab45"></a><h1 class="section">C type notations</h1>
+
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="tchar"><span class="id" title="abbreviation">tchar</span></a> := (<span class="id" title="constructor">Tint</span> <span class="id" title="constructor">I8</span> <span class="id" title="constructor">Unsigned</span> <span class="id" title="definition">noattr</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="tuchar"><span class="id" title="abbreviation">tuchar</span></a> := <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="tint"><span class="id" title="abbreviation">tint</span></a> := (<span class="id" title="constructor">Tint</span> <span class="id" title="constructor">I32</span> <span class="id" title="constructor">Unsigned</span> <span class="id" title="definition">noattr</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="tbool"><span class="id" title="abbreviation">tbool</span></a> := (<span class="id" title="constructor">Tint</span> <span class="id" title="constructor">IBool</span> <span class="id" title="constructor">Unsigned</span> <span class="id" title="definition">noattr</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="tuint"><span class="id" title="abbreviation">tuint</span></a> := <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="tulong"><span class="id" title="abbreviation">tulong</span></a> := (<span class="id" title="constructor">Tlong</span> <span class="id" title="constructor">Unsigned</span> <span class="id" title="definition">noattr</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="tptr"><span class="id" title="abbreviation">tptr</span></a> := (<span class="id" title="keyword">fun</span> <span class="id" title="var">ty</span> ⇒ <span class="id" title="constructor">Tpointer</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#ty"><span class="id" title="variable">ty</span></a> <span class="id" title="definition">noattr</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="tarray"><span class="id" title="abbreviation">tarray</span></a> := (<span class="id" title="keyword">fun</span> <span class="id" title="var">ty</span> <span class="id" title="var">size</span> ⇒ <span class="id" title="constructor">Tarray</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#ty"><span class="id" title="variable">ty</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#size"><span class="id" title="variable">size</span></a> <span class="id" title="definition">noattr</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="tvoid"><span class="id" title="abbreviation">tvoid</span></a> := (<span class="id" title="constructor">Tvoid</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="exec_stmt"><span class="id" title="definition">exec_stmt</span></a> `{<span class="id" title="var">compiler_config_ops</span>: <span class="id" title="class">CompilerConfigOps</span>} `{<span class="id" title="var">writable_block_ops</span>: <span class="id" title="class">WritableBlockOps</span>} <span class="id" title="var">ge</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="inductive">ClightBigstep.exec_stmt</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#ge"><span class="id" title="variable">ge</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> ⇒ <span class="id" title="inductive">function_entry2</span>).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab46"></a><h1 class="section">Properties of C types</h1>
+
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="tcharsize"><span class="id" title="lemma">tcharsize</span></a>: <span class="id" title="definition">sizeof</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tchar"><span class="id" title="abbreviation">tchar</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 1.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">trivial</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="tintsize"><span class="id" title="lemma">tintsize</span></a>: <span class="id" title="definition">sizeof</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 4.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">trivial</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="tptrsize"><span class="id" title="lemma">tptrsize</span></a>: <span class="id" title="keyword">∀</span> <span class="id" title="var">ty</span>, <span class="id" title="definition">sizeof</span> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#ty"><span class="id" title="variable">ty</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 4.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">intros</span>. <span class="id" title="tactic">trivial</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab47"></a><h1 class="section">Device driver context variable declarations</h1>
+<a name="lab48"></a><h1 class="section">C type Declarations</h1>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="v_serial_exists"><span class="id" title="definition">v_serial_exists</span></a> := {|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">Init_int32</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">Int.repr</span> <span class="id" title="constructor">0)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="v_curr_intr_num"><span class="id" title="definition">v_curr_intr_num</span></a> := {|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">Init_int32</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">Int.repr</span> <span class="id" title="constructor">0)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab49"></a><h1 class="section">Kernel context variable declarations</h1>
+
+</div>
+<div class="code">
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="PDXPERM"><span class="id" title="abbreviation">PDXPERM</span></a> := 7.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="S"><span class="id" title="abbreviation">S</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#S"><span class="id" title="constructor">Datatypes.S</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="STACK_TOP"><span class="id" title="abbreviation">STACK_TOP</span></a>:= (<span class="id" title="definition">Int.repr</span> (<a class="idref" href="mcertikos.layerlib.Constant.html#kern_high"><span class="id" title="abbreviation">kern_high</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#88e34ed7a73f02772126289867960764"><span class="id" title="notation">×</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#PgSize"><span class="id" title="abbreviation">PgSize</span></a>)).<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab50"></a><h1 class="section">Properties of the kernel context variables</h1>
+
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="adr_high_val"><span class="id" title="lemma">adr_high_val</span></a>: <a class="idref" href="mcertikos.layerlib.Constant.html#adr_high"><span class="id" title="abbreviation">adr_high</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 4026531840.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="adr_low_val"><span class="id" title="lemma">adr_low_val</span></a>: <a class="idref" href="mcertikos.layerlib.Constant.html#adr_low"><span class="id" title="abbreviation">adr_low</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 1073741824.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="adr_max_val"><span class="id" title="lemma">adr_max_val</span></a>: <a class="idref" href="mcertikos.layerlib.Constant.html#adr_max"><span class="id" title="abbreviation">adr_max</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 4294967296.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="one_k_val"><span class="id" title="lemma">one_k_val</span></a>: <a class="idref" href="mcertikos.layerlib.Constant.html#one_k"><span class="id" title="abbreviation">one_k</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 1024.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">compute</span>. <span class="id" title="tactic">trivial</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="one_k_minus1"><span class="id" title="lemma">one_k_minus1</span></a>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#PDX"><span class="id" title="definition">PDX</span></a> <span class="id" title="definition">Int.max_unsigned</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#one_k"><span class="id" title="abbreviation">one_k</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#239a40728d107295b3cb2c790f57f9e9"><span class="id" title="notation">-</span></a> 1.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">compute</span>; <span class="id" title="tactic">trivial</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="one_k_plus1"><span class="id" title="lemma">one_k_plus1</span></a>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#PDX"><span class="id" title="definition">PDX</span></a> <span class="id" title="definition">Int.max_unsigned</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a3448b794f7a26d611ad36492b5d640b"><span class="id" title="notation">+</span></a> 2 <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#one_k"><span class="id" title="abbreviation">one_k</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a3448b794f7a26d611ad36492b5d640b"><span class="id" title="notation">+</span></a> 1.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">compute</span>; <span class="id" title="tactic">trivial</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="one_k_minus1&acute;"><span class="id" title="lemma">one_k_minus1&acute;</span></a>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#PTX"><span class="id" title="definition">PTX</span></a> <span class="id" title="definition">Int.max_unsigned</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#one_k"><span class="id" title="abbreviation">one_k</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#239a40728d107295b3cb2c790f57f9e9"><span class="id" title="notation">-</span></a> 1.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">compute</span>. <span class="id" title="tactic">trivial</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="valid_addr"><span class="id" title="lemma">valid_addr</span></a>: 0 <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#0ae6347154955be5e4fdfa755ff4a025"><span class="id" title="notation">&lt;</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#kern_low"><span class="id" title="abbreviation">kern_low</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#0ae6347154955be5e4fdfa755ff4a025"><span class="id" title="notation">&lt;</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#kern_high"><span class="id" title="abbreviation">kern_high</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">∧</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#kern_low"><span class="id" title="abbreviation">kern_low</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#273beba4f3453dbb29192b3ac740bb71"><span class="id" title="notation">&lt;</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#maxpage"><span class="id" title="abbreviation">maxpage</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">omega</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="valid_n_proc"><span class="id" title="lemma">valid_n_proc</span></a>: <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a1c07c706e79df7cc9eee5b1e369014a"><span class="id" title="notation">&gt;</span></a> 0.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">omega</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="valid_pgs"><span class="id" title="lemma">valid_pgs</span></a>: <a class="idref" href="mcertikos.layerlib.Constant.html#PgSize"><span class="id" title="abbreviation">PgSize</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a1c07c706e79df7cc9eee5b1e369014a"><span class="id" title="notation">&gt;</span></a> 260.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">omega</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="div_pgs"><span class="id" title="lemma">div_pgs</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#22aee23095fa75a48e17ac5311892ed3"><span class="id" title="notation">(</span></a>4 <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#22aee23095fa75a48e17ac5311892ed3"><span class="id" title="notation">|</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#PgSize"><span class="id" title="abbreviation">PgSize</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#22aee23095fa75a48e17ac5311892ed3"><span class="id" title="notation">)</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.divide"><span class="id" title="definition">Z.divide</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">∃</span> 1024.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">compute</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">trivial</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="HPS"><span class="id" title="lemma">HPS</span></a>: <a class="idref" href="mcertikos.layerlib.Constant.html#PgSize"><span class="id" title="abbreviation">PgSize</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a1c07c706e79df7cc9eee5b1e369014a"><span class="id" title="notation">&gt;</span></a> 0.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">omega</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="Hmax"><span class="id" title="lemma">Hmax</span></a>: <a class="idref" href="mcertikos.layerlib.Constant.html#maxpage"><span class="id" title="abbreviation">maxpage</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#88e34ed7a73f02772126289867960764"><span class="id" title="notation">×</span></a> 8 <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a3448b794f7a26d611ad36492b5d640b"><span class="id" title="notation">+</span></a> 4 <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#273beba4f3453dbb29192b3ac740bb71"><span class="id" title="notation">&lt;</span></a> <span class="id" title="definition">Int.max_unsigned</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">vm_compute</span>; <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="HPS4"><span class="id" title="lemma">HPS4</span></a>: <a class="idref" href="mcertikos.layerlib.Constant.html#PgSize"><span class="id" title="abbreviation">PgSize</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#162be8364124d2d389b2e8a3fc881ab2"><span class="id" title="notation">≥</span></a> 4.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">omega</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="Hnpc"><span class="id" title="lemma">Hnpc</span></a>: <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a1c07c706e79df7cc9eee5b1e369014a"><span class="id" title="notation">&gt;</span></a> 0.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">omega</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="Hlow"><span class="id" title="lemma">Hlow</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#22aee23095fa75a48e17ac5311892ed3"><span class="id" title="notation">(</span></a><a class="idref" href="mcertikos.layerlib.Constant.html#PgSize"><span class="id" title="abbreviation">PgSize</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#88e34ed7a73f02772126289867960764"><span class="id" title="notation">×</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#one_k"><span class="id" title="abbreviation">one_k</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#22aee23095fa75a48e17ac5311892ed3"><span class="id" title="notation">|</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#kern_low"><span class="id" title="abbreviation">kern_low</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#88e34ed7a73f02772126289867960764"><span class="id" title="notation">×</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#PgSize"><span class="id" title="abbreviation">PgSize</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#22aee23095fa75a48e17ac5311892ed3"><span class="id" title="notation">)</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.divide"><span class="id" title="definition">Z.divide</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">∃</span> (<a class="idref" href="mcertikos.layerlib.Constant.html#kern_low"><span class="id" title="abbreviation">kern_low</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#66073ffd934badf1f6e703023820601f"><span class="id" title="notation">/</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#one_k"><span class="id" title="abbreviation">one_k</span></a>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">compute</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">trivial</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="Hhigh"><span class="id" title="lemma">Hhigh</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#22aee23095fa75a48e17ac5311892ed3"><span class="id" title="notation">(</span></a><a class="idref" href="mcertikos.layerlib.Constant.html#PgSize"><span class="id" title="abbreviation">PgSize</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#88e34ed7a73f02772126289867960764"><span class="id" title="notation">×</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#one_k"><span class="id" title="abbreviation">one_k</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#22aee23095fa75a48e17ac5311892ed3"><span class="id" title="notation">|</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#kern_high"><span class="id" title="abbreviation">kern_high</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#88e34ed7a73f02772126289867960764"><span class="id" title="notation">×</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#PgSize"><span class="id" title="abbreviation">PgSize</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#22aee23095fa75a48e17ac5311892ed3"><span class="id" title="notation">)</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.divide"><span class="id" title="definition">Z.divide</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">∃</span> (<a class="idref" href="mcertikos.layerlib.Constant.html#kern_high"><span class="id" title="abbreviation">kern_high</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#66073ffd934badf1f6e703023820601f"><span class="id" title="notation">/</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#one_k"><span class="id" title="abbreviation">one_k</span></a>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">compute</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">trivial</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="Hnchan"><span class="id" title="lemma">Hnchan</span></a>: <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a1c07c706e79df7cc9eee5b1e369014a"><span class="id" title="notation">&gt;</span></a> 0.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">omega</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab51"></a><h1 class="section">C type Declarations</h1>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span>&nbsp;<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">positive</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="flatmem_loc_type"><span class="id" title="definition">flatmem_loc_type</span></a> : <span class="id" title="record">globvar</span> <span class="id" title="inductive">type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">tchar</span> <span class="id" title="constructor">adr_max</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">adr_max</span><span class="id" title="constructor">)::</span><span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="AC"><span class="id" title="abbreviation">AC</span></a> := 500.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="AC_quota"><span class="id" title="abbreviation">AC_quota</span></a> := 510.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="AC_usage"><span class="id" title="abbreviation">AC_usage</span></a> := 520.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="AC_parent"><span class="id" title="abbreviation">AC_parent</span></a> := 530.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="AC_nchildren"><span class="id" title="abbreviation">AC_nchildren</span></a> := 540.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="AC_used"><span class="id" title="abbreviation">AC_used</span></a> := 550.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="t_struct_AC"><span class="id" title="abbreviation">t_struct_AC</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#AC"><span class="id" title="abbreviation">AC</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#AC_quota"><span class="id" title="abbreviation">AC_quota</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#AC_usage"><span class="id" title="abbreviation">AC_usage</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#AC_parent"><span class="id" title="abbreviation">AC_parent</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#AC_nchildren"><span class="id" title="abbreviation">AC_nchildren</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> (<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#AC_used"><span class="id" title="abbreviation">AC_used</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> <span class="id" title="constructor">Fnil</span>))))) <span class="id" title="definition">noattr</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Fact</span> <a name="sizeof_AC"><span class="id" title="lemma">sizeof_AC</span></a> : <span class="id" title="definition">sizeof</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_AC"><span class="id" title="abbreviation">t_struct_AC</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 20%<span class="id" title="var">Z</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">auto</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="container_loc_type"><span class="id" title="definition">container_loc_type</span></a> : <span class="id" title="record">globvar</span> <span class="id" title="inductive">type</span> := <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">t_struct_AC</span> <span class="id" title="constructor">num_proc</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">num_proc</span> <span class="id" title="constructor">×</span> <span class="id" title="constructor">20)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="nps_loc_type"><span class="id" title="definition">nps_loc_type</span></a> : <span class="id" title="record">globvar</span> <span class="id" title="inductive">type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">Init_int32</span> <span class="id" title="constructor">Int.zero</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="A"><span class="id" title="abbreviation">A</span></a> := 1000. &nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="A_isnorm_ident"><span class="id" title="abbreviation">A_isnorm_ident</span></a> := 1100. &nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="A_allocated_ident"><span class="id" title="abbreviation">A_allocated_ident</span></a> := 1200. &nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="t_struct_A"><span class="id" title="abbreviation">t_struct_A</span></a> := (<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#A"><span class="id" title="abbreviation">A</span></a> (<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#A_isnorm_ident"><span class="id" title="abbreviation">A_isnorm_ident</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> (<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#A_allocated_ident"><span class="id" title="abbreviation">A_allocated_ident</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> <span class="id" title="constructor">Fnil</span>)) <span class="id" title="definition">noattr</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="at_loc_type"><span class="id" title="definition">at_loc_type</span></a> : <span class="id" title="record">globvar</span> <span class="id" title="inductive">type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">t_struct_A</span> <span class="id" title="constructor">maxpage</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">maxpage</span><span class="id" title="constructor">*8))::</span><span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="atc_loc_type"><span class="id" title="definition">atc_loc_type</span></a> : <span class="id" title="record">globvar</span> <span class="id" title="inductive">type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">t_struct_A</span> <span class="id" title="constructor">maxpage</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">maxpage</span><span class="id" title="constructor">*4))::</span><span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="ptp_loc_type"><span class="id" title="definition">ptp_loc_type</span></a> : <span class="id" title="record">globvar</span> <span class="id" title="inductive">type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">tint</span> <span class="id" title="constructor">num_proc</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">num_proc</span><span class="id" title="constructor">*4))::</span><span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="ptpool_loc_type"><span class="id" title="definition">ptpool_loc_type</span></a> : <span class="id" title="record">globvar</span> <span class="id" title="inductive">type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tptr</span> <span class="id" title="constructor">tchar</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">1024%</span><span class="id" title="constructor">Z</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">num_proc</span><span class="id" title="constructor">%</span><span class="id" title="constructor">Z</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">num_proc</span><span class="id" title="constructor">×</span><span class="id" title="constructor">PgSize</span><span class="id" title="constructor">))::</span><span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="idpmap_loc_type"><span class="id" title="definition">idpmap_loc_type</span></a> : <span class="id" title="record">globvar</span> <span class="id" title="inductive">type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">tint</span> <span class="id" title="constructor">1024%</span><span class="id" title="constructor">Z</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">1024%</span><span class="id" title="constructor">Z</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(1024%</span><span class="id" title="constructor">Z</span><span class="id" title="constructor">×</span><span class="id" title="constructor">PgSize</span><span class="id" title="constructor">))::</span><span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="KCtxtStruct"><span class="id" title="abbreviation">KCtxtStruct</span></a> := 1600.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="ESP"><span class="id" title="abbreviation">ESP</span></a> := 1700.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="EDI"><span class="id" title="abbreviation">EDI</span></a> := 1800.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="ESI"><span class="id" title="abbreviation">ESI</span></a> := 1900.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="EBX"><span class="id" title="abbreviation">EBX</span></a> := 2000.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="EBP"><span class="id" title="abbreviation">EBP</span></a> := 2100.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="RA"><span class="id" title="abbreviation">RA</span></a> := 2200.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="t_struct_KCtxt"><span class="id" title="abbreviation">t_struct_KCtxt</span></a> := (<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#KCtxtStruct"><span class="id" title="abbreviation">KCtxtStruct</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#ESP"><span class="id" title="abbreviation">ESP</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tvoid"><span class="id" title="abbreviation">tvoid</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#EDI"><span class="id" title="abbreviation">EDI</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tvoid"><span class="id" title="abbreviation">tvoid</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#ESI"><span class="id" title="abbreviation">ESI</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tvoid"><span class="id" title="abbreviation">tvoid</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#EBX"><span class="id" title="abbreviation">EBX</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tvoid"><span class="id" title="abbreviation">tvoid</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#EBP"><span class="id" title="abbreviation">EBP</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tvoid"><span class="id" title="abbreviation">tvoid</span></a>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#RA"><span class="id" title="abbreviation">RA</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tvoid"><span class="id" title="abbreviation">tvoid</span></a>) <span class="id" title="constructor">Fnil</span>)))))) <span class="id" title="definition">noattr</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="kctxtpool_loc_type"><span class="id" title="definition">kctxtpool_loc_type</span></a> : <span class="id" title="record">globvar</span> <span class="id" title="inductive">type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">t_struct_KCtxt</span> <span class="id" title="constructor">num_proc</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">num_proc</span><span class="id" title="constructor">*24))::</span><span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="struct_TCB"><span class="id" title="abbreviation">struct_TCB</span></a> := 7000.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="TCB_pool"><span class="id" title="abbreviation">TCB_pool</span></a> := 7100.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="struct_TCB_node"><span class="id" title="abbreviation">struct_TCB_node</span></a> := 7200.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="state"><span class="id" title="abbreviation">state</span></a> := 7300.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="cpu_id"><span class="id" title="abbreviation">cpu_id</span></a> := 7400.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="prev"><span class="id" title="abbreviation">prev</span></a> := 7500.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="next"><span class="id" title="abbreviation">next</span></a> := 7600.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="TDQ_pool"><span class="id" title="abbreviation">TDQ_pool</span></a> := 7700.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="struct_TDQ_node"><span class="id" title="abbreviation">struct_TDQ_node</span></a> := 7800.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="head"><span class="id" title="abbreviation">head</span></a> := 7900.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="tail"><span class="id" title="abbreviation">tail</span></a> := 8000.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#struct_TCB"><span class="id" title="abbreviation">struct_TCB</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#TCB_pool"><span class="id" title="abbreviation">TCB_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#struct_TCB_node"><span class="id" title="abbreviation">struct_TCB_node</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#state"><span class="id" title="abbreviation">state</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#cpu_id"><span class="id" title="abbreviation">cpu_id</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#prev"><span class="id" title="abbreviation">prev</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> (<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#next"><span class="id" title="abbreviation">next</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <span class="id" title="constructor">Fnil</span>)))) <span class="id" title="definition">noattr</span>) <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#TDQ_pool"><span class="id" title="abbreviation">TDQ_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#struct_TDQ_node"><span class="id" title="abbreviation">struct_TDQ_node</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#head"><span class="id" title="abbreviation">head</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> (<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tail"><span class="id" title="abbreviation">tail</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <span class="id" title="constructor">Fnil</span>)) <span class="id" title="definition">noattr</span>) <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">Fnil</span>)) <span class="id" title="definition">noattr</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#struct_TCB_node"><span class="id" title="abbreviation">struct_TCB_node</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#state"><span class="id" title="abbreviation">state</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#cpu_id"><span class="id" title="abbreviation">cpu_id</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> (<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#prev"><span class="id" title="abbreviation">prev</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> (<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#next"><span class="id" title="abbreviation">next</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <span class="id" title="constructor">Fnil</span>))))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">noattr</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#struct_TDQ_node"><span class="id" title="abbreviation">struct_TDQ_node</span></a> (<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#head"><span class="id" title="abbreviation">head</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> (<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tail"><span class="id" title="abbreviation">tail</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <span class="id" title="constructor">Fnil</span>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">noattr</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="tcbpool_loc_type"><span class="id" title="definition">tcbpool_loc_type</span></a> := <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">t_struct_TCB</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">num_proc</span> <span class="id" title="constructor">×</span> <span class="id" title="constructor">16</span> <span class="id" title="constructor">+</span> <span class="id" title="constructor">num_chan</span> <span class="id" title="constructor">×</span> <span class="id" title="constructor">8)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="curid_loc_type"><span class="id" title="definition">curid_loc_type</span></a> : <span class="id" title="record">globvar</span> <span class="id" title="inductive">type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tarray</span> <span class="id" title="constructor">tuint</span> <span class="id" title="constructor">TOTAL_CPU</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">TOTAL_CPU</span> <span class="id" title="constructor">×</span> <span class="id" title="constructor">4)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="t_struct_TCB_node_size"><span class="id" title="lemma">t_struct_TCB_node_size</span></a>: <span class="id" title="definition">sizeof</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 16%<span class="id" title="var">Z</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="t_struct_TDQ_node_size"><span class="id" title="lemma">t_struct_TDQ_node_size</span></a>: <span class="id" title="definition">sizeof</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 8%<span class="id" title="var">Z</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="ChanStruct"><span class="id" title="abbreviation">ChanStruct</span></a> := 3100.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="isbusy"><span class="id" title="abbreviation">isbusy</span></a> := 3200.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="content"><span class="id" title="abbreviation">content</span></a> := 3300.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="t_struct_Chan"><span class="id" title="abbreviation">t_struct_Chan</span></a> := (<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#ChanStruct"><span class="id" title="abbreviation">ChanStruct</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#isbusy"><span class="id" title="abbreviation">isbusy</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> (<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#content"><span class="id" title="abbreviation">content</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a> <span class="id" title="constructor">Fnil</span>)) <span class="id" title="definition">noattr</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="chpool_loc_type"><span class="id" title="definition">chpool_loc_type</span></a> : <span class="id" title="record">globvar</span> <span class="id" title="inductive">type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">t_struct_Chan</span> <span class="id" title="constructor">num_proc</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">num_chan</span><span class="id" title="constructor">*8))::</span><span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="uctx_loc_type"><span class="id" title="definition">uctx_loc_type</span></a> : <span class="id" title="record">globvar</span> <span class="id" title="inductive">type</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">tint</span> <span class="id" title="constructor">UCTXT_SIZE</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">num_proc</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">num_proc</span><span class="id" title="constructor">×</span><span class="id" title="constructor">UCTXT_SIZE</span><span class="id" title="constructor">*4))::</span><span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="cons_buf"><span class="id" title="abbreviation">cons_buf</span></a> := 4100.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="buffer"><span class="id" title="abbreviation">buffer</span></a> := 4200.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="rpos"><span class="id" title="abbreviation">rpos</span></a> := 4300.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="wpos"><span class="id" title="abbreviation">wpos</span></a> := 4400.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="t_struct_cons_buf"><span class="id" title="abbreviation">t_struct_cons_buf</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#cons_buf"><span class="id" title="abbreviation">cons_buf</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#buffer"><span class="id" title="abbreviation">buffer</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#CONSOLE_BUFFER_SIZE"><span class="id" title="abbreviation">CONSOLE_BUFFER_SIZE</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#rpos"><span class="id" title="abbreviation">rpos</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#wpos"><span class="id" title="abbreviation">wpos</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <span class="id" title="constructor">Fnil</span>))) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">noattr</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="cons_buf_loc_type"><span class="id" title="definition">cons_buf_loc_type</span></a> := {|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">t_struct_cons_buf</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">CONSOLE_BUFFER_SIZE</span><span class="id" title="constructor">*4)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">Init_int32</span> <span class="id" title="constructor">Int.zero</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">Init_int32</span> <span class="id" title="constructor">Int.zero</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="kbd_buf"><span class="id" title="abbreviation">kbd_buf</span></a> := 5100.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="kbd_buffer"><span class="id" title="abbreviation">kbd_buffer</span></a> := 5200.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="kbd_rpos"><span class="id" title="abbreviation">kbd_rpos</span></a> := 5300.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="kbd_wpos"><span class="id" title="abbreviation">kbd_wpos</span></a> := 5400.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="t_struct_kbd_buf"><span class="id" title="abbreviation">t_struct_kbd_buf</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#kbd_buf"><span class="id" title="abbreviation">kbd_buf</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#kbd_buffer"><span class="id" title="abbreviation">kbd_buffer</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#KEYBOARD_SW_BUF_SIZE"><span class="id" title="abbreviation">KEYBOARD_SW_BUF_SIZE</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#kbd_rpos"><span class="id" title="abbreviation">kbd_rpos</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#kbd_wpos"><span class="id" title="abbreviation">kbd_wpos</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> <span class="id" title="constructor">Fnil</span>))) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">noattr</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="kbd_buf_loc_type"><span class="id" title="definition">kbd_buf_loc_type</span></a> := {|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">t_struct_kbd_buf</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">KEYBOARD_SW_BUF_SIZE</span><span class="id" title="constructor">*4)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">Init_int32</span> <span class="id" title="constructor">Int.zero</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">Init_int32</span> <span class="id" title="constructor">Int.zero</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="sleeper_loc_type"><span class="id" title="definition">sleeper_loc_type</span></a> : <span class="id" title="record">globvar</span> <span class="id" title="inductive">type</span> := <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">tuint</span> <span class="id" title="constructor">num_proc</span><span class="id" title="constructor">);</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">TOTAL_CPU</span> <span class="id" title="constructor">×</span> <span class="id" title="constructor">4)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="_node_pool"><span class="id" title="abbreviation">_node_pool</span></a> := 6100.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="_tail"><span class="id" title="abbreviation">_tail</span></a> := 6200.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="_next"><span class="id" title="abbreviation">_next</span></a> := 6300.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="_busy"><span class="id" title="abbreviation">_busy</span></a> := 6400.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="_lock_padding"><span class="id" title="abbreviation">_lock_padding</span></a> := 6500.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="_node_padding"><span class="id" title="abbreviation">_node_padding</span></a> := 6600.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="mcs_lock"><span class="id" title="abbreviation">mcs_lock</span></a> := 6700.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="mcs_node"><span class="id" title="abbreviation">mcs_node</span></a> := 6800.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="t_struct_mcs_lock"><span class="id" title="abbreviation">t_struct_mcs_lock</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#mcs_lock"><span class="id" title="abbreviation">mcs_lock</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#_tail"><span class="id" title="abbreviation">_tail</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#_lock_padding"><span class="id" title="abbreviation">_lock_padding</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> 15%<span class="id" title="var">Z</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#_node_pool"><span class="id" title="abbreviation">_node_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> (<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#mcs_node"><span class="id" title="abbreviation">mcs_node</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#_next"><span class="id" title="abbreviation">_next</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#_busy"><span class="id" title="abbreviation">_busy</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#_node_padding"><span class="id" title="abbreviation">_node_padding</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> 14%<span class="id" title="var">Z</span>) <span class="id" title="constructor">Fnil</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">noattr</span>) <a class="idref" href="mcertikos.layerlib.Constant.html#TOTAL_CPU"><span class="id" title="abbreviation">TOTAL_CPU</span></a>) <span class="id" title="constructor">Fnil</span>))) <span class="id" title="definition">noattr</span>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="t_struct_mcs_node"><span class="id" title="abbreviation">t_struct_mcs_node</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Tstruct</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#mcs_node"><span class="id" title="abbreviation">mcs_node</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#_next"><span class="id" title="abbreviation">_next</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#_busy"><span class="id" title="abbreviation">_busy</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> (<span class="id" title="constructor">Fcons</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#_node_padding"><span class="id" title="abbreviation">_node_padding</span></a> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a> 14%<span class="id" title="var">Z</span>) <span class="id" title="constructor">Fnil</span>)))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">noattr</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="mcslock_loc_type"><span class="id" title="definition">mcslock_loc_type</span></a> := <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_info</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">tarray</span> <span class="id" title="constructor">t_struct_mcs_lock</span> <span class="id" title="constructor">lock_range</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_init</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">Init_space</span> <span class="id" title="constructor">(((</span><span class="id" title="constructor">TOTAL_CPU</span> <span class="id" title="constructor">×</span> <span class="id" title="constructor">(2</span> <span class="id" title="constructor">+</span> <span class="id" title="constructor">14)</span> <span class="id" title="constructor">+</span> <span class="id" title="constructor">(15</span> <span class="id" title="constructor">+</span>  <span class="id" title="constructor">1))</span> <span class="id" title="constructor">×</span> <span class="id" title="constructor">4)</span> <span class="id" title="constructor">×</span> <span class="id" title="constructor">lock_range</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_readonly</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">gvar_volatile</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">false</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab52"></a><h1 class="section">Properties of C types declared</h1>
+
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Local</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">Z</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="t_struct_mcs_node_size"><span class="id" title="lemma">t_struct_mcs_node_size</span></a> : <span class="id" title="definition">sizeof</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_mcs_node"><span class="id" title="abbreviation">t_struct_mcs_node</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 64. &nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="t_struct_mcs_lock_size"><span class="id" title="lemma">t_struct_mcs_lock_size</span></a> : <span class="id" title="definition">sizeof</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_mcs_lock"><span class="id" title="abbreviation">t_struct_mcs_lock</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 576. &nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="t_struct_KCtxt_size"><span class="id" title="lemma">t_struct_KCtxt_size</span></a>: <span class="id" title="definition">sizeof</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_KCtxt"><span class="id" title="abbreviation">t_struct_KCtxt</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 24.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="ptr_size"><span class="id" title="lemma">ptr_size</span></a>: <span class="id" title="keyword">∀</span> <span class="id" title="var">t</span>, <span class="id" title="definition">sizeof</span> (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t"><span class="id" title="variable">t</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 4.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">intro</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="tvoid_size"><span class="id" title="lemma">tvoid_size</span></a>: <span class="id" title="definition">sizeof</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#tvoid"><span class="id" title="abbreviation">tvoid</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 1.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="t_struct_Chan_size"><span class="id" title="lemma">t_struct_Chan_size</span></a>: <span class="id" title="definition">sizeof</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_Chan"><span class="id" title="abbreviation">t_struct_Chan</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> 8.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>. <span class="id" title="tactic">reflexivity</span>. <span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab53"></a><h1 class="section">Additional definitions to compcert</h1>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Fixpoint</span> <a name="bind_parameter_temps&acute;"><span class="id" title="definition">bind_parameter_temps&acute;</span></a> (<span class="id" title="var">formals</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> (<span class="id" title="definition">ident</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">×</span></a> <span class="id" title="inductive">type</span>)) (<span class="id" title="var">args</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <span class="id" title="inductive">val</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">le</span>: <span class="id" title="definition">temp_env</span>) : <span class="id" title="definition">temp_env</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="definition">bind_parameter_temps</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#formals"><span class="id" title="variable">formals</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#args"><span class="id" title="variable">args</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#le"><span class="id" title="variable">le</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a> ⇒ <a class="idref" href="mcertikos.clib.CDataTypes.html#le"><span class="id" title="variable">le</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">le&acute;</span> ⇒ <span class="id" title="var">le&acute;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

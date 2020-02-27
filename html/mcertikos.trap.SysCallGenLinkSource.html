@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.trap.SysCallGenLinkSource</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.trap.SysCallGenLinkSource</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#"><span class="id" title="library">LinkSourceTemplate</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.trap.TDispatch.html#"><span class="id" title="library">TDispatch</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.trap.SysCallGenAsmSource.html#"><span class="id" title="library">SysCallGenAsmSource</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#"><span class="id" title="library">GlobalOracleProp</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#"><span class="id" title="library">SingleOracle</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#"><span class="id" title="library">SingleAbstractDataType</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="WITHCOMPCERTIKOS"><span class="id" title="section">WITHCOMPCERTIKOS</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="TSysCall_module"><span class="id" title="definition">TSysCall_module</span></a>: <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_module"><span class="id" title="record">link_module</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lm_cfun</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">:=</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">nil</span></a><a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lm_asmfun</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">:=</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">laf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">syscall_dispatch</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">sys_dispatch_function</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">laf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">pgf_handler</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">pgf_handler_function</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">laf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">sys_run_vm</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">sys_run_vm_function</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">nil</span></a><a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lm_gvar</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">:=</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">nil</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="TSysCall_impl"><span class="id" title="definition">TSysCall_impl</span></a>  `{<a class="idref" href="mcertikos.layerlib.CompCertiKOSproof.html#CompCertiKOS"><span class="id" title="class">CompCertiKOS</span></a>}  `{<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#SingleOracleProp"><span class="id" title="class">SingleOracleProp</span></a>}  `{<a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>} `{<a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleProp"><span class="id" title="class">MultiOracleProp</span></a>} :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_impl"><span class="id" title="definition">link_impl</span></a> <a class="idref" href="mcertikos.trap.SysCallGenLinkSource.html#TSysCall_module"><span class="id" title="definition">TSysCall_module</span></a> <a class="idref" href="mcertikos.trap.TDispatch.html#tdispatch"><span class="id" title="definition">tdispatch</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.trap.SysCallGenLinkSource.html#WITHCOMPCERTIKOS"><span class="id" title="section">WITHCOMPCERTIKOS</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

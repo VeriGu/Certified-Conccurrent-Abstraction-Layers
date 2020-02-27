@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.layerlib.LinkSourceTemplate</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.layerlib.LinkSourceTemplate</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="library">liblayers.compat.CompatLayers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="library">liblayers.compat.CompatClightSem</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.layerlib.LAsmModuleSemDef.html#"><span class="id" title="library">LAsmModuleSemDef</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.layerlib.CompCertiKOS.html#"><span class="id" title="library">CompCertiKOS</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.layerlib.CompCertiKOSproof.html#"><span class="id" title="library">CompCertiKOSproof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.clib.RealParams.html#"><span class="id" title="library">RealParams</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="library">I64Layer</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#"><span class="id" title="library">GlobIdent</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The generic linking code works based on a description of the code at
+  a given layer: C functions, assembly functions, and global variables. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Record</span> <a name="link_cfunction"><span class="id" title="record">link_cfunction</span></a> :=<br/>
+&nbsp;&nbsp;<a name="lcf"><span class="id" title="constructor">lcf</span></a> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="lcf_id"><span class="id" title="projection">lcf_id</span></a>: <span class="id" title="definition">AST.ident</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="lcf_fun"><span class="id" title="projection">lcf_fun</span></a>: <span class="id" title="record">Clight.function</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+<span class="id" title="keyword">Record</span> <a name="link_asmfunction"><span class="id" title="record">link_asmfunction</span></a> :=<br/>
+&nbsp;&nbsp;<a name="laf"><span class="id" title="constructor">laf</span></a> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="laf_id"><span class="id" title="projection">laf_id</span></a>: <span class="id" title="definition">AST.ident</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="laf_fun"><span class="id" title="projection">laf_fun</span></a>: <a class="idref" href="mcertikos.layerlib.LAsm.html#function"><span class="id" title="record">LAsm.function</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+<span class="id" title="keyword">Record</span> <a name="link_globvar"><span class="id" title="record">link_globvar</span></a> :=<br/>
+&nbsp;&nbsp;<a name="lgv"><span class="id" title="constructor">lgv</span></a> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="lgv_id"><span class="id" title="projection">lgv_id</span></a>: <span class="id" title="definition">AST.ident</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="lgv_type"><span class="id" title="projection">lgv_type</span></a>: <span class="id" title="record">AST.globvar</span> <span class="id" title="inductive">Ctypes.type</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+<span class="id" title="keyword">Record</span> <a name="link_module"><span class="id" title="record">link_module</span></a> :=<br/>
+&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="lm_cfun"><span class="id" title="projection">lm_cfun</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_cfunction"><span class="id" title="record">link_cfunction</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="lm_asmfun"><span class="id" title="projection">lm_asmfun</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_asmfunction"><span class="id" title="record">link_asmfunction</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="lm_gvar"><span class="id" title="projection">lm_gvar</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_globvar"><span class="id" title="record">link_globvar</span></a><br/>
+&nbsp;&nbsp;}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+From the description above, we can construct the assembly module
+  for a given layer: we need to compile all C functions, then add the
+  assembly functions and global variables.
+
+<div class="paragraph"> </div>
+
+  The module should be constructed in a strategic way: fresh layer
+  primitives are listed with C-implemented function first, then
+  assembly. Furthermore, before any proof we will want to apply
+  <span class="inlinecode"><span class="id" title="var">transfer_variable</span></span> as needed. Hence, our module should have the
+  general form:
+  <span class="inlinecode">(⋯(((<span class="id" title="var">cf1</span></span> <span class="inlinecode">⊕</span> <span class="inlinecode"><span class="id" title="var">cf2</span></span> <span class="inlinecode">⊕</span> <span class="inlinecode">⋯</span> <span class="inlinecode">⊕</span> <span class="inlinecode"><span class="id" title="var">af1</span></span> <span class="inlinecode">⊕</span> <span class="inlinecode"><span class="id" title="var">af2</span></span> <span class="inlinecode">⊕</span> <span class="inlinecode">⋯</span> <span class="inlinecode">⊕</span> <span class="inlinecode">∅)</span> <span class="inlinecode">⊕</span> <span class="inlinecode"><span class="id" title="var">v1</span>)</span> <span class="inlinecode">⊕</span> <span class="inlinecode"><span class="id" title="var">v2</span>)</span> <span class="inlinecode">⊕</span> <span class="inlinecode">⋯)</span> <span class="inlinecode">⊕</span> <span class="inlinecode"><span class="id" title="var">vn</span></span>.
+
+<div class="paragraph"> </div>
+
+  The following code builds this module from the lists in the
+  corresponding <span class="inlinecode"><span class="id" title="var">link_module</span></span> object. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="LINK_IMPL"><span class="id" title="section">LINK_IMPL</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">compcertikos_prf</span>: <a class="idref" href="mcertikos.layerlib.CompCertiKOSproof.html#CompCertiKOS"><span class="id" title="class">CompCertiKOS</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">real_params_prf</span> : <a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> {<span class="id" title="var">HDATA</span> <span class="id" title="var">LDATA</span>: <span class="id" title="record">compatdata</span>} {<span class="id" title="var">R</span>: <span class="id" title="class">compatrel</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#HDATA"><span class="id" title="variable">HDATA</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#LDATA"><span class="id" title="variable">LDATA</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="link_add_cfunction"><span class="id" title="definition">link_add_cfunction</span></a> (<span class="id" title="var">f</span>: <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_cfunction"><span class="id" title="record">link_cfunction</span></a>) (<span class="id" title="var">M</span>: <span class="id" title="inductive">res</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#module"><span class="id" title="definition">LAsm.module</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Mr</span> <span class="id" title="notation">&lt;-</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#M"><span class="id" title="variable">M</span></a><span class="id" title="notation">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Mf</span> <span class="id" title="notation">&lt;-</span> <a class="idref" href="mcertikos.layerlib.CompCertiKOS.html#transf_module"><span class="id" title="definition">CompCertiKOS.transf_module</span></a> (<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lcf_id"><span class="id" title="projection">lcf_id</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#f"><span class="id" title="variable">f</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lcf_fun"><span class="id" title="projection">lcf_fun</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#f"><span class="id" title="variable">f</span></a>)<span class="id" title="notation">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="method">ret</span> (<span class="id" title="var">Mf</span> <span class="id" title="notation">⊕</span> <span class="id" title="var">Mr</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="link_impl_c"><span class="id" title="definition">link_impl_c</span></a> (<span class="id" title="var">lm</span>: <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_module"><span class="id" title="record">link_module</span></a>) (<span class="id" title="var">M</span>: <a class="idref" href="mcertikos.layerlib.LAsm.html#module"><span class="id" title="definition">LAsm.module</span></a>): <span class="id" title="inductive">res</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#module"><span class="id" title="definition">LAsm.module</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Lists.List.html#fold_right"><span class="id" title="definition">fold_right</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_add_cfunction"><span class="id" title="definition">link_add_cfunction</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="method">ret</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#M"><span class="id" title="variable">M</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lm_cfun"><span class="id" title="projection">lm_cfun</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lm"><span class="id" title="variable">lm</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="link_impl_asm"><span class="id" title="definition">link_impl_asm</span></a> (<span class="id" title="var">lm</span>: <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_module"><span class="id" title="record">link_module</span></a>): <a class="idref" href="mcertikos.layerlib.LAsm.html#module"><span class="id" title="definition">LAsm.module</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Lists.List.html#fold_right"><span class="id" title="definition">fold_right</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="keyword">fun</span> <span class="id" title="var">f</span> <span class="id" title="var">M</span> ⇒ <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#laf_id"><span class="id" title="projection">laf_id</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#f"><span class="id" title="variable">f</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#laf_fun"><span class="id" title="projection">laf_fun</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#f"><span class="id" title="variable">f</span></a> <span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#M"><span class="id" title="variable">M</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">∅</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lm_asmfun"><span class="id" title="projection">lm_asmfun</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lm"><span class="id" title="variable">lm</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="link_impl_add_gvar_specs"><span class="id" title="definition">link_impl_add_gvar_specs</span></a> <span class="id" title="var">vs</span> <span class="id" title="var">L</span>: <span class="id" title="record">compatlayer</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#LINK_IMPL.LDATA"><span class="id" title="variable">LDATA</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Lists.List.html#fold_right"><span class="id" title="definition">fold_right</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">v</span> <span class="id" title="var">L</span> ⇒ <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#L"><span class="id" title="variable">L</span></a> <span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lgv_id"><span class="id" title="projection">lgv_id</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#v"><span class="id" title="variable">v</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lgv_type"><span class="id" title="projection">lgv_type</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#v"><span class="id" title="variable">v</span></a>) <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#L"><span class="id" title="variable">L</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#vs"><span class="id" title="variable">vs</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="link_impl_add_gvar_defs"><span class="id" title="definition">link_impl_add_gvar_defs</span></a>: <span class="id" title="var">_</span> → <span class="id" title="var">_</span> → <a class="idref" href="mcertikos.layerlib.LAsm.html#module"><span class="id" title="definition">LAsm.module</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Lists.List.html#fold_left"><span class="id" title="definition">fold_left</span></a> (<span class="id" title="keyword">fun</span> <span class="id" title="var">M</span> <span class="id" title="var">v</span> ⇒ <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#M"><span class="id" title="variable">M</span></a> <span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lgv_id"><span class="id" title="projection">lgv_id</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#v"><span class="id" title="variable">v</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lgv_type"><span class="id" title="projection">lgv_type</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#v"><span class="id" title="variable">v</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Fixpoint</span> <a name="link_impl_add_gvars"><span class="id" title="definition">link_impl_add_gvars</span></a> (<span class="id" title="var">vs</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_globvar"><span class="id" title="record">link_globvar</span></a>) <span class="id" title="var">M</span> <span class="id" title="var">L</span>: <span class="id" title="inductive">res</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#module"><span class="id" title="definition">LAsm.module</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">_</span> <span class="id" title="notation">&lt;-</span> <span class="id" title="definition">eassert</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> (<span class="id" title="class">LayerOK</span> (<span class="id" title="notation">〚</span><a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#M"><span class="id" title="variable">M</span></a><span class="id" title="notation">〛</span> (<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_impl_add_gvar_specs"><span class="id" title="definition">link_impl_add_gvar_specs</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#vs"><span class="id" title="variable">vs</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#L"><span class="id" title="variable">L</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>) <span class="id" title="notation">⊕</span> <span class="id" title="notation">(</span><a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_impl_add_gvar_specs"><span class="id" title="definition">link_impl_add_gvar_specs</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#vs"><span class="id" title="variable">vs</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#L"><span class="id" title="variable">L</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span><span class="id" title="notation">)</span>))<span class="id" title="notation">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#vs"><span class="id" title="variable">vs</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="method">ret</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#M"><span class="id" title="variable">M</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">v</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a><span class="id" title="var">vs</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_impl_add_gvars"><span class="id" title="definition">link_impl_add_gvars</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#vs"><span class="id" title="variable">vs</span></a> (<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#M"><span class="id" title="variable">M</span></a> <span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lgv_id"><span class="id" title="projection">lgv_id</span></a> <span class="id" title="var">v</span> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lgv_type"><span class="id" title="projection">lgv_type</span></a> <span class="id" title="var">v</span>) <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#L"><span class="id" title="variable">L</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="link_impl_gvar"><span class="id" title="definition">link_impl_gvar</span></a> (<span class="id" title="var">lm</span>: <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_module"><span class="id" title="record">link_module</span></a>) <span class="id" title="var">ll</span> <span class="id" title="var">M</span>: <span class="id" title="inductive">res</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#module"><span class="id" title="definition">LAsm.module</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_impl_add_gvars"><span class="id" title="definition">link_impl_add_gvars</span></a> (<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lm_gvar"><span class="id" title="projection">lm_gvar</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lm"><span class="id" title="variable">lm</span></a>) <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#M"><span class="id" title="variable">M</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#ll"><span class="id" title="variable">ll</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="link_impl"><span class="id" title="definition">link_impl</span></a> (<span class="id" title="var">lm</span>: <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_module"><span class="id" title="record">link_module</span></a>) (<span class="id" title="var">ll</span>: <span class="id" title="record">compatlayer</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#LINK_IMPL.LDATA"><span class="id" title="variable">LDATA</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">Mc</span> <span class="id" title="notation">&lt;-</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_impl_c"><span class="id" title="definition">link_impl_c</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lm"><span class="id" title="variable">lm</span></a> <span class="id" title="notation">∅</span><span class="id" title="notation">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">M</span>  <span class="id" title="notation">&lt;-</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_impl_gvar"><span class="id" title="definition">link_impl_gvar</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lm"><span class="id" title="variable">lm</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#ll"><span class="id" title="variable">ll</span></a> (<span class="id" title="var">Mc</span> <span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_impl_asm"><span class="id" title="definition">link_impl_asm</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#lm"><span class="id" title="variable">lm</span></a>)<span class="id" title="notation">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">_</span>  <span class="id" title="notation">&lt;-</span> <span class="id" title="definition">eassert</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> (<span class="id" title="class">LayerOK</span> (<span class="id" title="notation">〚</span><span class="id" title="var">M</span> <span class="id" title="notation">⊕</span> <span class="id" title="notation">∅</span><span class="id" title="notation">〛</span> (<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#ll"><span class="id" title="variable">ll</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>) <span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#ll"><span class="id" title="variable">ll</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>))<span class="id" title="notation">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="method">ret</span> (<span class="id" title="var">M</span> <span class="id" title="notation">⊕</span> <span class="id" title="notation">∅</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#LINK_IMPL"><span class="id" title="section">LINK_IMPL</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

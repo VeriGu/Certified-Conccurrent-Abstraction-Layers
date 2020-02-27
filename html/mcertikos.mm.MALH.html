@@ -1,0 +1,551 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.mm.MALH</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.mm.MALH</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+This file defines the abstract data and the primitives for the MAL layer, which will introduce the palloc and pfree primitives
+</div>
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Maps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.ASTExtra.html#"><span class="id" title="library">ASTExtra</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Floats</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Memory</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Events</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Stacklayout</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Globalenvs</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">AsmX</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Smallstep</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#"><span class="id" title="library">AuxStateDataType</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.Constant.html#"><span class="id" title="library">Constant</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#"><span class="id" title="library">GlobIdent</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.flatmem.FlatMemory.html#"><span class="id" title="library">FlatMemory</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.CommonTactic.html#"><span class="id" title="library">CommonTactic</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AuxLemma.html#"><span class="id" title="library">AuxLemma</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.RealParams.html#"><span class="id" title="library">RealParams</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#"><span class="id" title="library">PrimSemantics</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#"><span class="id" title="library">LAsm</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.flatmem.LoadStoreSem1.html#"><span class="id" title="library">LoadStoreSem1</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.logic.PTreeModules</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.logic.LayerLogicImpl</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatLayers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatGenSem</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.FutureTactic.html#"><span class="id" title="library">FutureTactic</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.invariants.INVLemmaContainer.html#"><span class="id" title="library">INVLemmaContainer</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.invariants.INVLemmaMemory.html#"><span class="id" title="library">INVLemmaMemory</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#"><span class="id" title="library">INVLemmaQLock</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.invariants.INVLemmaInterrupt.html#"><span class="id" title="library">INVLemmaInterrupt</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.invariants.INVLemmaDriver.html#"><span class="id" title="library">INVLemmaDriver</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#"><span class="id" title="library">AbstractDataType</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.DeviceStateDataType.html#"><span class="id" title="library">DeviceStateDataType</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.objects.ObjCPU.html#"><span class="id" title="library">ObjCPU</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.objects.ObjMM.html#"><span class="id" title="library">ObjMM</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#"><span class="id" title="library">ObjFlatMem</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#"><span class="id" title="library">ObjContainer</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.objects.ObjMultiprocessor.html#"><span class="id" title="library">ObjMultiprocessor</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.objects.ObjQLock.html#"><span class="id" title="library">ObjQLock</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.objects.ObjPMM.html#"><span class="id" title="library">ObjPMM</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptManagement.html#"><span class="id" title="library">ObjInterruptManagement</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptController.html#"><span class="id" title="library">ObjInterruptController</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.objects.dev.ObjConsole.html#"><span class="id" title="library">ObjConsole</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.objects.dev.ObjSerialDriver.html#"><span class="id" title="library">ObjSerialDriver</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="WITHMEM"><span class="id" title="section">WITHMEM</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span>&nbsp;<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">Z_scope</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">oracle_prop</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleProp"><span class="id" title="class">MultiOracleProp</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">real_params</span>: <a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab434"></a><h2 class="section">Invariants at this layer</h2>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Record</span> <a name="high_level_invariant"><span class="id" title="record">high_level_invariant</span></a> (<span class="id" title="var">abd</span>: <a class="idref" href="mcertikos.objects.AbstractDataType.html#RData"><span class="id" title="record">RData</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="mkInvariant"><span class="id" title="constructor">mkInvariant</span></a> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="CPU_ID_range"><span class="id" title="projection">CPU_ID_range</span></a>: 0 <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#cb2fd1306e4fe5d333fd9fb7e2c4a1d2"><span class="id" title="notation">≤</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#cb2fd1306e4fe5d333fd9fb7e2c4a1d2"><span class="id" title="notation">(</span></a><a class="idref" href="mcertikos.objects.AbstractDataType.html#CPU_ID"><span class="id" title="projection">CPU_ID</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#cb2fd1306e4fe5d333fd9fb7e2c4a1d2"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#cb2fd1306e4fe5d333fd9fb7e2c4a1d2"><span class="id" title="notation">&lt;</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#TOTAL_CPU"><span class="id" title="abbreviation">TOTAL_CPU</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="valid_curid"><span class="id" title="projection">valid_curid</span></a>: 0 <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#cb2fd1306e4fe5d333fd9fb7e2c4a1d2"><span class="id" title="notation">≤</span></a> <span class="id" title="definition">ZMap.get</span> (<a class="idref" href="mcertikos.objects.AbstractDataType.html#CPU_ID"><span class="id" title="projection">CPU_ID</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a>) (<a class="idref" href="mcertikos.objects.AbstractDataType.html#cid"><span class="id" title="projection">cid</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#cb2fd1306e4fe5d333fd9fb7e2c4a1d2"><span class="id" title="notation">&lt;</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>;<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="valid_nps"><span class="id" title="projection">valid_nps</span></a>: <a class="idref" href="mcertikos.objects.AbstractDataType.html#init"><span class="id" title="projection">init</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> → <a class="idref" href="mcertikos.layerlib.Constant.html#kern_low"><span class="id" title="abbreviation">kern_low</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#5dda7752d319ac2ccefb830f12787952"><span class="id" title="notation">≤</span></a> <a class="idref" href="mcertikos.objects.AbstractDataType.html#nps"><span class="id" title="projection">nps</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#5dda7752d319ac2ccefb830f12787952"><span class="id" title="notation">≤</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#maxpage"><span class="id" title="abbreviation">maxpage</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="valid_kern"><span class="id" title="projection">valid_kern</span></a>: <a class="idref" href="mcertikos.objects.AbstractDataType.html#ikern"><span class="id" title="projection">ikern</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a> → <a class="idref" href="mcertikos.objects.AbstractDataType.html#pg"><span class="id" title="projection">pg</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">∧</span></a> <a class="idref" href="mcertikos.objects.AbstractDataType.html#init"><span class="id" title="projection">init</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="valid_CR3"><span class="id" title="projection">valid_CR3</span></a>: <a class="idref" href="mcertikos.objects.AbstractDataType.html#pg"><span class="id" title="projection">pg</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> → <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#CR3_valid"><span class="id" title="definition">CR3_valid</span></a> (<a class="idref" href="mcertikos.objects.AbstractDataType.html#CR3"><span class="id" title="projection">CR3</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="valid_ihost"><span class="id" title="projection">valid_ihost</span></a>: <a class="idref" href="mcertikos.objects.AbstractDataType.html#ihost"><span class="id" title="projection">ihost</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a> → <a class="idref" href="mcertikos.objects.AbstractDataType.html#pg"><span class="id" title="projection">pg</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">∧</span></a> <a class="idref" href="mcertikos.objects.AbstractDataType.html#init"><span class="id" title="projection">init</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">∧</span></a> <a class="idref" href="mcertikos.objects.AbstractDataType.html#ikern"><span class="id" title="projection">ikern</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="valid_container"><span class="id" title="projection">valid_container</span></a>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#Container_valid"><span class="id" title="record">Container_valid</span></a> (<a class="idref" href="mcertikos.objects.AbstractDataType.html#AC"><span class="id" title="projection">AC</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a>);<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="valid_multi_oracle_pool_inv"><span class="id" title="projection">valid_multi_oracle_pool_inv</span></a>: <a class="idref" href="mcertikos.objects.LogReplay.html#valid_multi_oracle_pool_H1"><span class="id" title="definition">valid_multi_oracle_pool_H1</span></a> (<a class="idref" href="mcertikos.objects.AbstractDataType.html#multi_oracle"><span class="id" title="projection">multi_oracle</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="valid_hlock_pool_inv"><span class="id" title="projection">valid_hlock_pool_inv</span></a>: <a class="idref" href="mcertikos.objects.LogReplay.html#valid_hlock_pool1"><span class="id" title="definition">valid_hlock_pool1</span></a> (<a class="idref" href="mcertikos.objects.AbstractDataType.html#multi_log"><span class="id" title="projection">multi_log</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="valid_AT_oracle_pool_inv"><span class="id" title="projection">valid_AT_oracle_pool_inv</span></a>: <a class="idref" href="mcertikos.objects.LogReplay.html#valid_AT_oracle_pool_H"><span class="id" title="definition">valid_AT_oracle_pool_H</span></a> (<a class="idref" href="mcertikos.objects.AbstractDataType.html#multi_oracle"><span class="id" title="projection">multi_oracle</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="valid_AT_log_pool_inv"><span class="id" title="projection">valid_AT_log_pool_inv</span></a>: <a class="idref" href="mcertikos.objects.LogReplay.html#valid_AT_log_pool_H"><span class="id" title="definition">valid_AT_log_pool_H</span></a> (<a class="idref" href="mcertikos.objects.AbstractDataType.html#multi_log"><span class="id" title="projection">multi_log</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a>);<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="valid_cons_buf_rpos"><span class="id" title="projection">valid_cons_buf_rpos</span></a>: 0 <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#cb2fd1306e4fe5d333fd9fb7e2c4a1d2"><span class="id" title="notation">≤</span></a> <a class="idref" href="mcertikos.layerlib.DeviceStateDataType.html#rpos"><span class="id" title="projection">rpos</span></a> (<a class="idref" href="mcertikos.objects.AbstractDataType.html#console"><span class="id" title="projection">console</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#cb2fd1306e4fe5d333fd9fb7e2c4a1d2"><span class="id" title="notation">&lt;</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#CONSOLE_BUFFER_SIZE"><span class="id" title="abbreviation">CONSOLE_BUFFER_SIZE</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="valid_cons_buf_length"><span class="id" title="projection">valid_cons_buf_length</span></a>: 0 <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#cb2fd1306e4fe5d333fd9fb7e2c4a1d2"><span class="id" title="notation">≤</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.Zcomplements.html#Zlength"><span class="id" title="definition">Zlength</span></a> (<a class="idref" href="mcertikos.layerlib.DeviceStateDataType.html#cons_buf"><span class="id" title="projection">cons_buf</span></a> (<a class="idref" href="mcertikos.objects.AbstractDataType.html#console"><span class="id" title="projection">console</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a>)) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#cb2fd1306e4fe5d333fd9fb7e2c4a1d2"><span class="id" title="notation">&lt;</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#CONSOLE_BUFFER_SIZE"><span class="id" title="abbreviation">CONSOLE_BUFFER_SIZE</span></a>;<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="init_pperm"><span class="id" title="projection">init_pperm</span></a>: <a class="idref" href="mcertikos.objects.AbstractDataType.html#init"><span class="id" title="projection">init</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a> → <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">(</span></a><a class="idref" href="mcertikos.objects.AbstractDataType.html#pperm"><span class="id" title="projection">pperm</span></a> <a class="idref" href="mcertikos.mm.MALH.html#abd"><span class="id" title="variable">abd</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">)</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="definition">ZMap.init</span> <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#PGUndef"><span class="id" title="constructor">PGUndef</span></a><br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab435"></a><h2 class="section">Definition of the abstract state ops</h2>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="malh_data_ops"><span class="id" title="instance">malh_data_ops</span></a> : <span class="id" title="class">CompatDataOps</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#RData"><span class="id" title="record">RData</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="method">empty_data</span> := <a class="idref" href="mcertikos.objects.AbstractDataType.html#init_adt"><span class="id" title="definition">init_adt</span></a> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#multi_oracle_init3"><span class="id" title="method">multi_oracle_init3</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="method">high_level_invariant</span> := <a class="idref" href="mcertikos.mm.MALH.html#high_level_invariant"><span class="id" title="record">high_level_invariant</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="method">low_level_invariant</span> := <a class="idref" href="mcertikos.objects.AbstractDataType.html#low_level_invariant"><span class="id" title="record">low_level_invariant</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="method">kernel_mode</span> <span class="id" title="var">adt</span> := <a class="idref" href="mcertikos.objects.AbstractDataType.html#ikern"><span class="id" title="projection">ikern</span></a> <a class="idref" href="mcertikos.mm.MALH.html#adt"><span class="id" title="variable">adt</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">∧</span></a> <a class="idref" href="mcertikos.objects.AbstractDataType.html#ihost"><span class="id" title="projection">ihost</span></a> <a class="idref" href="mcertikos.mm.MALH.html#adt"><span class="id" title="variable">adt</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#true"><span class="id" title="constructor">true</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab436"></a><h2 class="section">Proofs that the initial abstract_data should satisfy the invariants</h2>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Section</span> <a name="WITHMEM.Property_Abstract_Data"><span class="id" title="section">Property_Abstract_Data</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="empty_data_high_level_invariant"><span class="id" title="lemma">empty_data_high_level_invariant</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MALH.html#high_level_invariant"><span class="id" title="record">high_level_invariant</span></a> (<a class="idref" href="mcertikos.objects.AbstractDataType.html#init_adt"><span class="id" title="definition">init_adt</span></a> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#multi_oracle_init3"><span class="id" title="method">multi_oracle_init3</span></a>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">auto</span>; <span class="id" title="tactic">try</span> <span class="id" title="var">inv</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracle.html#current_CPU_ID_range"><span class="id" title="method">current_CPU_ID_range</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">ZMap.gi</span>; <span class="id" title="tactic">intuition</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.invariants.INVLemmaContainer.html#empty_container_valid"><span class="id" title="lemma">empty_container_valid</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#valid_ticket_oracle3"><span class="id" title="method">valid_ticket_oracle3</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#valid_hlock_pool_init1"><span class="id" title="lemma">valid_hlock_pool_init1</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#valid_AT_oracle_pool3"><span class="id" title="method">valid_AT_oracle_pool3</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#valid_AT_log_pool_H_init"><span class="id" title="lemma">valid_AT_log_pool_H_init</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.mm.MALH.html#WITHMEM.Property_Abstract_Data"><span class="id" title="section">Property_Abstract_Data</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab437"></a><h2 class="section">Definition of the abstract state</h2>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="malh_data_prf"><span class="id" title="instance">malh_data_prf</span></a> : <span class="id" title="class">CompatData</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#RData"><span class="id" title="record">RData</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#low_level_invariant_incr"><span class="id" title="lemma">low_level_invariant_incr</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#empty_data_low_level_invariant"><span class="id" title="lemma">empty_data_low_level_invariant</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.mm.MALH.html#empty_data_high_level_invariant"><span class="id" title="lemma">empty_data_high_level_invariant</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hstencil</span>: <span class="id" title="class">Stencil</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hmem</span>: <span class="id" title="class">Mem.MemoryModelX</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hmwd</span>: <span class="id" title="class">UseMemWithData</span> <a class="idref" href="mcertikos.mm.MALH.html#WITHMEM.mem"><span class="id" title="variable">mem</span></a>}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab438"></a><h1 class="section">Proofs that the primitives satisfies the invariants at this layer</h1>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Section</span> <a name="WITHMEM.INV"><span class="id" title="section">INV</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="release_lock_inv"><span class="id" title="instance">release_lock_inv</span></a>: <a class="idref" href="mcertikos.layerlib.MultiProcessorSemantics.html#ReleaseInvariants"><span class="id" title="class">ReleaseInvariants</span></a> <a class="idref" href="mcertikos.objects.ObjQLock.html#release_lock_spec1"><span class="id" title="abbreviation">release_lock_spec1</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">unfold</span> <a class="idref" href="mcertikos.objects.ObjQLock.html#release_lock_spec"><span class="id" title="definition">release_lock_spec</span></a>; <span class="id" title="tactic">intros</span>; <span class="id" title="var">subdestruct</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">inv</span> <span class="id" title="var">H</span>; <span class="id" title="var">inv</span> <span class="id" title="var">H0</span>; <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">auto</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#valid_hlock_pool1_gss&acute;"><span class="id" title="lemma">valid_hlock_pool1_gss&acute;</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#valid_AT_log_pool_H_gso"><span class="id" title="lemma">valid_AT_log_pool_H_gso</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#Shared2ID1_neq"><span class="id" title="lemma">Shared2ID1_neq</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="acquire_lock_inv"><span class="id" title="instance">acquire_lock_inv</span></a>: <a class="idref" href="mcertikos.layerlib.MultiProcessorSemantics.html#AcquireInvariants"><span class="id" title="class">AcquireInvariants</span></a> <a class="idref" href="mcertikos.objects.ObjQLock.html#acquire_lock_spec1"><span class="id" title="abbreviation">acquire_lock_spec1</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">unfold</span> <a class="idref" href="mcertikos.objects.ObjQLock.html#acquire_lock_spec"><span class="id" title="definition">acquire_lock_spec</span></a>; <span class="id" title="tactic">intros</span>; <span class="id" title="var">subdestruct</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">inv</span> <span class="id" title="var">H</span>; <span class="id" title="var">inv</span> <span class="id" title="var">H0</span>; <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">auto</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#valid_hlock_pool1_gss&acute;"><span class="id" title="lemma">valid_hlock_pool1_gss&acute;</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#valid_AT_log_pool_H_gso"><span class="id" title="lemma">valid_AT_log_pool_H_gso</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#Shared2ID1_neq"><span class="id" title="lemma">Shared2ID1_neq</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="set_curid_inv"><span class="id" title="instance">set_curid_inv</span></a>: <span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.ObjMultiprocessor.html#set_curid_spec"><span class="id" title="definition">set_curid_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_simpl_auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">ZMap.gss</span>. <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="set_curid_init_inv"><span class="id" title="instance">set_curid_init_inv</span></a>: <span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.ObjMultiprocessor.html#set_curid_init_spec"><span class="id" title="definition">set_curid_init_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_simpl_auto</span>; <span class="id" title="tactic">eauto</span> 2.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">case_eq</span> (<span class="id" title="definition">zeq</span> (<a class="idref" href="mcertikos.objects.AbstractDataType.html#CPU_ID"><span class="id" title="projection">CPU_ID</span></a> <span class="id" title="var">d</span>) (<span class="id" title="definition">Int.unsigned</span> <span class="id" title="var">i</span>)); <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">subst</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="var">e</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">ZMap.gss</span>; <span class="id" title="tactic">omega</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">ZMap.gso</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="setCR3_inv"><span class="id" title="instance">setCR3_inv</span></a>: <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#SetCR3Invariants"><span class="id" title="class">SetCR3Invariants</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#setCR30_spec"><span class="id" title="definition">setCR30_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="var">functional</span> <span class="id" title="tactic">inversion</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">inv</span> <span class="id" title="var">H0</span>; <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">trivial</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">inv</span> <span class="id" title="var">H0</span>; <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="container_split_inv"><span class="id" title="instance">container_split_inv</span></a>: <span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_split_spec"><span class="id" title="definition">container_split_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_simpl_auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H1</span> <span class="id" title="keyword">in</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">exploit</span> <a class="idref" href="mcertikos.invariants.INVLemmaContainer.html#split_container_valid"><span class="id" title="lemma">split_container_valid</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="container_alloc_inv"><span class="id" title="instance">container_alloc_inv</span></a>: <span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_alloc_spec"><span class="id" title="definition">container_alloc_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_simpl_auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">exploit</span> <a class="idref" href="mcertikos.invariants.INVLemmaContainer.html#alloc_container_valid"><span class="id" title="lemma">alloc_container_valid</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="trapin_inv"><span class="id" title="instance">trapin_inv</span></a>: <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#PrimInvariants"><span class="id" title="class">PrimInvariants</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#trapin_spec"><span class="id" title="definition">trapin_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PrimInvariants_simpl_auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="trapout_inv"><span class="id" title="instance">trapout_inv</span></a>: <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#PrimInvariants"><span class="id" title="class">PrimInvariants</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#trapout0_spec"><span class="id" title="definition">trapout0_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PrimInvariants_simpl_auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="hostin_inv"><span class="id" title="instance">hostin_inv</span></a>: <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#PrimInvariants"><span class="id" title="class">PrimInvariants</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#hostin_spec"><span class="id" title="definition">hostin_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PrimInvariants_simpl_auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="hostout_inv"><span class="id" title="instance">hostout_inv</span></a>: <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#PrimInvariants"><span class="id" title="class">PrimInvariants</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#hostout_spec"><span class="id" title="definition">hostout_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">PrimInvariants_simpl_auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="cli_inv"><span class="id" title="instance">cli_inv</span></a>: <span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptController.html#cli_spec"><span class="id" title="definition">cli_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_direct</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#low_level_invariant"><span class="id" title="record">low_level_invariant</span></a> <a class="idref" href="mcertikos.mm.MALH.html#high_level_invariant"><span class="id" title="record">high_level_invariant</span></a>; <span class="id" title="tactic">eauto</span> 2.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="sti_inv"><span class="id" title="instance">sti_inv</span></a>: <span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptController.html#sti_spec"><span class="id" title="definition">sti_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_direct</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#low_level_invariant"><span class="id" title="record">low_level_invariant</span></a> <a class="idref" href="mcertikos.mm.MALH.html#high_level_invariant"><span class="id" title="record">high_level_invariant</span></a>; <span class="id" title="tactic">eauto</span> 2.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="cons_buf_read_inv"><span class="id" title="instance">cons_buf_read_inv</span></a>: <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.dev.ObjConsole.html#cons_buf_read_spec"><span class="id" title="definition">cons_buf_read_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_nested</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#low_level_invariant"><span class="id" title="record">low_level_invariant</span></a> <a class="idref" href="mcertikos.mm.MALH.html#high_level_invariant"><span class="id" title="record">high_level_invariant</span></a>; <span class="id" title="tactic">eauto</span> 2.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="serial_putc_inv"><span class="id" title="instance">serial_putc_inv</span></a>: <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.dev.ObjSerialDriver.html#serial_putc_spec"><span class="id" title="definition">serial_putc_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_simpl_auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="serial_intr_disable_inv"><span class="id" title="instance">serial_intr_disable_inv</span></a>: <span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptManagement.html#serial_intr_disable_spec"><span class="id" title="definition">serial_intr_disable_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="var">inv_generic_sem</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">inversion</span> <span class="id" title="var">H0</span>; <span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">eauto</span> 2 <span class="id" title="keyword">with</span> <span class="id" title="var">serial_intr_disable_invariantdb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<a class="idref" href="mcertikos.invariants.INVLemmaInterrupt.html#serial_intr_disable_preserves_tf"><span class="id" title="lemma">serial_intr_disable_preserves_tf</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H2</span>); <span class="id" title="tactic">intro</span> <span class="id" title="var">tmprw</span>; <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">tmprw</span>; <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">inversion</span> <span class="id" title="var">H0</span>; <span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">eauto</span> 2 <span class="id" title="keyword">with</span> <span class="id" title="var">serial_intr_disable_invariantdb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eauto</span> 2 <span class="id" title="keyword">with</span> <span class="id" title="var">serial_intr_disable_invariantdb</span>.<br/>
+&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="serial_intr_enable_inv"><span class="id" title="instance">serial_intr_enable_inv</span></a>: <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptManagement.html#serial_intr_enable_spec"><span class="id" title="definition">serial_intr_enable_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="var">inv_generic_sem</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">inversion</span> <span class="id" title="var">H0</span>; <span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">eauto</span> 2 <span class="id" title="keyword">with</span> <span class="id" title="var">serial_intr_enable_invariantdb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> (<a class="idref" href="mcertikos.invariants.INVLemmaInterrupt.html#serial_intr_enable_preserves_tf"><span class="id" title="lemma">serial_intr_enable_preserves_tf</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">H2</span>); <span class="id" title="tactic">intro</span> <span class="id" title="var">tmprw</span>; <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">tmprw</span>; <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">inversion</span> <span class="id" title="var">H0</span>; <span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">eauto</span> 2 <span class="id" title="keyword">with</span> <span class="id" title="var">serial_intr_enable_invariantdb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eauto</span> 2 <span class="id" title="keyword">with</span> <span class="id" title="var">serial_intr_enable_invariantdb</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="lmem_init_inv"><span class="id" title="instance">lmem_init_inv</span></a>: <span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.ObjPMM.html#lmem_init_spec"><span class="id" title="definition">lmem_init_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_simpl</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#low_level_invariant"><span class="id" title="record">low_level_invariant</span></a> <a class="idref" href="mcertikos.mm.MALH.html#high_level_invariant"><span class="id" title="record">high_level_invariant</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.clib.RealParams.html#real_nps_range"><span class="id" title="lemma">real_nps_range</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.invariants.INVLemmaContainer.html#AC_init_container_valid"><span class="id" title="lemma">AC_init_container_valid</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#real_valid_hlock_pool1"><span class="id" title="lemma">real_valid_hlock_pool1</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#real_valid_AT_log_pool_H"><span class="id" title="lemma">real_valid_AT_log_pool_H</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="setPG_inv"><span class="id" title="instance">setPG_inv</span></a>: <span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.ObjCPU.html#setPG0_spec"><span class="id" title="definition">setPG0_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_simpl_auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="set_at_c_inv"><span class="id" title="instance">set_at_c_inv</span></a>: <span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.ObjPMM.html#set_at_c0_spec"><span class="id" title="definition">set_at_c0_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_simpl_auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Section</span> <a name="WITHMEM.INV.PALLOC"><span class="id" title="section">PALLOC</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="lpalloc_high_level_inv"><span class="id" title="lemma">lpalloc_high_level_inv</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">d</span> <span class="id" title="var">d&acute;</span> <span class="id" title="var">i</span> <span class="id" title="var">n</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.objects.ObjPMM.html#lpalloc_spec"><span class="id" title="definition">lpalloc_spec</span></a> <a class="idref" href="mcertikos.mm.MALH.html#i"><span class="id" title="variable">i</span></a> <a class="idref" href="mcertikos.mm.MALH.html#d"><span class="id" title="variable">d</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><a class="idref" href="mcertikos.mm.MALH.html#d&acute;"><span class="id" title="variable">d&acute;</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <a class="idref" href="mcertikos.mm.MALH.html#n"><span class="id" title="variable">n</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MALH.html#high_level_invariant"><span class="id" title="record">high_level_invariant</span></a> <a class="idref" href="mcertikos.mm.MALH.html#d"><span class="id" title="variable">d</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.mm.MALH.html#high_level_invariant"><span class="id" title="record">high_level_invariant</span></a> <a class="idref" href="mcertikos.mm.MALH.html#d&acute;"><span class="id" title="variable">d&acute;</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="mcertikos.objects.ObjPMM.html#lpalloc_spec"><span class="id" title="definition">lpalloc_spec</span></a>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">subdestruct</span>; <span class="id" title="var">inv</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">subst</span>; <span class="id" title="tactic">eauto</span>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">inv</span> <span class="id" title="var">H0</span>; <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">Hdestruct2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaContainer.html#alloc_container_valid&acute;"><span class="id" title="lemma">alloc_container_valid&acute;</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#valid_hlock_pool1_gso"><span class="id" title="lemma">valid_hlock_pool1_gso</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#valid_AT_log_pool_H_n"><span class="id" title="lemma">valid_AT_log_pool_H_n</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">a0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">subst</span>; <span class="id" title="tactic">simpl</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>; <span class="id" title="tactic">congruence</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#valid_hlock_pool1_gso"><span class="id" title="lemma">valid_hlock_pool1_gso</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#valid_AT_log_pool_H_0"><span class="id" title="lemma">valid_AT_log_pool_H_0</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#valid_hlock_pool1_gso"><span class="id" title="lemma">valid_hlock_pool1_gso</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#valid_AT_log_pool_H_0&acute;"><span class="id" title="lemma">valid_AT_log_pool_H_0&acute;</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="lpalloc_low_level_inv"><span class="id" title="lemma">lpalloc_low_level_inv</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">d</span> <span class="id" title="var">d&acute;</span> <span class="id" title="var">i</span> <span class="id" title="var">n</span> <span class="id" title="var">n&acute;</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.objects.ObjPMM.html#lpalloc_spec"><span class="id" title="definition">lpalloc_spec</span></a> <a class="idref" href="mcertikos.mm.MALH.html#i"><span class="id" title="variable">i</span></a> <a class="idref" href="mcertikos.mm.MALH.html#d"><span class="id" title="variable">d</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><a class="idref" href="mcertikos.mm.MALH.html#d&acute;"><span class="id" title="variable">d&acute;</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <a class="idref" href="mcertikos.mm.MALH.html#n"><span class="id" title="variable">n</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.objects.AbstractDataType.html#low_level_invariant"><span class="id" title="record">low_level_invariant</span></a> <a class="idref" href="mcertikos.mm.MALH.html#n&acute;"><span class="id" title="variable">n&acute;</span></a> <a class="idref" href="mcertikos.mm.MALH.html#d"><span class="id" title="variable">d</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.objects.AbstractDataType.html#low_level_invariant"><span class="id" title="record">low_level_invariant</span></a> <a class="idref" href="mcertikos.mm.MALH.html#n&acute;"><span class="id" title="variable">n&acute;</span></a> <a class="idref" href="mcertikos.mm.MALH.html#d&acute;"><span class="id" title="variable">d&acute;</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="mcertikos.objects.ObjPMM.html#lpalloc_spec"><span class="id" title="definition">lpalloc_spec</span></a>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">subdestruct</span>; <span class="id" title="var">inv</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">subst</span>; <span class="id" title="tactic">eauto</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">inv</span> <span class="id" title="var">H0</span>; <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="lpalloc_kernel_mode"><span class="id" title="lemma">lpalloc_kernel_mode</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">d</span> <span class="id" title="var">d&acute;</span> <span class="id" title="var">i</span> <span class="id" title="var">n</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.objects.ObjPMM.html#lpalloc_spec"><span class="id" title="definition">lpalloc_spec</span></a> <a class="idref" href="mcertikos.mm.MALH.html#i"><span class="id" title="variable">i</span></a> <a class="idref" href="mcertikos.mm.MALH.html#d"><span class="id" title="variable">d</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><a class="idref" href="mcertikos.mm.MALH.html#d&acute;"><span class="id" title="variable">d&acute;</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <a class="idref" href="mcertikos.mm.MALH.html#n"><span class="id" title="variable">n</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="method">kernel_mode</span> <a class="idref" href="mcertikos.mm.MALH.html#d"><span class="id" title="variable">d</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="method">kernel_mode</span> <a class="idref" href="mcertikos.mm.MALH.html#d&acute;"><span class="id" title="variable">d&acute;</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="mcertikos.objects.ObjPMM.html#lpalloc_spec"><span class="id" title="definition">lpalloc_spec</span></a>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">subdestruct</span>; <span class="id" title="var">inv</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="lpalloc_inv"><span class="id" title="instance">lpalloc_inv</span></a>: <span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.ObjPMM.html#lpalloc_spec"><span class="id" title="definition">lpalloc_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_simpl&acute;</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.mm.MALH.html#lpalloc_low_level_inv"><span class="id" title="lemma">lpalloc_low_level_inv</span></a>; <span class="id" title="var">eassumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.mm.MALH.html#lpalloc_high_level_inv"><span class="id" title="lemma">lpalloc_high_level_inv</span></a>; <span class="id" title="var">eassumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.mm.MALH.html#lpalloc_kernel_mode"><span class="id" title="lemma">lpalloc_kernel_mode</span></a>; <span class="id" title="var">eassumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.mm.MALH.html#WITHMEM.INV.PALLOC"><span class="id" title="section">PALLOC</span></a>.<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="proc_create_postinit_inv"><span class="id" title="instance">proc_create_postinit_inv</span></a>: <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.ObjCPU.html#proc_create_postinit_spec"><span class="id" title="definition">proc_create_postinit_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_simpl</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#low_level_invariant"><span class="id" title="record">low_level_invariant</span></a> <a class="idref" href="mcertikos.mm.MALH.html#high_level_invariant"><span class="id" title="record">high_level_invariant</span></a>; <span class="id" title="tactic">eauto</span> 2.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.mm.MALH.html#WITHMEM.INV"><span class="id" title="section">INV</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="exec_loadex"><span class="id" title="definition">exec_loadex</span></a> {<span class="id" title="var">F</span> <span class="id" title="var">V</span>} := <a class="idref" href="mcertikos.flatmem.LoadStoreSem1.html#exec_loadex1"><span class="id" title="definition">exec_loadex1</span></a> (<span class="id" title="var">F</span> := <a class="idref" href="mcertikos.mm.MALH.html#F"><span class="id" title="variable">F</span></a>) (<span class="id" title="var">V</span> := <a class="idref" href="mcertikos.mm.MALH.html#V"><span class="id" title="variable">V</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="exec_storeex"><span class="id" title="definition">exec_storeex</span></a> {<span class="id" title="var">F</span> <span class="id" title="var">V</span>} := <a class="idref" href="mcertikos.flatmem.LoadStoreSem1.html#exec_storeex1"><span class="id" title="definition">exec_storeex1</span></a> (<span class="id" title="var">flatmem_store</span>:= <a class="idref" href="mcertikos.objects.ObjFlatMem.html#flatmem_store"><span class="id" title="definition">flatmem_store</span></a>) (<span class="id" title="var">F</span> := <a class="idref" href="mcertikos.mm.MALH.html#F"><span class="id" title="variable">F</span></a>) (<span class="id" title="var">V</span> := <a class="idref" href="mcertikos.mm.MALH.html#V"><span class="id" title="variable">V</span></a>).<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="page_copy_inv"><span class="id" title="instance">page_copy_inv</span></a>: <span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#page_copy0_spec"><span class="id" title="definition">page_copy0_spec</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_simpl</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#low_level_invariant"><span class="id" title="record">low_level_invariant</span></a> <a class="idref" href="mcertikos.mm.MALH.html#high_level_invariant"><span class="id" title="record">high_level_invariant</span></a>; <span class="id" title="tactic">eauto</span> 2.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#valid_hlock_pool1_gss&acute;"><span class="id" title="lemma">valid_hlock_pool1_gss&acute;</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#valid_AT_log_pool_H_gso"><span class="id" title="lemma">valid_AT_log_pool_H_gso</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.invariants.INVLemmaQLock.html#Shared2ID1_neq"><span class="id" title="lemma">Shared2ID1_neq</span></a> <span class="id" title="keyword">in</span> <span class="id" title="var">H0</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracle.html#Shared2ID1"><span class="id" title="definition">Shared2ID1</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="page_copy_back_inv"><span class="id" title="instance">page_copy_back_inv</span></a>: <span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#page_copy_back0_spec"><span class="id" title="definition">page_copy_back0_spec</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_simpl_auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="flatmem_store_inv"><span class="id" title="instance">flatmem_store_inv</span></a>: <a class="idref" href="mcertikos.flatmem.LoadStoreDef.html#FlatmemStoreInvariant"><span class="id" title="class">FlatmemStoreInvariant</span></a> (<span class="id" title="var">flatmem_store</span>:= <a class="idref" href="mcertikos.objects.ObjFlatMem.html#flatmem_store"><span class="id" title="definition">flatmem_store</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>; <span class="id" title="tactic">inversion</span> 1; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">functional</span> <span class="id" title="tactic">inversion</span> <span class="id" title="var">H0</span>; <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">functional</span> <span class="id" title="tactic">inversion</span> <span class="id" title="var">H1</span>; <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="fstore_inv"><span class="id" title="instance">fstore_inv</span></a>: <span class="id" title="class">PreservesInvariants</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#fstore0_spec"><span class="id" title="definition">fstore0_spec</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">preserves_invariants_simpl</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#low_level_invariant"><span class="id" title="record">low_level_invariant</span></a> <a class="idref" href="mcertikos.mm.MALH.html#high_level_invariant"><span class="id" title="record">high_level_invariant</span></a>; <span class="id" title="tactic">trivial</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">functional</span> <span class="id" title="tactic">inversion</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">subst</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="trapinfo_set_inv"><span class="id" title="instance">trapinfo_set_inv</span></a>: <a class="idref" href="mcertikos.flatmem.LoadStoreDef.html#TrapinfoSetInvariant"><span class="id" title="class">TrapinfoSetInvariant</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>; <span class="id" title="tactic">inversion</span> 1; <span class="id" title="tactic">intros</span>; <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab439"></a><h1 class="section">Layer Definition</h1>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="malh"><span class="id" title="definition">malh</span></a> : <span class="id" title="record">compatlayer</span> (<span class="id" title="definition">cdata</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#RData"><span class="id" title="record">RData</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.GlobIdent.html#fload"><span class="id" title="definition">fload</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#fload&acute;_spec"><span class="id" title="definition">fload&acute;_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#fstore"><span class="id" title="definition">fstore</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#fstore0_spec"><span class="id" title="definition">fstore0_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#page_copy"><span class="id" title="definition">page_copy</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#page_copy0_spec"><span class="id" title="definition">page_copy0_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#page_copy_back"><span class="id" title="definition">page_copy_back</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#page_copy_back0_spec"><span class="id" title="definition">page_copy_back0_spec</span></a><br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#vmxinfo_get"><span class="id" title="definition">vmxinfo_get</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjCPU.html#vmxinfo_get_spec"><span class="id" title="definition">vmxinfo_get_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#set_pg"><span class="id" title="definition">set_pg</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjCPU.html#setPG0_spec"><span class="id" title="definition">setPG0_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#set_cr3"><span class="id" title="definition">set_cr3</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#setCR3_compatsem"><span class="id" title="definition">setCR3_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#setCR30_spec"><span class="id" title="definition">setCR30_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#at_get_c"><span class="id" title="definition">at_get_c</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjPMM.html#get_at_c_spec"><span class="id" title="definition">get_at_c_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#at_set_c"><span class="id" title="definition">at_set_c</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjPMM.html#set_at_c0_spec"><span class="id" title="definition">set_at_c0_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#palloc"><span class="id" title="definition">palloc</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjPMM.html#lpalloc_spec"><span class="id" title="definition">lpalloc_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#mem_init"><span class="id" title="definition">mem_init</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjPMM.html#lmem_init_spec"><span class="id" title="definition">lmem_init_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#container_get_parent"><span class="id" title="definition">container_get_parent</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_get_parent_spec"><span class="id" title="definition">container_get_parent_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#container_get_nchildren"><span class="id" title="definition">container_get_nchildren</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_get_nchildren_spec"><span class="id" title="definition">container_get_nchildren_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#container_get_quota"><span class="id" title="definition">container_get_quota</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_get_quota_spec"><span class="id" title="definition">container_get_quota_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#container_get_usage"><span class="id" title="definition">container_get_usage</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_get_usage_spec"><span class="id" title="definition">container_get_usage_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#container_can_consume"><span class="id" title="definition">container_can_consume</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_can_consume_spec"><span class="id" title="definition">container_can_consume_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#container_split"><span class="id" title="definition">container_split</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_split_spec"><span class="id" title="definition">container_split_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#get_CPU_ID"><span class="id" title="definition">get_CPU_ID</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjMultiprocessor.html#get_CPU_ID_spec"><span class="id" title="definition">get_CPU_ID_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#get_curid"><span class="id" title="definition">get_curid</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjMultiprocessor.html#get_curid_spec"><span class="id" title="definition">get_curid_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#set_curid"><span class="id" title="definition">set_curid</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjMultiprocessor.html#set_curid_spec"><span class="id" title="definition">set_curid_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#set_curid_init"><span class="id" title="definition">set_curid_init</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjMultiprocessor.html#set_curid_init_spec"><span class="id" title="definition">set_curid_init_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#release_lock"><span class="id" title="definition">release_lock</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.MultiProcessorSemantics.html#primcall_release_lock_compatsem"><span class="id" title="definition">primcall_release_lock_compatsem</span></a> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#release_lock"><span class="id" title="definition">release_lock</span></a> <a class="idref" href="mcertikos.objects.ObjQLock.html#release_lock_spec1"><span class="id" title="abbreviation">release_lock_spec1</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#acquire_lock"><span class="id" title="definition">acquire_lock</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.MultiProcessorSemantics.html#primcall_acquire_lock_compatsem"><span class="id" title="definition">primcall_acquire_lock_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjQLock.html#acquire_lock_spec1"><span class="id" title="abbreviation">acquire_lock_spec1</span></a>          <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#cli"><span class="id" title="definition">cli</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptController.html#cli_spec"><span class="id" title="definition">cli_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#sti"><span class="id" title="definition">sti</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptController.html#sti_spec"><span class="id" title="definition">sti_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#serial_intr_disable"><span class="id" title="definition">serial_intr_disable</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptManagement.html#serial_intr_disable_spec"><span class="id" title="definition">serial_intr_disable_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#serial_intr_enable"><span class="id" title="definition">serial_intr_enable</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptManagement.html#serial_intr_enable_spec"><span class="id" title="definition">serial_intr_enable_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#serial_putc"><span class="id" title="definition">serial_putc</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.dev.ObjSerialDriver.html#serial_putc_spec"><span class="id" title="definition">serial_putc_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#cons_buf_read"><span class="id" title="definition">cons_buf_read</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.dev.ObjConsole.html#cons_buf_read_spec"><span class="id" title="definition">cons_buf_read_spec</span></a>      <br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#trap_in"><span class="id" title="definition">trap_in</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_general_compatsem"><span class="id" title="definition">primcall_general_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#trapin_spec"><span class="id" title="definition">trapin_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#trap_out"><span class="id" title="definition">trap_out</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_general_compatsem"><span class="id" title="definition">primcall_general_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#trapout0_spec"><span class="id" title="definition">trapout0_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#host_in"><span class="id" title="definition">host_in</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_general_compatsem"><span class="id" title="definition">primcall_general_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#hostin_spec"><span class="id" title="definition">hostin_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#host_out"><span class="id" title="definition">host_out</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_general_compatsem"><span class="id" title="definition">primcall_general_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#hostout_spec"><span class="id" title="definition">hostout_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#proc_create_postinit"><span class="id" title="definition">proc_create_postinit</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjCPU.html#proc_create_postinit_spec"><span class="id" title="definition">proc_create_postinit_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#trap_get"><span class="id" title="definition">trap_get</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_trap_info_get_compatsem"><span class="id" title="definition">primcall_trap_info_get_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#trap_info_get_spec"><span class="id" title="definition">trap_info_get_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#trap_set"><span class="id" title="definition">trap_set</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_trap_info_ret_compatsem"><span class="id" title="definition">primcall_trap_info_ret_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjCPU.html#trap_info_ret_spec"><span class="id" title="definition">trap_info_ret_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <span class="id" title="constructor">accessors</span> <span class="id" title="notation">↦</span> <span class="id" title="notation">{|</span> <span class="id" title="constructor">exec_load</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">@</span><span class="id" title="constructor">exec_loadex</span><span class="id" title="constructor">;</span> <span class="id" title="constructor">exec_store</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">@</span><span class="id" title="constructor">exec_storeex</span> <span class="id" title="notation">|}</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.mm.MALH.html#WITHMEM"><span class="id" title="section">WITHMEM</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

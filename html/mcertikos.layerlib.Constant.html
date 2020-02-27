@@ -1,0 +1,755 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.layerlib.Constant</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.layerlib.Constant</h1>
+
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+This file provide some <span class="inlinecode"><span class="id" title="var">constant</span></span> that will be used in the layer definitions and refinement proofs
+</div>
+<div class="code">
+<span class="id" title="keyword">Notation</span> <a name="num_proc"><span class="id" title="abbreviation">num_proc</span></a>:= 1024.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="TOTAL_CPU"><span class="id" title="abbreviation">TOTAL_CPU</span></a> := 8.<br/>
+<span class="id" title="keyword">Notation</span> <a name="NUM_VMS"><span class="id" title="abbreviation">NUM_VMS</span></a> := <a class="idref" href="mcertikos.layerlib.Constant.html#TOTAL_CPU"><span class="id" title="abbreviation">TOTAL_CPU</span></a>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="max_children"><span class="id" title="abbreviation">max_children</span></a> := <a class="idref" href="mcertikos.layerlib.Constant.html#TOTAL_CPU"><span class="id" title="abbreviation">TOTAL_CPU</span></a>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="READ_Q_START"><span class="id" title="abbreviation">READ_Q_START</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="MSG_Q_START"><span class="id" title="abbreviation">MSG_Q_START</span></a> := (<a class="idref" href="mcertikos.layerlib.Constant.html#READ_Q_START"><span class="id" title="abbreviation">READ_Q_START</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a3448b794f7a26d611ad36492b5d640b"><span class="id" title="notation">+</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#TOTAL_CPU"><span class="id" title="abbreviation">TOTAL_CPU</span></a>).<br/>
+<span class="id" title="keyword">Notation</span> <a name="SLEEP_Q_START"><span class="id" title="abbreviation">SLEEP_Q_START</span></a> := (<a class="idref" href="mcertikos.layerlib.Constant.html#MSG_Q_START"><span class="id" title="abbreviation">MSG_Q_START</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a3448b794f7a26d611ad36492b5d640b"><span class="id" title="notation">+</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#TOTAL_CPU"><span class="id" title="abbreviation">TOTAL_CPU</span></a>).<br/>
+<span class="id" title="keyword">Notation</span> <a name="num_cv"><span class="id" title="abbreviation">num_cv</span></a> := <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TDQ_SIZE"><span class="id" title="abbreviation">TDQ_SIZE</span></a> := (<a class="idref" href="mcertikos.layerlib.Constant.html#SLEEP_Q_START"><span class="id" title="abbreviation">SLEEP_Q_START</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a3448b794f7a26d611ad36492b5d640b"><span class="id" title="notation">+</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>).<br/>
+<span class="id" title="keyword">Notation</span> <a name="num_chan"><span class="id" title="abbreviation">num_chan</span></a>:= <a class="idref" href="mcertikos.layerlib.Constant.html#TDQ_SIZE"><span class="id" title="abbreviation">TDQ_SIZE</span></a>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="max_resource_size"><span class="id" title="abbreviation">max_resource_size</span></a> := 1.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Machine Configuration 
+</div>
+<div class="code">
+<span class="id" title="keyword">Notation</span> <a name="kern_low"><span class="id" title="abbreviation">kern_low</span></a>:= 262144.<br/>
+<span class="id" title="keyword">Notation</span> <a name="kern_high"><span class="id" title="abbreviation">kern_high</span></a>:= 983040.<br/>
+<span class="id" title="keyword">Notation</span> <a name="PgSize"><span class="id" title="abbreviation">PgSize</span></a>:= 4096.<br/>
+<span class="id" title="keyword">Notation</span> <a name="maxpage"><span class="id" title="abbreviation">maxpage</span></a>:= 1048576.<br/>
+<span class="id" title="keyword">Notation</span> <a name="one_k"><span class="id" title="abbreviation">one_k</span></a> := 1024.<br/>
+<span class="id" title="keyword">Notation</span> <a name="adr_max"><span class="id" title="abbreviation">adr_max</span></a> := 4294967296.<br/>
+<span class="id" title="keyword">Notation</span> <a name="adr_low"><span class="id" title="abbreviation">adr_low</span></a> := 1073741824.<br/>
+<span class="id" title="keyword">Notation</span> <a name="adr_high"><span class="id" title="abbreviation">adr_high</span></a> := 4026531840.<br/>
+<span class="id" title="keyword">Notation</span> <a name="MagicNumber"><span class="id" title="abbreviation">MagicNumber</span></a> := (<a class="idref" href="mcertikos.layerlib.Constant.html#maxpage"><span class="id" title="abbreviation">maxpage</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a3448b794f7a26d611ad36492b5d640b"><span class="id" title="notation">+</span></a> 1).<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="root_quota"><span class="id" title="abbreviation">root_quota</span></a> := 720896.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Page Table Permission
+</div>
+<div class="code">
+<span class="id" title="keyword">Notation</span> <a name="PT_PERM_UP"><span class="id" title="abbreviation">PT_PERM_UP</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="PT_PERM_P"><span class="id" title="abbreviation">PT_PERM_P</span></a> := 1. <span class="id" title="keyword">Notation</span> <a name="PT_PERM_PTKF"><span class="id" title="abbreviation">PT_PERM_PTKF</span></a> := 3. <span class="id" title="keyword">Notation</span> <a name="PT_PERM_PTKT"><span class="id" title="abbreviation">PT_PERM_PTKT</span></a> := 259. <span class="id" title="keyword">Notation</span> <a name="PT_PERM_PTU"><span class="id" title="abbreviation">PT_PERM_PTU</span></a> := 7. 
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="TSTATE_READY"><span class="id" title="abbreviation">TSTATE_READY</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TSTATE_RUN"><span class="id" title="abbreviation">TSTATE_RUN</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TSTATE_SLEEP"><span class="id" title="abbreviation">TSTATE_SLEEP</span></a> := 2.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TSTATE_DEAD"><span class="id" title="abbreviation">TSTATE_DEAD</span></a> := 3.<br/>
+<span class="id" title="keyword">Notation</span> <a name="NPTEPERM"><span class="id" title="abbreviation">NPTEPERM</span></a> := 7.<br/>
+<span class="id" title="keyword">Notation</span> <a name="NPDEPERM"><span class="id" title="abbreviation">NPDEPERM</span></a> := 39.<br/>
+<span class="id" title="keyword">Notation</span> <a name="EPTEPERM"><span class="id" title="abbreviation">EPTEPERM</span></a> := 7.<br/>
+<span class="id" title="keyword">Notation</span> <a name="EPDTEPERM"><span class="id" title="abbreviation">EPDTEPERM</span></a> := 39.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_V_SIZE"><span class="id" title="abbreviation">VMCB_V_SIZE</span></a> := 16.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_SIZE"><span class="id" title="abbreviation">VMCB_Z_SIZE</span></a> := 1008.<br/>
+<span class="id" title="keyword">Notation</span> <a name="XVMST_SIZE"><span class="id" title="abbreviation">XVMST_SIZE</span></a> := 6.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_EDI"><span class="id" title="abbreviation">U_EDI</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_ESI"><span class="id" title="abbreviation">U_ESI</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_EBP"><span class="id" title="abbreviation">U_EBP</span></a> := 2.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_OESP"><span class="id" title="abbreviation">U_OESP</span></a> := 3.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_EBX"><span class="id" title="abbreviation">U_EBX</span></a> := 4.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_EDX"><span class="id" title="abbreviation">U_EDX</span></a> := 5.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_ECX"><span class="id" title="abbreviation">U_ECX</span></a> := 6.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_EAX"><span class="id" title="abbreviation">U_EAX</span></a> := 7.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_ES"><span class="id" title="abbreviation">U_ES</span></a> := 8.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_DS"><span class="id" title="abbreviation">U_DS</span></a> := 9.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_TRAPNO"><span class="id" title="abbreviation">U_TRAPNO</span></a> := 10.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_ERR"><span class="id" title="abbreviation">U_ERR</span></a> := 11.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_EIP"><span class="id" title="abbreviation">U_EIP</span></a> := 12.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_CS"><span class="id" title="abbreviation">U_CS</span></a> := 13.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_EFLAGS"><span class="id" title="abbreviation">U_EFLAGS</span></a> := 14.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_ESP"><span class="id" title="abbreviation">U_ESP</span></a> := 15.<br/>
+<span class="id" title="keyword">Notation</span> <a name="U_SS"><span class="id" title="abbreviation">U_SS</span></a> := 16.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="UCTXT_SIZE"><span class="id" title="abbreviation">UCTXT_SIZE</span></a> := 17.<br/>
+<span class="id" title="keyword">Notation</span> <a name="STACK_TOP"><span class="id" title="abbreviation">STACK_TOP</span></a>:= (<span class="id" title="definition">Int.repr</span> (<a class="idref" href="mcertikos.layerlib.Constant.html#kern_high"><span class="id" title="abbreviation">kern_high</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#88e34ed7a73f02772126289867960764"><span class="id" title="notation">×</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#PgSize"><span class="id" title="abbreviation">PgSize</span></a>)).<br/>
+<span class="id" title="keyword">Notation</span> <a name="CPU_GDT_UDATA"><span class="id" title="abbreviation">CPU_GDT_UDATA</span></a> := (<span class="id" title="constructor">Vint</span> (<span class="id" title="definition">Int.repr</span> 35)).<br/>
+<span class="id" title="keyword">Notation</span> <a name="CPU_GDT_UCODE"><span class="id" title="abbreviation">CPU_GDT_UCODE</span></a> := (<span class="id" title="constructor">Vint</span> (<span class="id" title="definition">Int.repr</span> 27)).<br/>
+<span class="id" title="keyword">Notation</span> <a name="FL_IF"><span class="id" title="abbreviation">FL_IF</span></a> := (<span class="id" title="constructor">Vint</span> (<span class="id" title="definition">Int.repr</span> 512)).<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_INTCEPT_LO_OFFSET"><span class="id" title="abbreviation">VMCB_Z_INTCEPT_LO_OFFSET</span></a>     := 3.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_INTCEPT_HI_OFFSET"><span class="id" title="abbreviation">VMCB_Z_INTCEPT_HI_OFFSET</span></a>     := 4.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_GASID_OFFSET"><span class="id" title="abbreviation">VMCB_Z_GASID_OFFSET</span></a>          := 22.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_INT_CTL_OFFSET"><span class="id" title="abbreviation">VMCB_Z_INT_CTL_OFFSET</span></a>        := 24.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_INT_STATE_OFFSET"><span class="id" title="abbreviation">VMCB_Z_INT_STATE_OFFSET</span></a>      := 26.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_EXITCODE_LO_OFFSET"><span class="id" title="abbreviation">VMCB_Z_EXITCODE_LO_OFFSET</span></a>    := 28.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_EXITINFO1_LO_OFFSET"><span class="id" title="abbreviation">VMCB_Z_EXITINFO1_LO_OFFSET</span></a>   := 30.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_EXITINFO2_LO_OFFSET"><span class="id" title="abbreviation">VMCB_Z_EXITINFO2_LO_OFFSET</span></a>   := 32.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_EXITINTINFO_LO_OFFSET"><span class="id" title="abbreviation">VMCB_Z_EXITINTINFO_LO_OFFSET</span></a> := 34.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_EXITINTINFO_HI_OFFSET"><span class="id" title="abbreviation">VMCB_Z_EXITINTINFO_HI_OFFSET</span></a> := 35.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_NESTED_CTL_OFFSET"><span class="id" title="abbreviation">VMCB_Z_NESTED_CTL_OFFSET</span></a>     := 36.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_EVENTINJ_LO_OFFSET"><span class="id" title="abbreviation">VMCB_Z_EVENTINJ_LO_OFFSET</span></a>    := 42.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_EVENTINJ_HI_OFFSET"><span class="id" title="abbreviation">VMCB_Z_EVENTINJ_HI_OFFSET</span></a>    := 43.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_NEXT_RIP_LO_OFFSET"><span class="id" title="abbreviation">VMCB_Z_NEXT_RIP_LO_OFFSET</span></a>    := 50.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_ES_OFFSET"><span class="id" title="abbreviation">VMCB_Z_ES_OFFSET</span></a>             := 256.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_CS_OFFSET"><span class="id" title="abbreviation">VMCB_Z_CS_OFFSET</span></a>             := 260.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_SS_OFFSET"><span class="id" title="abbreviation">VMCB_Z_SS_OFFSET</span></a>             := 264.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_DS_OFFSET"><span class="id" title="abbreviation">VMCB_Z_DS_OFFSET</span></a>             := 268.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_FS_OFFSET"><span class="id" title="abbreviation">VMCB_Z_FS_OFFSET</span></a>             := 272.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_GS_OFFSET"><span class="id" title="abbreviation">VMCB_Z_GS_OFFSET</span></a>             := 276.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_GDTR_OFFSET"><span class="id" title="abbreviation">VMCB_Z_GDTR_OFFSET</span></a>           := 280.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_LDTR_OFFSET"><span class="id" title="abbreviation">VMCB_Z_LDTR_OFFSET</span></a>           := 284.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_IDTR_OFFSET"><span class="id" title="abbreviation">VMCB_Z_IDTR_OFFSET</span></a>           := 288.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_TR_OFFSET"><span class="id" title="abbreviation">VMCB_Z_TR_OFFSET</span></a>             := 292.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_EFER_LO_OFFSET"><span class="id" title="abbreviation">VMCB_Z_EFER_LO_OFFSET</span></a>        := 308.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_DR7_LO_OFFSET"><span class="id" title="abbreviation">VMCB_Z_DR7_LO_OFFSET</span></a>         := 344.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_DR6_LO_OFFSET"><span class="id" title="abbreviation">VMCB_Z_DR6_LO_OFFSET</span></a>         := 346.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_GPAT_LO_OFFSET"><span class="id" title="abbreviation">VMCB_Z_GPAT_LO_OFFSET</span></a>        := 410.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_Z_GPAT_HI_OFFSET"><span class="id" title="abbreviation">VMCB_Z_GPAT_HI_OFFSET</span></a>        := 411.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_V_CR4_LO_OFFSET"><span class="id" title="abbreviation">VMCB_V_CR4_LO_OFFSET</span></a>         := 338.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_V_CR3_LO_OFFSET"><span class="id" title="abbreviation">VMCB_V_CR3_LO_OFFSET</span></a>         := 340.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_V_CR0_LO_OFFSET"><span class="id" title="abbreviation">VMCB_V_CR0_LO_OFFSET</span></a>         := 342.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_V_RFLAGS_LO_OFFSET"><span class="id" title="abbreviation">VMCB_V_RFLAGS_LO_OFFSET</span></a>      := 348.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_V_RIP_LO_OFFSET"><span class="id" title="abbreviation">VMCB_V_RIP_LO_OFFSET</span></a>         := 350.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_V_RSP_LO_OFFSET"><span class="id" title="abbreviation">VMCB_V_RSP_LO_OFFSET</span></a>         := 374.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_V_RAX_LO_OFFSET"><span class="id" title="abbreviation">VMCB_V_RAX_LO_OFFSET</span></a>         := 382.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_V_CR2_LO_OFFSET"><span class="id" title="abbreviation">VMCB_V_CR2_LO_OFFSET</span></a>         := 400.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMEXIT_VINTR"><span class="id" title="abbreviation">VMEXIT_VINTR</span></a> := 96.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMEXIT_IOIO"><span class="id" title="abbreviation">VMEXIT_IOIO</span></a>  := 123.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMEXIT_NPF"><span class="id" title="abbreviation">VMEXIT_NPF</span></a>   := 1024.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_INTCEPT_VINT_SHIFT"><span class="id" title="abbreviation">VMCB_INTCEPT_VINT_SHIFT</span></a>    := 4.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_INT_CTL_VIRQ_SHIFT"><span class="id" title="abbreviation">VMCB_INT_CTL_VIRQ_SHIFT</span></a>    := 8.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_INT_CTL_IGN_TPR_SHIFT"><span class="id" title="abbreviation">VMCB_INT_CTL_IGN_TPR_SHIFT</span></a> := 20.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_EVENTINJ_VALID_SHIFT"><span class="id" title="abbreviation">VMCB_EVENTINJ_VALID_SHIFT</span></a>  := 31.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_EVENTINJ_EV_SHIFT"><span class="id" title="abbreviation">VMCB_EVENTINJ_EV_SHIFT</span></a>     := 11.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_EVENTINJ_TYPE_SHIFT"><span class="id" title="abbreviation">VMCB_EVENTINJ_TYPE_SHIFT</span></a>   := 8.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_EVENTINJ_TYPE_INTR"><span class="id" title="abbreviation">VMCB_EVENTINJ_TYPE_INTR</span></a>    := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_EVENTINJ_TYPE_EXCPT"><span class="id" title="abbreviation">VMCB_EVENTINJ_TYPE_EXCPT</span></a>   := 3.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_SEG_ATTR_SHIFT"><span class="id" title="abbreviation">VMCB_SEG_ATTR_SHIFT</span></a>        := 2.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_SEG_LIM_SHIFT"><span class="id" title="abbreviation">VMCB_SEG_LIM_SHIFT</span></a>         := 4.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCB_SEG_BASE_SHIFT"><span class="id" title="abbreviation">VMCB_SEG_BASE_SHIFT</span></a>        := 8.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_INTINFO_VALID_SHIFT"><span class="id" title="abbreviation">EXIT_INTINFO_VALID_SHIFT</span></a>   := 31.<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_INTINFO_TYPE_SHIFT"><span class="id" title="abbreviation">EXIT_INTINFO_TYPE_SHIFT</span></a>    := 8.<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_INTINFO_TYPE_MASK"><span class="id" title="abbreviation">EXIT_INTINFO_TYPE_MASK</span></a>     := (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.shiftl"><span class="id" title="definition">Z.shiftl</span></a> 7 <a class="idref" href="mcertikos.layerlib.Constant.html#EXIT_INTINFO_TYPE_SHIFT"><span class="id" title="abbreviation">EXIT_INTINFO_TYPE_SHIFT</span></a>).<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_INTINFO_TYPE_INTR"><span class="id" title="abbreviation">EXIT_INTINFO_TYPE_INTR</span></a>     := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_INTINFO_VECTOR_MASK"><span class="id" title="abbreviation">EXIT_INTINFO_VECTOR_MASK</span></a>   := 255.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="XVMST_EBX_OFFSET"><span class="id" title="abbreviation">XVMST_EBX_OFFSET</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="XVMST_ECX_OFFSET"><span class="id" title="abbreviation">XVMST_ECX_OFFSET</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="XVMST_EDX_OFFSET"><span class="id" title="abbreviation">XVMST_EDX_OFFSET</span></a> := 2.<br/>
+<span class="id" title="keyword">Notation</span> <a name="XVMST_ESI_OFFSET"><span class="id" title="abbreviation">XVMST_ESI_OFFSET</span></a> := 3.<br/>
+<span class="id" title="keyword">Notation</span> <a name="XVMST_EDI_OFFSET"><span class="id" title="abbreviation">XVMST_EDI_OFFSET</span></a> := 4.<br/>
+<span class="id" title="keyword">Notation</span> <a name="XVMST_EBP_OFFSET"><span class="id" title="abbreviation">XVMST_EBP_OFFSET</span></a> := 5.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_CS"><span class="id" title="abbreviation">G_CS</span></a>    := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_DS"><span class="id" title="abbreviation">G_DS</span></a>    := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_ES"><span class="id" title="abbreviation">G_ES</span></a>    := 2.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_FS"><span class="id" title="abbreviation">G_FS</span></a>    := 3.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_GS"><span class="id" title="abbreviation">G_GS</span></a>    := 4.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_SS"><span class="id" title="abbreviation">G_SS</span></a>    := 5.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_LDTR"><span class="id" title="abbreviation">G_LDTR</span></a>  := 6.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_TR"><span class="id" title="abbreviation">G_TR</span></a>    := 7.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_GDTR"><span class="id" title="abbreviation">G_GDTR</span></a>  := 8.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_IDTR"><span class="id" title="abbreviation">G_IDTR</span></a>  := 9.<br/>
+<span class="id" title="keyword">Notation</span> <a name="MAX_SEG"><span class="id" title="abbreviation">MAX_SEG</span></a> := 10.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_EAX"><span class="id" title="abbreviation">G_EAX</span></a>    := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_EBX"><span class="id" title="abbreviation">G_EBX</span></a>    := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_ECX"><span class="id" title="abbreviation">G_ECX</span></a>    := 2.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_EDX"><span class="id" title="abbreviation">G_EDX</span></a>    := 3.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_ESI"><span class="id" title="abbreviation">G_ESI</span></a>    := 4.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_EDI"><span class="id" title="abbreviation">G_EDI</span></a>    := 5.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_EBP"><span class="id" title="abbreviation">G_EBP</span></a>    := 6.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_ESP"><span class="id" title="abbreviation">G_ESP</span></a>    := 7.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_EIP"><span class="id" title="abbreviation">G_EIP</span></a>    := 8.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_EFLAGS"><span class="id" title="abbreviation">G_EFLAGS</span></a> := 9.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_CR0"><span class="id" title="abbreviation">G_CR0</span></a>    := 10.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_CR2"><span class="id" title="abbreviation">G_CR2</span></a>    := 11.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_CR3"><span class="id" title="abbreviation">G_CR3</span></a>    := 12.<br/>
+<span class="id" title="keyword">Notation</span> <a name="G_CR4"><span class="id" title="abbreviation">G_CR4</span></a>    := 13.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="sz32_mask"><span class="id" title="definition">sz32_mask</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.shiftl"><span class="id" title="definition">Z.shiftl</span></a> 1 6.<br/>
+<span class="id" title="keyword">Definition</span> <a name="sz16_mask"><span class="id" title="definition">sz16_mask</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.shiftl"><span class="id" title="definition">Z.shiftl</span></a> 1 5.<br/>
+<span class="id" title="keyword">Definition</span> <a name="sz8_mask"><span class="id" title="definition">sz8_mask</span></a>  := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.shiftl"><span class="id" title="definition">Z.shiftl</span></a> 1 4.<br/>
+<span class="id" title="keyword">Definition</span> <a name="rep_mask"><span class="id" title="definition">rep_mask</span></a>  := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.shiftl"><span class="id" title="definition">Z.shiftl</span></a> 1 3.<br/>
+<span class="id" title="keyword">Definition</span> <a name="str_mask"><span class="id" title="definition">str_mask</span></a>  := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.shiftl"><span class="id" title="definition">Z.shiftl</span></a> 1 2.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="in_mask"><span class="id" title="abbreviation">in_mask</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SZ8"><span class="id" title="abbreviation">SZ8</span></a>  := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SZ16"><span class="id" title="abbreviation">SZ16</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SZ32"><span class="id" title="abbreviation">SZ32</span></a> := 2.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="SHARED_MEM_READY"><span class="id" title="abbreviation">SHARED_MEM_READY</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SHARED_MEM_PEND"><span class="id" title="abbreviation">SHARED_MEM_PEND</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SHARED_MEM_DEAD"><span class="id" title="abbreviation">SHARED_MEM_DEAD</span></a> := 2.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="EPT_SIZE"><span class="id" title="abbreviation">EPT_SIZE</span></a>:= 8413184.<br/>
+<span class="id" title="keyword">Notation</span> <a name="GDT_OFFSET"><span class="id" title="abbreviation">GDT_OFFSET</span></a>:= 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TSS_OFFSET"><span class="id" title="abbreviation">TSS_OFFSET</span></a>:= 48.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="five_one_two"><span class="id" title="abbreviation">five_one_two</span></a> := 512.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_VPID"><span class="id" title="abbreviation">C_VMCS_VPID</span></a> := 0	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_ES_SELECTOR"><span class="id" title="abbreviation">C_VMCS_GUEST_ES_SELECTOR</span></a> := 2048	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_CS_SELECTOR"><span class="id" title="abbreviation">C_VMCS_GUEST_CS_SELECTOR</span></a> := 2050	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_SS_SELECTOR"><span class="id" title="abbreviation">C_VMCS_GUEST_SS_SELECTOR</span></a> := 2052	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_DS_SELECTOR"><span class="id" title="abbreviation">C_VMCS_GUEST_DS_SELECTOR</span></a> := 2054	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_FS_SELECTOR"><span class="id" title="abbreviation">C_VMCS_GUEST_FS_SELECTOR</span></a> := 2056	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_GS_SELECTOR"><span class="id" title="abbreviation">C_VMCS_GUEST_GS_SELECTOR</span></a> := 2058	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_LDTR_SELECTOR"><span class="id" title="abbreviation">C_VMCS_GUEST_LDTR_SELECTOR</span></a> := 2060	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_TR_SELECTOR"><span class="id" title="abbreviation">C_VMCS_GUEST_TR_SELECTOR</span></a> := 2062	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_ES_SELECTOR"><span class="id" title="abbreviation">C_VMCS_HOST_ES_SELECTOR</span></a> := 3072	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_CS_SELECTOR"><span class="id" title="abbreviation">C_VMCS_HOST_CS_SELECTOR</span></a> := 3074	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_SS_SELECTOR"><span class="id" title="abbreviation">C_VMCS_HOST_SS_SELECTOR</span></a> := 3076	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_DS_SELECTOR"><span class="id" title="abbreviation">C_VMCS_HOST_DS_SELECTOR</span></a> := 3078	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_FS_SELECTOR"><span class="id" title="abbreviation">C_VMCS_HOST_FS_SELECTOR</span></a> := 3080	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_GS_SELECTOR"><span class="id" title="abbreviation">C_VMCS_HOST_GS_SELECTOR</span></a> := 3082	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_TR_SELECTOR"><span class="id" title="abbreviation">C_VMCS_HOST_TR_SELECTOR</span></a> := 3084	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_IO_BITMAP_A"><span class="id" title="abbreviation">C_VMCS_IO_BITMAP_A</span></a> := 8192	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_IO_BITMAP_A_HI"><span class="id" title="abbreviation">C_VMCS_IO_BITMAP_A_HI</span></a> := 8193	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_IO_BITMAP_B"><span class="id" title="abbreviation">C_VMCS_IO_BITMAP_B</span></a> := 8194	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_IO_BITMAP_B_HI"><span class="id" title="abbreviation">C_VMCS_IO_BITMAP_B_HI</span></a> := 8195	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_MSR_BITMAP"><span class="id" title="abbreviation">C_VMCS_MSR_BITMAP</span></a> := 8196	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_MSR_BITMAP_HI"><span class="id" title="abbreviation">C_VMCS_MSR_BITMAP_HI</span></a> := 8197	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_EXIT_MSR_STORE"><span class="id" title="abbreviation">C_VMCS_EXIT_MSR_STORE</span></a> := 8198	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_EXIT_MSR_LOAD"><span class="id" title="abbreviation">C_VMCS_EXIT_MSR_LOAD</span></a> := 8200	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_ENTRY_MSR_LOAD"><span class="id" title="abbreviation">C_VMCS_ENTRY_MSR_LOAD</span></a> := 8202	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_EXECUTIVE_VMCS"><span class="id" title="abbreviation">C_VMCS_EXECUTIVE_VMCS</span></a> := 8204	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_TSC_OFFSET"><span class="id" title="abbreviation">C_VMCS_TSC_OFFSET</span></a> := 8208	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_VIRTUAL_APIC"><span class="id" title="abbreviation">C_VMCS_VIRTUAL_APIC</span></a> := 8210	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_APIC_ACCESS"><span class="id" title="abbreviation">C_VMCS_APIC_ACCESS</span></a> := 8212	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_EPTP"><span class="id" title="abbreviation">C_VMCS_EPTP</span></a> := 8218	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_EPTP_HI"><span class="id" title="abbreviation">C_VMCS_EPTP_HI</span></a> := 8219	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_PHYSICAL_ADDRESS"><span class="id" title="abbreviation">C_VMCS_GUEST_PHYSICAL_ADDRESS</span></a> := 9216	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_LINK_POINTER"><span class="id" title="abbreviation">C_VMCS_LINK_POINTER</span></a> := 10240	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_IA32_DEBUGCTL"><span class="id" title="abbreviation">C_VMCS_GUEST_IA32_DEBUGCTL</span></a> := 10242	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_IA32_PAT"><span class="id" title="abbreviation">C_VMCS_GUEST_IA32_PAT</span></a> := 10244	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_IA32_EFER"><span class="id" title="abbreviation">C_VMCS_GUEST_IA32_EFER</span></a> := 10246	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_IA32_PERF_GLOBAL_CTRL"><span class="id" title="abbreviation">C_VMCS_GUEST_IA32_PERF_GLOBAL_CTRL</span></a>  := 10248	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_PDPTE0"><span class="id" title="abbreviation">C_VMCS_GUEST_PDPTE0</span></a> := 10250	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_PDPTE1"><span class="id" title="abbreviation">C_VMCS_GUEST_PDPTE1</span></a> := 10252	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_PDPTE2"><span class="id" title="abbreviation">C_VMCS_GUEST_PDPTE2</span></a> := 10254	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_PDPTE3"><span class="id" title="abbreviation">C_VMCS_GUEST_PDPTE3</span></a> := 10256	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_IA32_PAT"><span class="id" title="abbreviation">C_VMCS_HOST_IA32_PAT</span></a> := 11264	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_IA32_EFER"><span class="id" title="abbreviation">C_VMCS_HOST_IA32_EFER</span></a> := 11266	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_IA32_PERF_GLOBAL_CTRL"><span class="id" title="abbreviation">C_VMCS_HOST_IA32_PERF_GLOBAL_CTRL</span></a> := 11268	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_PIN_BASED_CTLS"><span class="id" title="abbreviation">C_VMCS_PIN_BASED_CTLS</span></a> := 16384	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_PRI_PROC_BASED_CTLS"><span class="id" title="abbreviation">C_VMCS_PRI_PROC_BASED_CTLS</span></a> := 16386	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_EXCEPTION_BITMAP"><span class="id" title="abbreviation">C_VMCS_EXCEPTION_BITMAP</span></a> := 16388	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_PF_ERROR_MASK"><span class="id" title="abbreviation">C_VMCS_PF_ERROR_MASK</span></a> := 16390	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_PF_ERROR_MATCH"><span class="id" title="abbreviation">C_VMCS_PF_ERROR_MATCH</span></a> := 16392	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_CR3_TARGET_COUNT"><span class="id" title="abbreviation">C_VMCS_CR3_TARGET_COUNT</span></a> := 16394	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_EXIT_CTLS"><span class="id" title="abbreviation">C_VMCS_EXIT_CTLS</span></a> := 16396	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_EXIT_MSR_STORE_COUNT"><span class="id" title="abbreviation">C_VMCS_EXIT_MSR_STORE_COUNT</span></a> := 16398	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_EXIT_MSR_LOAD_COUNT"><span class="id" title="abbreviation">C_VMCS_EXIT_MSR_LOAD_COUNT</span></a> := 16400	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_ENTRY_CTLS"><span class="id" title="abbreviation">C_VMCS_ENTRY_CTLS</span></a> := 16402	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_ENTRY_MSR_LOAD_COUNT"><span class="id" title="abbreviation">C_VMCS_ENTRY_MSR_LOAD_COUNT</span></a> := 16404	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_ENTRY_INTR_INFO"><span class="id" title="abbreviation">C_VMCS_ENTRY_INTR_INFO</span></a> := 16406	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_ENTRY_EXCEPTION_ERROR"><span class="id" title="abbreviation">C_VMCS_ENTRY_EXCEPTION_ERROR</span></a> := 16408	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_ENTRY_INST_LENGTH"><span class="id" title="abbreviation">C_VMCS_ENTRY_INST_LENGTH</span></a> := 16410	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_TPR_THRESHOLD"><span class="id" title="abbreviation">C_VMCS_TPR_THRESHOLD</span></a> := 16412	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_SEC_PROC_BASED_CTLS"><span class="id" title="abbreviation">C_VMCS_SEC_PROC_BASED_CTLS</span></a> := 16414	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_PLE_GAP"><span class="id" title="abbreviation">C_VMCS_PLE_GAP</span></a> := 16416	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_PLE_WINDOW"><span class="id" title="abbreviation">C_VMCS_PLE_WINDOW</span></a> := 16418	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_INSTRUCTION_ERROR"><span class="id" title="abbreviation">C_VMCS_INSTRUCTION_ERROR</span></a> := 17408	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_EXIT_REASON"><span class="id" title="abbreviation">C_VMCS_EXIT_REASON</span></a> := 17410	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_EXIT_INTERRUPTION_INFO"><span class="id" title="abbreviation">C_VMCS_EXIT_INTERRUPTION_INFO</span></a> := 17412	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_EXIT_INTERRUPTION_ERROR"><span class="id" title="abbreviation">C_VMCS_EXIT_INTERRUPTION_ERROR</span></a> := 17414	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_IDT_VECTORING_INFO"><span class="id" title="abbreviation">C_VMCS_IDT_VECTORING_INFO</span></a> := 17416	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_IDT_VECTORING_ERROR"><span class="id" title="abbreviation">C_VMCS_IDT_VECTORING_ERROR</span></a> := 17418	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_EXIT_INSTRUCTION_LENGTH"><span class="id" title="abbreviation">C_VMCS_EXIT_INSTRUCTION_LENGTH</span></a> := 17420	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_EXIT_INSTRUCTION_INFO"><span class="id" title="abbreviation">C_VMCS_EXIT_INSTRUCTION_INFO</span></a> := 17422	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_ES_LIMIT"><span class="id" title="abbreviation">C_VMCS_GUEST_ES_LIMIT</span></a> := 18432	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_CS_LIMIT"><span class="id" title="abbreviation">C_VMCS_GUEST_CS_LIMIT</span></a> := 18434	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_SS_LIMIT"><span class="id" title="abbreviation">C_VMCS_GUEST_SS_LIMIT</span></a> := 18436	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_DS_LIMIT"><span class="id" title="abbreviation">C_VMCS_GUEST_DS_LIMIT</span></a> := 18438	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_FS_LIMIT"><span class="id" title="abbreviation">C_VMCS_GUEST_FS_LIMIT</span></a> := 18440	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_GS_LIMIT"><span class="id" title="abbreviation">C_VMCS_GUEST_GS_LIMIT</span></a> := 18442	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_LDTR_LIMIT"><span class="id" title="abbreviation">C_VMCS_GUEST_LDTR_LIMIT</span></a> := 18444	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_TR_LIMIT"><span class="id" title="abbreviation">C_VMCS_GUEST_TR_LIMIT</span></a> := 18446	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_GDTR_LIMIT"><span class="id" title="abbreviation">C_VMCS_GUEST_GDTR_LIMIT</span></a> := 18448	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_IDTR_LIMIT"><span class="id" title="abbreviation">C_VMCS_GUEST_IDTR_LIMIT</span></a> := 18450	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_ES_ACCESS_RIGHTS"><span class="id" title="abbreviation">C_VMCS_GUEST_ES_ACCESS_RIGHTS</span></a> := 18452	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_CS_ACCESS_RIGHTS"><span class="id" title="abbreviation">C_VMCS_GUEST_CS_ACCESS_RIGHTS</span></a> := 18454	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_SS_ACCESS_RIGHTS"><span class="id" title="abbreviation">C_VMCS_GUEST_SS_ACCESS_RIGHTS</span></a> := 18456	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_DS_ACCESS_RIGHTS"><span class="id" title="abbreviation">C_VMCS_GUEST_DS_ACCESS_RIGHTS</span></a> := 18458	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_FS_ACCESS_RIGHTS"><span class="id" title="abbreviation">C_VMCS_GUEST_FS_ACCESS_RIGHTS</span></a> := 18460	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_GS_ACCESS_RIGHTS"><span class="id" title="abbreviation">C_VMCS_GUEST_GS_ACCESS_RIGHTS</span></a> := 18462	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_LDTR_ACCESS_RIGHTS"><span class="id" title="abbreviation">C_VMCS_GUEST_LDTR_ACCESS_RIGHTS</span></a> := 18464	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_TR_ACCESS_RIGHTS"><span class="id" title="abbreviation">C_VMCS_GUEST_TR_ACCESS_RIGHTS</span></a> := 18466	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_INTERRUPTIBILITY"><span class="id" title="abbreviation">C_VMCS_GUEST_INTERRUPTIBILITY</span></a> := 18468	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_ACTIVITY"><span class="id" title="abbreviation">C_VMCS_GUEST_ACTIVITY</span></a> := 18470	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_SMBASE"><span class="id" title="abbreviation">C_VMCS_GUEST_SMBASE</span></a> := 18472	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_IA32_SYSENTER_CS"><span class="id" title="abbreviation">C_VMCS_GUEST_IA32_SYSENTER_CS</span></a> := 18474	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_PREEMPTION_TIMER_VALUE"><span class="id" title="abbreviation">C_VMCS_PREEMPTION_TIMER_VALUE</span></a> := 18478	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_IA32_SYSENTER_CS"><span class="id" title="abbreviation">C_VMCS_HOST_IA32_SYSENTER_CS</span></a> := 19456	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_CR0_MASK"><span class="id" title="abbreviation">C_VMCS_CR0_MASK</span></a> := 24576	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_CR4_MASK"><span class="id" title="abbreviation">C_VMCS_CR4_MASK</span></a> := 24578	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_CR0_SHADOW"><span class="id" title="abbreviation">C_VMCS_CR0_SHADOW</span></a> := 24580	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_CR4_SHADOW"><span class="id" title="abbreviation">C_VMCS_CR4_SHADOW</span></a> := 24582	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_CR3_TARGET0"><span class="id" title="abbreviation">C_VMCS_CR3_TARGET0</span></a> := 24584	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_CR3_TARGET1"><span class="id" title="abbreviation">C_VMCS_CR3_TARGET1</span></a> := 24586	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_CR3_TARGET2"><span class="id" title="abbreviation">C_VMCS_CR3_TARGET2</span></a> := 24588	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_CR3_TARGET3"><span class="id" title="abbreviation">C_VMCS_CR3_TARGET3</span></a> := 24590	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_EXIT_QUALIFICATION"><span class="id" title="abbreviation">C_VMCS_EXIT_QUALIFICATION</span></a> := 25600	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_IO_RCX"><span class="id" title="abbreviation">C_VMCS_IO_RCX</span></a> := 25602	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_IO_RSI"><span class="id" title="abbreviation">C_VMCS_IO_RSI</span></a> := 25604	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_IO_RDI"><span class="id" title="abbreviation">C_VMCS_IO_RDI</span></a> := 25606	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_IO_RIP"><span class="id" title="abbreviation">C_VMCS_IO_RIP</span></a> := 25608	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_LINEAR_ADDRESS"><span class="id" title="abbreviation">C_VMCS_GUEST_LINEAR_ADDRESS</span></a> := 25610	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_CR0"><span class="id" title="abbreviation">C_VMCS_GUEST_CR0</span></a> := 26624	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_CR3"><span class="id" title="abbreviation">C_VMCS_GUEST_CR3</span></a> := 26626	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_CR4"><span class="id" title="abbreviation">C_VMCS_GUEST_CR4</span></a> := 26628	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_ES_BASE"><span class="id" title="abbreviation">C_VMCS_GUEST_ES_BASE</span></a> := 26630	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_CS_BASE"><span class="id" title="abbreviation">C_VMCS_GUEST_CS_BASE</span></a> := 26632	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_SS_BASE"><span class="id" title="abbreviation">C_VMCS_GUEST_SS_BASE</span></a> := 26634	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_DS_BASE"><span class="id" title="abbreviation">C_VMCS_GUEST_DS_BASE</span></a> := 26636	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_FS_BASE"><span class="id" title="abbreviation">C_VMCS_GUEST_FS_BASE</span></a> := 26638	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_GS_BASE"><span class="id" title="abbreviation">C_VMCS_GUEST_GS_BASE</span></a> := 26640	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_LDTR_BASE"><span class="id" title="abbreviation">C_VMCS_GUEST_LDTR_BASE</span></a> := 26642	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_TR_BASE"><span class="id" title="abbreviation">C_VMCS_GUEST_TR_BASE</span></a> := 26644	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_GDTR_BASE"><span class="id" title="abbreviation">C_VMCS_GUEST_GDTR_BASE</span></a> := 26646	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_IDTR_BASE"><span class="id" title="abbreviation">C_VMCS_GUEST_IDTR_BASE</span></a> := 26648	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_DR7"><span class="id" title="abbreviation">C_VMCS_GUEST_DR7</span></a> := 26650	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_RSP"><span class="id" title="abbreviation">C_VMCS_GUEST_RSP</span></a> := 26652	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_RIP"><span class="id" title="abbreviation">C_VMCS_GUEST_RIP</span></a> := 26654	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_RFLAGS"><span class="id" title="abbreviation">C_VMCS_GUEST_RFLAGS</span></a> := 26656	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_PENDING_DBG_EXCEPTIONS"><span class="id" title="abbreviation">C_VMCS_GUEST_PENDING_DBG_EXCEPTIONS</span></a> := 26658	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_IA32_SYSENTER_ESP"><span class="id" title="abbreviation">C_VMCS_GUEST_IA32_SYSENTER_ESP</span></a> := 26660	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_GUEST_IA32_SYSENTER_EIP"><span class="id" title="abbreviation">C_VMCS_GUEST_IA32_SYSENTER_EIP</span></a> := 26662	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_CR0"><span class="id" title="abbreviation">C_VMCS_HOST_CR0</span></a> := 27648	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_CR3"><span class="id" title="abbreviation">C_VMCS_HOST_CR3</span></a> := 27650	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_CR4"><span class="id" title="abbreviation">C_VMCS_HOST_CR4</span></a> := 27652	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_FS_BASE"><span class="id" title="abbreviation">C_VMCS_HOST_FS_BASE</span></a> := 27654	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_GS_BASE"><span class="id" title="abbreviation">C_VMCS_HOST_GS_BASE</span></a> := 27656	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_TR_BASE"><span class="id" title="abbreviation">C_VMCS_HOST_TR_BASE</span></a> := 27658	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_GDTR_BASE"><span class="id" title="abbreviation">C_VMCS_HOST_GDTR_BASE</span></a> := 27660	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_IDTR_BASE"><span class="id" title="abbreviation">C_VMCS_HOST_IDTR_BASE</span></a> := 27662	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_IA32_SYSENTER_ESP"><span class="id" title="abbreviation">C_VMCS_HOST_IA32_SYSENTER_ESP</span></a> := 27664	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_IA32_SYSENTER_EIP"><span class="id" title="abbreviation">C_VMCS_HOST_IA32_SYSENTER_EIP</span></a> := 27666	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_RSP"><span class="id" title="abbreviation">C_VMCS_HOST_RSP</span></a> := 27668	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_VMCS_HOST_RIP"><span class="id" title="abbreviation">C_VMCS_HOST_RIP</span></a> := 27670	.<br/>
+<span class="id" title="keyword">Notation</span> <a name="MAX_INT_16"><span class="id" title="abbreviation">MAX_INT_16</span></a> := 65535.<br/>
+<span class="id" title="keyword">Notation</span> <a name="MAX_INT_32"><span class="id" title="abbreviation">MAX_INT_32</span></a> := 4294967296.<br/>
+<span class="id" title="keyword">Notation</span> <a name="MAX_INT_64"><span class="id" title="abbreviation">MAX_INT_64</span></a> := 18446744073709551616.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RAX"><span class="id" title="abbreviation">VMX_G_RAX</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RBX"><span class="id" title="abbreviation">VMX_G_RBX</span></a> := 8.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RCX"><span class="id" title="abbreviation">VMX_G_RCX</span></a> := 16.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RDX"><span class="id" title="abbreviation">VMX_G_RDX</span></a> := 24.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RSI"><span class="id" title="abbreviation">VMX_G_RSI</span></a> := 32.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RDI"><span class="id" title="abbreviation">VMX_G_RDI</span></a> := 40.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RBP"><span class="id" title="abbreviation">VMX_G_RBP</span></a> := 48.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RIP"><span class="id" title="abbreviation">VMX_G_RIP</span></a> := 56.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_CR2"><span class="id" title="abbreviation">VMX_G_CR2</span></a> := 64.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_DR0"><span class="id" title="abbreviation">VMX_G_DR0</span></a> := 68.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_DR1"><span class="id" title="abbreviation">VMX_G_DR1</span></a> := 72.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_DR2"><span class="id" title="abbreviation">VMX_G_DR2</span></a> := 76.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_DR3"><span class="id" title="abbreviation">VMX_G_DR3</span></a> := 80.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_DR6"><span class="id" title="abbreviation">VMX_G_DR6</span></a> := 84.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_ENTER_TSC0"><span class="id" title="abbreviation">VMX_ENTER_TSC0</span></a> := 88.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_ENTER_TSC1"><span class="id" title="abbreviation">VMX_ENTER_TSC1</span></a> := 92.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_EXIT_TSC0"><span class="id" title="abbreviation">VMX_EXIT_TSC0</span></a> := 96.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_EXIT_TSC1"><span class="id" title="abbreviation">VMX_EXIT_TSC1</span></a> := 100.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_VPID"><span class="id" title="abbreviation">VMX_VPID</span></a> := 104.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_EXIT_REASON"><span class="id" title="abbreviation">VMX_EXIT_REASON</span></a> := 108.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_EXIT_QUALIFICATION"><span class="id" title="abbreviation">VMX_EXIT_QUALIFICATION</span></a> := 112.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_PENDING_INTR"><span class="id" title="abbreviation">VMX_PENDING_INTR</span></a> := 120.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_LAUNCHED"><span class="id" title="abbreviation">VMX_LAUNCHED</span></a> := 124.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_FAILED"><span class="id" title="abbreviation">VMX_FAILED</span></a> := 128.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_HOST_EBP"><span class="id" title="abbreviation">VMX_HOST_EBP</span></a> := 132.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_HOST_EDI"><span class="id" title="abbreviation">VMX_HOST_EDI</span></a> := 136.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_HOST_EIP"><span class="id" title="abbreviation">VMX_HOST_EIP</span></a> := 140.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_STOPPED"><span class="id" title="abbreviation">VMX_STOPPED</span></a> := 144.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_VDISK_IDX"><span class="id" title="abbreviation">VMX_VDISK_IDX</span></a> := 148.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_Size"><span class="id" title="abbreviation">VMX_Size</span></a> := 152.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RAX&acute;"><span class="id" title="abbreviation">VMX_G_RAX&acute;</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RBX&acute;"><span class="id" title="abbreviation">VMX_G_RBX&acute;</span></a> := 2.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RCX&acute;"><span class="id" title="abbreviation">VMX_G_RCX&acute;</span></a> := 4.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RDX&acute;"><span class="id" title="abbreviation">VMX_G_RDX&acute;</span></a> := 6.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RSI&acute;"><span class="id" title="abbreviation">VMX_G_RSI&acute;</span></a> := 8.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RDI&acute;"><span class="id" title="abbreviation">VMX_G_RDI&acute;</span></a> := 10.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RBP&acute;"><span class="id" title="abbreviation">VMX_G_RBP&acute;</span></a> := 12.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_RIP&acute;"><span class="id" title="abbreviation">VMX_G_RIP&acute;</span></a> := 14.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_CR2&acute;"><span class="id" title="abbreviation">VMX_G_CR2&acute;</span></a> := 16.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_DR0&acute;"><span class="id" title="abbreviation">VMX_G_DR0&acute;</span></a> := 17.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_DR1&acute;"><span class="id" title="abbreviation">VMX_G_DR1&acute;</span></a> := 18.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_DR2&acute;"><span class="id" title="abbreviation">VMX_G_DR2&acute;</span></a> := 19.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_DR3&acute;"><span class="id" title="abbreviation">VMX_G_DR3&acute;</span></a> := 20.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_G_DR6&acute;"><span class="id" title="abbreviation">VMX_G_DR6&acute;</span></a> := 21.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_ENTER_TSC0&acute;"><span class="id" title="abbreviation">VMX_ENTER_TSC0&acute;</span></a> := 22.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_ENTER_TSC1&acute;"><span class="id" title="abbreviation">VMX_ENTER_TSC1&acute;</span></a> := 23.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_EXIT_TSC0&acute;"><span class="id" title="abbreviation">VMX_EXIT_TSC0&acute;</span></a> := 24.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_EXIT_TSC1&acute;"><span class="id" title="abbreviation">VMX_EXIT_TSC1&acute;</span></a> := 25.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_VPID&acute;"><span class="id" title="abbreviation">VMX_VPID&acute;</span></a> := 26.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_EXIT_REASON&acute;"><span class="id" title="abbreviation">VMX_EXIT_REASON&acute;</span></a> := 27.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_EXIT_QUALIFICATION&acute;"><span class="id" title="abbreviation">VMX_EXIT_QUALIFICATION&acute;</span></a> := 28.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_PENDING_INTR&acute;"><span class="id" title="abbreviation">VMX_PENDING_INTR&acute;</span></a> := 30.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_LAUNCHED&acute;"><span class="id" title="abbreviation">VMX_LAUNCHED&acute;</span></a> := 31.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_FAILED&acute;"><span class="id" title="abbreviation">VMX_FAILED&acute;</span></a> := 32.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_HOST_EBP&acute;"><span class="id" title="abbreviation">VMX_HOST_EBP&acute;</span></a> := 33.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_HOST_EDI&acute;"><span class="id" title="abbreviation">VMX_HOST_EDI&acute;</span></a> := 34.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_HOST_EIP&acute;"><span class="id" title="abbreviation">VMX_HOST_EIP&acute;</span></a> := 35.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_STOPPED&acute;"><span class="id" title="abbreviation">VMX_STOPPED&acute;</span></a> := 36.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_VDISK_IDX&acute;"><span class="id" title="abbreviation">VMX_VDISK_IDX&acute;</span></a> := 37.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_Size&acute;"><span class="id" title="abbreviation">VMX_Size&acute;</span></a> := 38.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_EAX"><span class="id" title="abbreviation">C_GUEST_EAX</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_EBX"><span class="id" title="abbreviation">C_GUEST_EBX</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_ECX"><span class="id" title="abbreviation">C_GUEST_ECX</span></a> := 2.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_EDX"><span class="id" title="abbreviation">C_GUEST_EDX</span></a> := 3.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_ESI"><span class="id" title="abbreviation">C_GUEST_ESI</span></a> := 4.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_EDI"><span class="id" title="abbreviation">C_GUEST_EDI</span></a> := 5.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_EBP"><span class="id" title="abbreviation">C_GUEST_EBP</span></a> := 6.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_ESP"><span class="id" title="abbreviation">C_GUEST_ESP</span></a> := 7.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_EIP"><span class="id" title="abbreviation">C_GUEST_EIP</span></a> := 8.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_EFLAGS"><span class="id" title="abbreviation">C_GUEST_EFLAGS</span></a> := 9.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_CR0"><span class="id" title="abbreviation">C_GUEST_CR0</span></a> := 10.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_CR2"><span class="id" title="abbreviation">C_GUEST_CR2</span></a> := 11.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_CR3"><span class="id" title="abbreviation">C_GUEST_CR3</span></a> := 12.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_CR4"><span class="id" title="abbreviation">C_GUEST_CR4</span></a> := 13.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_MAX_REG"><span class="id" title="abbreviation">C_GUEST_MAX_REG</span></a> := 14.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_CS"><span class="id" title="abbreviation">C_GUEST_CS</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_DS"><span class="id" title="abbreviation">C_GUEST_DS</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_ES"><span class="id" title="abbreviation">C_GUEST_ES</span></a> := 2.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_FS"><span class="id" title="abbreviation">C_GUEST_FS</span></a> := 3.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_GS"><span class="id" title="abbreviation">C_GUEST_GS</span></a> := 4.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_SS"><span class="id" title="abbreviation">C_GUEST_SS</span></a> := 5.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_LDTR"><span class="id" title="abbreviation">C_GUEST_LDTR</span></a> := 6.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_TR"><span class="id" title="abbreviation">C_GUEST_TR</span></a> := 7.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_GDTR"><span class="id" title="abbreviation">C_GUEST_GDTR</span></a> := 8.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_IDTR"><span class="id" title="abbreviation">C_GUEST_IDTR</span></a> := 9.<br/>
+<span class="id" title="keyword">Notation</span> <a name="C_GUEST_MAX_SEG_DESC"><span class="id" title="abbreviation">C_GUEST_MAX_SEG_DESC</span></a> := 10.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="MSR_VMX_BASIC"><span class="id" title="abbreviation">MSR_VMX_BASIC</span></a> := 1152. 
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="VM_VGA_LO"><span class="id" title="abbreviation">VM_VGA_LO</span></a> := 655360.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VM_VGA_HI"><span class="id" title="abbreviation">VM_VGA_HI</span></a> := 1703936.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_QUAL_IO_ONE_BYTE"><span class="id" title="abbreviation">EXIT_QUAL_IO_ONE_BYTE</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_QUAL_IO_TWO_BYTE"><span class="id" title="abbreviation">EXIT_QUAL_IO_TWO_BYTE</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_QUAL_IO_FOUR_BYTE"><span class="id" title="abbreviation">EXIT_QUAL_IO_FOUR_BYTE</span></a> := 4.<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_QUAL_IO_SIZE"><span class="id" title="abbreviation">EXIT_QUAL_IO_SIZE</span></a> := 7.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_QUAL_IO_OUT"><span class="id" title="abbreviation">EXIT_QUAL_IO_OUT</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_QUAL_IO_IN"><span class="id" title="abbreviation">EXIT_QUAL_IO_IN</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_QUAL_IO_DIR"><span class="id" title="abbreviation">EXIT_QUAL_IO_DIR</span></a> := 3.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_REASON_MASK"><span class="id" title="abbreviation">EXIT_REASON_MASK</span></a> := 65535. 
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="PROCBASED_INT_WINDOW_EXITING"><span class="id" title="abbreviation">PROCBASED_INT_WINDOW_EXITING</span></a> := 4.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCS_INTERRUPTION_INFO_VALID"><span class="id" title="abbreviation">VMCS_INTERRUPTION_INFO_VALID</span></a> := 2147483648. <span class="id" title="keyword">Notation</span> <a name="VMCS_INTERRUPTION_INFO_EV"><span class="id" title="abbreviation">VMCS_INTERRUPTION_INFO_EV</span></a> := 2048. 
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCS_INTERRUPTIBILITY_STI_BLOCKING"><span class="id" title="abbreviation">VMCS_INTERRUPTIBILITY_STI_BLOCKING</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCS_INTERRUPTIBILITY_MOVSS_BLOCKING"><span class="id" title="abbreviation">VMCS_INTERRUPTIBILITY_MOVSS_BLOCKING</span></a> := 2.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMCS_INTERRUPTIBILITY_STI_or_MOVSS_BLOCKING"><span class="id" title="abbreviation">VMCS_INTERRUPTIBILITY_STI_or_MOVSS_BLOCKING</span></a> := 3.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="CPU_GDT_KDATA"><span class="id" title="abbreviation">CPU_GDT_KDATA</span></a> := 16. <span class="id" title="keyword">Notation</span> <a name="CPU_GDT_KCODE"><span class="id" title="abbreviation">CPU_GDT_KCODE</span></a> := 8. <span class="id" title="keyword">Notation</span> <a name="CPU_GDT_TSS"><span class="id" title="abbreviation">CPU_GDT_TSS</span></a> := 40. 
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="MSR_IA32_SYSENTER_CS"><span class="id" title="abbreviation">MSR_IA32_SYSENTER_CS</span></a> := 372. <span class="id" title="keyword">Notation</span> <a name="MSR_IA32_SYSENTER_ESP"><span class="id" title="abbreviation">MSR_IA32_SYSENTER_ESP</span></a> := 373. <span class="id" title="keyword">Notation</span> <a name="MSR_IA32_SYSENTER_EIP"><span class="id" title="abbreviation">MSR_IA32_SYSENTER_EIP</span></a> := 374. <span class="id" title="keyword">Notation</span> <a name="MSR_PAT"><span class="id" title="abbreviation">MSR_PAT</span></a> := 631. <span class="id" title="keyword">Notation</span> <a name="MSR_IA32_PERF_GLOBAL_CTRL"><span class="id" title="abbreviation">MSR_IA32_PERF_GLOBAL_CTRL</span></a> := 911. <span class="id" title="keyword">Notation</span> <a name="MSR_EFER"><span class="id" title="abbreviation">MSR_EFER</span></a> := 3221225600. 
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="CR0_PE"><span class="id" title="abbreviation">CR0_PE</span></a> := 1. <span class="id" title="keyword">Notation</span> <a name="CR0_MP"><span class="id" title="abbreviation">CR0_MP</span></a> := 2. <span class="id" title="keyword">Notation</span> <a name="CR0_EM"><span class="id" title="abbreviation">CR0_EM</span></a> := 4. <span class="id" title="keyword">Notation</span> <a name="CR0_TS"><span class="id" title="abbreviation">CR0_TS</span></a> := 8. <span class="id" title="keyword">Notation</span> <a name="CR0_NE"><span class="id" title="abbreviation">CR0_NE</span></a> := 32. <span class="id" title="keyword">Notation</span> <a name="CR0_WP"><span class="id" title="abbreviation">CR0_WP</span></a> := 65536. <span class="id" title="keyword">Notation</span> <a name="CR0_AM"><span class="id" title="abbreviation">CR0_AM</span></a> := 262144. <span class="id" title="keyword">Notation</span> <a name="CR0_PG"><span class="id" title="abbreviation">CR0_PG</span></a> := 2147483648. 
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="v0x60000010"><span class="id" title="abbreviation">v0x60000010</span></a> := 1610612752. <span class="id" title="keyword">Notation</span> <a name="CR4_VMXE"><span class="id" title="abbreviation">CR4_VMXE</span></a> := 8192. <span class="id" title="keyword">Notation</span> <a name="v0x00000400"><span class="id" title="abbreviation">v0x00000400</span></a> := 1024. <span class="id" title="keyword">Notation</span> <a name="v0x7040600070406"><span class="id" title="abbreviation">v0x7040600070406</span></a> := 1974748653749254. <span class="id" title="keyword">Notation</span> <a name="v0xffffffffffffffff"><span class="id" title="abbreviation">v0xffffffffffffffff</span></a> := 18446744073709551615.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_QUAL_IO_REP"><span class="id" title="abbreviation">EXIT_QUAL_IO_REP</span></a> := 5.<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_QUAL_IO_STR"><span class="id" title="abbreviation">EXIT_QUAL_IO_STR</span></a> := 4.<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_REASON_ENTRY_FAIL"><span class="id" title="abbreviation">EXIT_REASON_ENTRY_FAIL</span></a> := 2147483648. <span class="id" title="keyword">Notation</span> <a name="C_EXIT_QUAL_IO_PORT"><span class="id" title="abbreviation">C_EXIT_QUAL_IO_PORT</span></a> := 65536.<br/>
+<span class="id" title="keyword">Notation</span> <a name="v0xffffffff"><span class="id" title="abbreviation">v0xffffffff</span></a> := 4294967295.<br/>
+<span class="id" title="keyword">Notation</span> <a name="v0xfff0"><span class="id" title="abbreviation">v0xfff0</span></a> := 65520.<br/>
+<span class="id" title="keyword">Notation</span> <a name="v0xffff0ff0"><span class="id" title="abbreviation">v0xffff0ff0</span></a> := 4294905840.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="EPT_NO_PERM"><span class="id" title="abbreviation">EPT_NO_PERM</span></a>:= 4294967288. <span class="id" title="keyword">Notation</span> <a name="EPT_ADDR_OFFSET_MASK"><span class="id" title="abbreviation">EPT_ADDR_OFFSET_MASK</span></a> := 4095.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="EPT_PG_IGNORE_PAT_or_PERM"><span class="id" title="abbreviation">EPT_PG_IGNORE_PAT_or_PERM</span></a>:= 71.<br/>
+<span class="id" title="keyword">Notation</span> <a name="EPT_ADDR_MASK"><span class="id" title="abbreviation">EPT_ADDR_MASK</span></a> := 4294963200. <span class="id" title="keyword">Notation</span> <a name="EPT_PG_MEMORY_TYPE"><span class="id" title="abbreviation">EPT_PG_MEMORY_TYPE</span></a> := 3.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="EPTP_pml4"><span class="id" title="abbreviation">EPTP_pml4</span></a> := 30.<br/>
+<span class="id" title="keyword">Notation</span> <a name="T_MCHK_SHIFT"><span class="id" title="abbreviation">T_MCHK_SHIFT</span></a> := 262144.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_INFO_VMX_ENABLED"><span class="id" title="abbreviation">VMX_INFO_VMX_ENABLED</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_INFO_PINBASED_CTLS"><span class="id" title="abbreviation">VMX_INFO_PINBASED_CTLS</span></a> := 2.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_INFO_PROCBASED_CTLS"><span class="id" title="abbreviation">VMX_INFO_PROCBASED_CTLS</span></a> := 3.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_INFO_PROCBASED_CTLS2"><span class="id" title="abbreviation">VMX_INFO_PROCBASED_CTLS2</span></a> := 4.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_INFO_EXIT_CTLS"><span class="id" title="abbreviation">VMX_INFO_EXIT_CTLS</span></a> := 5.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_INFO_ENTRY_CTLS"><span class="id" title="abbreviation">VMX_INFO_ENTRY_CTLS</span></a> := 6.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_INFO_CR0_ONES_MASK"><span class="id" title="abbreviation">VMX_INFO_CR0_ONES_MASK</span></a> := 7.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_INFO_CR0_ZEROS_MASK"><span class="id" title="abbreviation">VMX_INFO_CR0_ZEROS_MASK</span></a> := 8.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_INFO_CR4_ONES_MASK"><span class="id" title="abbreviation">VMX_INFO_CR4_ONES_MASK</span></a> := 9.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_INFO_CR4_ZEROS_MASK"><span class="id" title="abbreviation">VMX_INFO_CR4_ZEROS_MASK</span></a> := 10.<br/>
+<span class="id" title="keyword">Notation</span> <a name="VMX_INFO_VMX_REGION"><span class="id" title="abbreviation">VMX_INFO_VMX_REGION</span></a> := 11.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_SUCC"><span class="id" title="abbreviation">E_SUCC</span></a> := 0. <span class="id" title="keyword">Notation</span> <a name="E_MEM"><span class="id" title="abbreviation">E_MEM</span></a> := 1. <span class="id" title="keyword">Notation</span> <a name="E_IPC"><span class="id" title="abbreviation">E_IPC</span></a> := 2.<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_INVAL_CALLNR"><span class="id" title="abbreviation">E_INVAL_CALLNR</span></a> := 3. <span class="id" title="keyword">Notation</span> <a name="E_INVAL_ADDR"><span class="id" title="abbreviation">E_INVAL_ADDR</span></a> := 4. <span class="id" title="keyword">Notation</span> <a name="E_INVAL_PID"><span class="id" title="abbreviation">E_INVAL_PID</span></a> := 5. <span class="id" title="keyword">Notation</span> <a name="E_INVAL_REG"><span class="id" title="abbreviation">E_INVAL_REG</span></a> := 6.<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_INVAL_SEG"><span class="id" title="abbreviation">E_INVAL_SEG</span></a> := 7.<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_INVAL_EVENT"><span class="id" title="abbreviation">E_INVAL_EVENT</span></a> := 8.<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_INVAL_PORT"><span class="id" title="abbreviation">E_INVAL_PORT</span></a> := 9.<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_INVAL_HVM"><span class="id" title="abbreviation">E_INVAL_HVM</span></a> := 10.<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_INVAL_CHID"><span class="id" title="abbreviation">E_INVAL_CHID</span></a> := 11.<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_DISK_OP"><span class="id" title="abbreviation">E_DISK_OP</span></a> := 12. <span class="id" title="keyword">Notation</span> <a name="E_HVM_VMRUN"><span class="id" title="abbreviation">E_HVM_VMRUN</span></a> := 13.<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_HVM_MMAP"><span class="id" title="abbreviation">E_HVM_MMAP</span></a> := 14.<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_HVM_REG"><span class="id" title="abbreviation">E_HVM_REG</span></a> := 15.<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_HVM_SEG"><span class="id" title="abbreviation">E_HVM_SEG</span></a> := 16.<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_HVM_NEIP"><span class="id" title="abbreviation">E_HVM_NEIP</span></a> := 17.<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_HVM_INJECT"><span class="id" title="abbreviation">E_HVM_INJECT</span></a> := 18.<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_HVM_IOPORT"><span class="id" title="abbreviation">E_HVM_IOPORT</span></a> := 19.<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_HVM_MSR"><span class="id" title="abbreviation">E_HVM_MSR</span></a> := 20.<br/>
+<span class="id" title="keyword">Notation</span> <a name="E_HVM_INTRWIN"><span class="id" title="abbreviation">E_HVM_INTRWIN</span></a> := 21.<br/>
+<span class="id" title="keyword">Notation</span> <a name="MAX_ERROR_NR"><span class="id" title="abbreviation">MAX_ERROR_NR</span></a> := 22.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="v0xfffff000"><span class="id" title="abbreviation">v0xfffff000</span></a> := 4294963200.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_REASON_CR_ACCESS"><span class="id" title="abbreviation">EXIT_REASON_CR_ACCESS</span></a> := 28.<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_REASON_INOUT"><span class="id" title="abbreviation">EXIT_REASON_INOUT</span></a>:= 30.<br/>
+<span class="id" title="keyword">Notation</span> <a name="EXIT_REASON_EPT_FAULT"><span class="id" title="abbreviation">EXIT_REASON_EPT_FAULT</span></a>:= 48.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_puts"><span class="id" title="abbreviation">SYS_puts</span></a> := 0. <span class="id" title="keyword">Notation</span> <a name="SYS_ring0_spawn"><span class="id" title="abbreviation">SYS_ring0_spawn</span></a> := 1. <span class="id" title="keyword">Notation</span> <a name="SYS_spawn"><span class="id" title="abbreviation">SYS_spawn</span></a> := 2. <span class="id" title="keyword">Notation</span> <a name="SYS_yield"><span class="id" title="abbreviation">SYS_yield</span></a> := 3. <span class="id" title="keyword">Notation</span> <a name="SYS_sleep"><span class="id" title="abbreviation">SYS_sleep</span></a> := 4.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_disk_op"><span class="id" title="abbreviation">SYS_disk_op</span></a> := 5. <span class="id" title="keyword">Notation</span> <a name="SYS_disk_cap"><span class="id" title="abbreviation">SYS_disk_cap</span></a> := 6. <span class="id" title="keyword">Notation</span> <a name="SYS_is_chan_ready"><span class="id" title="abbreviation">SYS_is_chan_ready</span></a> := 7.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_send"><span class="id" title="abbreviation">SYS_send</span></a> := 8.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_recv"><span class="id" title="abbreviation">SYS_recv</span></a> := 9.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_get_tsc_per_ms"><span class="id" title="abbreviation">SYS_get_tsc_per_ms</span></a> := 10.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_run_vm"><span class="id" title="abbreviation">SYS_hvm_run_vm</span></a> := 11.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_get_exitinfo"><span class="id" title="abbreviation">SYS_hvm_get_exitinfo</span></a> := 12.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_mmap"><span class="id" title="abbreviation">SYS_hvm_mmap</span></a> := 13.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_set_seg"><span class="id" title="abbreviation">SYS_hvm_set_seg</span></a> := 14.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_set_reg"><span class="id" title="abbreviation">SYS_hvm_set_reg</span></a> := 15.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_get_reg"><span class="id" title="abbreviation">SYS_hvm_get_reg</span></a> := 16.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_get_next_eip"><span class="id" title="abbreviation">SYS_hvm_get_next_eip</span></a> := 17.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_inject_event"><span class="id" title="abbreviation">SYS_hvm_inject_event</span></a> := 18.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_check_int_shadow"><span class="id" title="abbreviation">SYS_hvm_check_int_shadow</span></a> := 19.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_check_pending_event"><span class="id" title="abbreviation">SYS_hvm_check_pending_event</span></a> := 20.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_intercept_int_window"><span class="id" title="abbreviation">SYS_hvm_intercept_int_window</span></a> := 21.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_get_tsc_offset"><span class="id" title="abbreviation">SYS_hvm_get_tsc_offset</span></a> := 22.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_set_tsc_offset"><span class="id" title="abbreviation">SYS_hvm_set_tsc_offset</span></a> := 23.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_handle_rdmsr"><span class="id" title="abbreviation">SYS_hvm_handle_rdmsr</span></a> := 24.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_handle_wrmsr"><span class="id" title="abbreviation">SYS_hvm_handle_wrmsr</span></a> := 25.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_get_quota"><span class="id" title="abbreviation">SYS_get_quota</span></a> := 26.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_getc"><span class="id" title="abbreviation">SYS_getc</span></a> := 27.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_putc"><span class="id" title="abbreviation">SYS_putc</span></a> := 28.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_hypervisor_mode"><span class="id" title="abbreviation">SYS_hvm_hypervisor_mode</span></a> := 29.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_getkey"><span class="id" title="abbreviation">SYS_getkey</span></a> := 30.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_vputc"><span class="id" title="abbreviation">SYS_vputc</span></a> := 31.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_cpuidx"><span class="id" title="abbreviation">SYS_cpuidx</span></a> := 32.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_get_pid"><span class="id" title="abbreviation">SYS_get_pid</span></a> := 33.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_get_cpu_nums"><span class="id" title="abbreviation">SYS_get_cpu_nums</span></a> := 34.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_get_cur_vconsole"><span class="id" title="abbreviation">SYS_hvm_get_cur_vconsole</span></a> := 35.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_set_cur_vconsole"><span class="id" title="abbreviation">SYS_hvm_set_cur_vconsole</span></a> := 36.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_save_vga_buffer"><span class="id" title="abbreviation">SYS_save_vga_buffer</span></a> := 37.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_restore_vga_buffer"><span class="id" title="abbreviation">SYS_restore_vga_buffer</span></a> := 38.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_stop_vm"><span class="id" title="abbreviation">SYS_hvm_stop_vm</span></a> := 39.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_set_seg1"><span class="id" title="abbreviation">SYS_hvm_set_seg1</span></a> := 40.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SYS_hvm_set_seg2"><span class="id" title="abbreviation">SYS_hvm_set_seg2</span></a> := 41.<br/>
+<span class="id" title="keyword">Notation</span> <a name="MAX_SYSCALL_NR"><span class="id" title="abbreviation">MAX_SYSCALL_NR</span></a> := 42. 
+<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Constants for serial port
+</div>
+<div class="code">
+<span class="id" title="keyword">Notation</span> <a name="PortCom1Base"><span class="id" title="abbreviation">PortCom1Base</span></a> := 1016.<br/>
+<span class="id" title="keyword">Notation</span> <a name="PortCom2Base"><span class="id" title="abbreviation">PortCom2Base</span></a> := 760.<br/>
+<span class="id" title="keyword">Notation</span> <a name="PortCom3Base"><span class="id" title="abbreviation">PortCom3Base</span></a> := 998.<br/>
+<span class="id" title="keyword">Notation</span> <a name="PortCom4Base"><span class="id" title="abbreviation">PortCom4Base</span></a> := 744.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="PortComRx"><span class="id" title="abbreviation">PortComRx</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="PortComTx"><span class="id" title="abbreviation">PortComTx</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="PortComDll"><span class="id" title="abbreviation">PortComDll</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="PortComDlm"><span class="id" title="abbreviation">PortComDlm</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="PortComIER"><span class="id" title="abbreviation">PortComIER</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="PortComIIR"><span class="id" title="abbreviation">PortComIIR</span></a> := 2.<br/>
+<span class="id" title="keyword">Notation</span> <a name="PortComFCR"><span class="id" title="abbreviation">PortComFCR</span></a> := 2.<br/>
+<span class="id" title="keyword">Notation</span> <a name="PortComLCR"><span class="id" title="abbreviation">PortComLCR</span></a> := 3.<br/>
+<span class="id" title="keyword">Notation</span> <a name="PortComMCR"><span class="id" title="abbreviation">PortComMCR</span></a> := 4.<br/>
+<span class="id" title="keyword">Notation</span> <a name="PortComLSR"><span class="id" title="abbreviation">PortComLSR</span></a> := 5.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="COM_LCR_DLAB"><span class="id" title="abbreviation">COM_LCR_DLAB</span></a> := 128. <span class="id" title="keyword">Notation</span> <a name="COM_DEFAULT_BAUDRATE"><span class="id" title="abbreviation">COM_DEFAULT_BAUDRATE</span></a> := 115200.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+For Console 
+</div>
+<div class="code">
+<span class="id" title="keyword">Notation</span> <a name="CONSOLE_BUFFER_SIZE"><span class="id" title="abbreviation">CONSOLE_BUFFER_SIZE</span></a> := 512.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+For Keyboard 
+</div>
+<div class="code">
+<span class="id" title="keyword">Notation</span> <a name="KEYBOARD_HW_BUF_SIZE"><span class="id" title="abbreviation">KEYBOARD_HW_BUF_SIZE</span></a> := 6%<span class="id" title="var">nat</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="KEYBOARD_SW_BUF_SIZE"><span class="id" title="abbreviation">KEYBOARD_SW_BUF_SIZE</span></a> := 512%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="KEY_ESC"><span class="id" title="abbreviation">KEY_ESC</span></a> := 0%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="KEY_F12"><span class="id" title="abbreviation">KEY_F12</span></a> := 87%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="KEY_PAD"><span class="id" title="abbreviation">KEY_PAD</span></a> := 88%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="KEY_APP"><span class="id" title="abbreviation">KEY_APP</span></a> := 93%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="KEY_PRINT_SCREEN"><span class="id" title="abbreviation">KEY_PRINT_SCREEN</span></a> := 98%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="KEY_PAUSE"><span class="id" title="abbreviation">KEY_PAUSE</span></a> := 99%<span class="id" title="var">Z</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="SCODE_DAUL_KEY"><span class="id" title="abbreviation">SCODE_DAUL_KEY</span></a>:= 224%<span class="id" title="var">Z</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+For I/O APIC
+</div>
+<div class="code">
+<span class="id" title="keyword">Notation</span> <a name="IRQ0"><span class="id" title="abbreviation">IRQ0</span></a> := 32%<span class="id" title="var">Z</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="IOAPIC_ID"><span class="id" title="abbreviation">IOAPIC_ID</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="IOAPIC_VER"><span class="id" title="abbreviation">IOAPIC_VER</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="IOAPIC_TABLE_BASE"><span class="id" title="abbreviation">IOAPIC_TABLE_BASE</span></a> := 16.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+For LAPIC
+</div>
+<div class="code">
+<span class="id" title="keyword">Notation</span> <a name="LAPIC_IDX_TPR"><span class="id" title="abbreviation">LAPIC_IDX_TPR</span></a> := 32.<br/>
+<span class="id" title="keyword">Notation</span> <a name="LAPIC_IDX_EOI"><span class="id" title="abbreviation">LAPIC_IDX_EOI</span></a> := 44.<br/>
+<span class="id" title="keyword">Notation</span> <a name="LAPIC_IDX_SVR"><span class="id" title="abbreviation">LAPIC_IDX_SVR</span></a> := 60.<br/>
+<span class="id" title="keyword">Notation</span> <a name="LAPIC_IDX_DFR"><span class="id" title="abbreviation">LAPIC_IDX_DFR</span></a> := 56.<br/>
+<span class="id" title="keyword">Notation</span> <a name="LAPIC_IDX_LDR"><span class="id" title="abbreviation">LAPIC_IDX_LDR</span></a> := 52.<br/>
+<span class="id" title="keyword">Notation</span> <a name="LAPIC_IDX_ESR"><span class="id" title="abbreviation">LAPIC_IDX_ESR</span></a> := 160.<br/>
+<span class="id" title="keyword">Notation</span> <a name="LAPIC_IDX_LVT_PMC"><span class="id" title="abbreviation">LAPIC_IDX_LVT_PMC</span></a> := 208.<br/>
+<span class="id" title="keyword">Notation</span> <a name="LAPIC_IDX_LVT_LINT0"><span class="id" title="abbreviation">LAPIC_IDX_LVT_LINT0</span></a> := 212.<br/>
+<span class="id" title="keyword">Notation</span> <a name="LAPIC_IDX_LVT_LINT1"><span class="id" title="abbreviation">LAPIC_IDX_LVT_LINT1</span></a> := 216.<br/>
+<span class="id" title="keyword">Notation</span> <a name="LAPIC_IDX_ERROR"><span class="id" title="abbreviation">LAPIC_IDX_ERROR</span></a> := 220.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="INTR_DISABLE_REC_MAX"><span class="id" title="abbreviation">INTR_DISABLE_REC_MAX</span></a> := 100%<span class="id" title="var">nat</span>.<br/>
+<span class="id" title="keyword">Notation</span> <a name="INTR_ENABLE_REC_MAX"><span class="id" title="abbreviation">INTR_ENABLE_REC_MAX</span></a> := 100%<span class="id" title="var">nat</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+For trap numbers in certikos
+</div>
+<div class="code">
+<span class="id" title="keyword">Notation</span> <a name="TRAPNO_EXCEPTIONS_BEGIN"><span class="id" title="abbreviation">TRAPNO_EXCEPTIONS_BEGIN</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TRAPNO_EXCEPTIONS_END"><span class="id" title="abbreviation">TRAPNO_EXCEPTIONS_END</span></a> := 30.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TRAPNO_IOAPIC_BEGIN"><span class="id" title="abbreviation">TRAPNO_IOAPIC_BEGIN</span></a> := 32.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TRAPNO_IOAPIC_END"><span class="id" title="abbreviation">TRAPNO_IOAPIC_END</span></a> := 55.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TRAPNO_SYSCALL"><span class="id" title="abbreviation">TRAPNO_SYSCALL</span></a> := 56.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TRAPNO_CMCI"><span class="id" title="abbreviation">TRAPNO_CMCI</span></a> := 57.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TRAPNO_MSI_BEGIN"><span class="id" title="abbreviation">TRAPNO_MSI_BEGIN</span></a> := 72.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TRAPNO_PASSTHROUGH"><span class="id" title="abbreviation">TRAPNO_PASSTHROUGH</span></a> := 112.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TRAPNO_DEFAULT"><span class="id" title="abbreviation">TRAPNO_DEFAULT</span></a> := 254.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TRAPNO_MAX"><span class="id" title="abbreviation">TRAPNO_MAX</span></a> := 256.<br/>
+
+<br/>
+<span class="id" title="keyword">Notation</span> <a name="MAX_IRQ_NUM"><span class="id" title="abbreviation">MAX_IRQ_NUM</span></a> := 257%<span class="id" title="var">nat</span>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

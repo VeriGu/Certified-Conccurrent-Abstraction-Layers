@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.conlib.conmtlib.SingleAbstractDataType</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.conlib.conmtlib.SingleAbstractDataType</h1>
+
+<div class="code">
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Maps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatLayers</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Class</span> <a name="SingleData"><span class="id" title="record">SingleData</span></a> :=<br/>
+&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="dshare"><span class="id" title="projection">dshare</span></a>: <span class="id" title="keyword">Type</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="init_dshare"><span class="id" title="projection">init_dshare</span></a>: <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#dshare"><span class="id" title="method">dshare</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="processor_id"><span class="id" title="projection">processor_id</span></a> : <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#dshare"><span class="id" title="method">dshare</span></a> → <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="proc_id"><span class="id" title="projection">proc_id</span></a>: <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#dshare"><span class="id" title="method">dshare</span></a> → <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="dproc"><span class="id" title="projection">dproc</span></a>: <span class="id" title="keyword">Type</span>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="main_init_dproc"><span class="id" title="projection">main_init_dproc</span></a>: <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#dproc"><span class="id" title="method">dproc</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="nomain_init_dproc"><span class="id" title="projection">nomain_init_dproc</span></a>: <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#dproc"><span class="id" title="method">dproc</span></a><br/>
+&nbsp;&nbsp;}.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="WithData"><span class="id" title="section">WithData</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Context</span> `{<span class="id" title="var">single_data</span>: <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#SingleData"><span class="id" title="class">SingleData</span></a>}.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="EData"><span class="id" title="definition">EData</span></a> := <span class="id" title="definition">ZMap.t</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#dproc"><span class="id" title="method">dproc</span></a>).<br/>
+<span class="id" title="keyword">Definition</span> <a name="CData"><span class="id" title="definition">CData</span></a> := <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#dshare"><span class="id" title="method">dshare</span></a> <span class="id" title="notation">×</span> <span class="id" title="definition">ZMap.t</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#dproc"><span class="id" title="method">dproc</span></a>).<br/>
+<span class="id" title="keyword">Definition</span> <a name="PData"><span class="id" title="definition">PData</span></a> := <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#dshare"><span class="id" title="method">dshare</span></a> <span class="id" title="notation">×</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#dproc"><span class="id" title="method">dproc</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#WithData"><span class="id" title="section">WithData</span></a>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

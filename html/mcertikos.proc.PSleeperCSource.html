@@ -1,0 +1,628 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.proc.PSleeperCSource</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.proc.PSleeperCSource</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">AST</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Cop</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Clight</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#"><span class="id" title="library">CDataTypes</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Ctypes</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<pre>
+#define num_proc 1024
+#define num_chan 266137
+
+#define TSTATE_READY 0
+#define TSTATE_RUN 1
+#define TSTATE_SLEEP 2
+#define TSTATE_DEAD 3
+
+struct TCB_node{
+    unsigned int state;
+    unsigned int cpu_id;
+    unsigned int prev;
+    unsigned int next;
+};
+
+struct TDQ_node{
+    unsigned int head;
+    unsigned int tail;
+};
+
+struct TCB{
+    struct TCB_node TCB_pool[num_proc];
+    struct TDQ_node TDQ_pool[num_chan];
+};
+
+extern struct TCB TCBPool_LOC;
+
+void
+tcb_init(unsigned int proc_index)
+{
+    TCBPool_LOC.TCB_pool[proc_index].state = TSTATE_DEAD;
+    TCBPool_LOC.TCB_pool[proc_index].cpu_id = 0;
+    TCBPool_LOC.TCB_pool[proc_index].prev = num_proc;
+    TCBPool_LOC.TCB_pool[proc_index].next = num_proc;
+}
+
+void
+tdq_init(unsigned int chan_index)
+{
+    TCBPool_LOC.TDQ_pool[chan_index].head = num_proc;
+    TCBPool_LOC.TDQ_pool[chan_index].tail = num_proc;
+}
+
+unsigned int
+tcb_get_state(unsigned int proc_index)
+{
+    return TCBPool_LOC.TCB_pool[proc_index].state;
+}
+
+void
+tcb_set_state(unsigned int proc_index, unsigned int state)
+{
+    TCBPool_LOC.TCB_pool[proc_index].state = state;
+}
+
+unsigned int
+tcb_get_CPU_ID_state(unsigned int proc_index)
+{
+    return TCBPool_LOC.TCB_pool[proc_index].cpu_id;
+}
+
+void
+tcb_set_CPU_ID_state(unsigned int proc_index, unsigned int cpu_id)
+{
+    TCBPool_LOC.TCB_pool[proc_index].cpu_id = cpu_id;
+}
+
+unsigned int
+tcb_get_prev(unsigned int proc_index)
+{
+    return TCBPool_LOC.TCB_pool[proc_index].prev;
+}
+
+void
+tcb_set_prev(unsigned int proc_index, unsigned int prev)
+{
+    TCBPool_LOC.TCB_pool[proc_index].prev = prev;
+}
+
+unsigned int
+tcb_get_next(unsigned int proc_index)
+{
+    return TCBPool_LOC.TCB_pool[proc_index].next;
+}
+
+void
+tcb_set_next(unsigned int proc_index, unsigned int next)
+{
+    TCBPool_LOC.TCB_pool[proc_index].next = next;
+}
+
+unsigned int
+tdq_get_head(unsigned int chan_index)
+{
+    return TCBPool_LOC.TDQ_pool[chan_index].head;
+}
+
+void
+tdq_set_head(unsigned int chan_index, unsigned int head)
+{
+    TCBPool_LOC.TDQ_pool[chan_index].head = head;
+}
+
+unsigned int
+tdq_get_tail(unsigned int chan_index)
+{
+    return TCBPool_LOC.TDQ_pool[chan_index].tail;
+}
+
+void
+tdq_set_tail(unsigned int chan_index, unsigned int tail)
+{
+    TCBPool_LOC.TDQ_pool[chan_index].tail = tail;
+}
+</pre>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Notation</span> <a name="TSTATE_READY"><span class="id" title="abbreviation">TSTATE_READY</span></a> := 0.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TSTATE_RUN"><span class="id" title="abbreviation">TSTATE_RUN</span></a> := 1.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TSTATE_SLEEP"><span class="id" title="abbreviation">TSTATE_SLEEP</span></a> := 2.<br/>
+<span class="id" title="keyword">Notation</span> <a name="TSTATE_DEAD"><span class="id" title="abbreviation">TSTATE_DEAD</span></a> := 3.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="_proc_index"><span class="id" title="definition">_proc_index</span></a> : <span class="id" title="definition">ident</span> := 10%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="_chan_index"><span class="id" title="definition">_chan_index</span></a> : <span class="id" title="definition">ident</span> := 11%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="_state"><span class="id" title="definition">_state</span></a> : <span class="id" title="definition">ident</span> := 12%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="_cpu_id"><span class="id" title="definition">_cpu_id</span></a> : <span class="id" title="definition">ident</span> := 13%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="_prev"><span class="id" title="definition">_prev</span></a> : <span class="id" title="definition">ident</span> := 14%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="_next"><span class="id" title="definition">_next</span></a> :<span class="id" title="definition">ident</span> := 15%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="_head"><span class="id" title="definition">_head</span></a> : <span class="id" title="definition">ident</span> := 16%<span class="id" title="var">positive</span>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="_tail"><span class="id" title="definition">_tail</span></a> : <span class="id" title="definition">ident</span> := 17%<span class="id" title="var">positive</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+tcb_init function 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_init_body"><span class="id" title="definition">f_tcb_init_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TCB_pool"><span class="id" title="abbreviation">TCB_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_proc_index"><span class="id" title="definition">_proc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#state"><span class="id" title="abbreviation">state</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#TSTATE_DEAD"><span class="id" title="abbreviation">TSTATE_DEAD</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TCB_pool"><span class="id" title="abbreviation">TCB_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_proc_index"><span class="id" title="definition">_proc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#cpu_id"><span class="id" title="abbreviation">cpu_id</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> 0) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TCB_pool"><span class="id" title="abbreviation">TCB_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_proc_index"><span class="id" title="definition">_proc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#prev"><span class="id" title="abbreviation">prev</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TCB_pool"><span class="id" title="abbreviation">TCB_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_proc_index"><span class="id" title="definition">_proc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#next"><span class="id" title="abbreviation">next</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_init"><span class="id" title="definition">f_tcb_init</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_proc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_tcb_init_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+tdq_init function 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tdq_init_body"><span class="id" title="definition">f_tdq_init_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Ssequence</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TDQ_pool"><span class="id" title="abbreviation">TDQ_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_chan_index"><span class="id" title="definition">_chan_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#head"><span class="id" title="abbreviation">head</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TDQ_pool"><span class="id" title="abbreviation">TDQ_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_chan_index"><span class="id" title="definition">_chan_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tail"><span class="id" title="abbreviation">tail</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Econst_int</span> (<span class="id" title="definition">Int.repr</span> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tint"><span class="id" title="abbreviation">tint</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tdq_init"><span class="id" title="definition">f_tdq_init</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chan_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_tdq_init_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+tcb_get_state 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_get_state_body"><span class="id" title="definition">f_tcb_get_state_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TCB_pool"><span class="id" title="abbreviation">TCB_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_proc_index"><span class="id" title="definition">_proc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#state"><span class="id" title="abbreviation">state</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_get_state"><span class="id" title="definition">f_tcb_get_state</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_proc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_tcb_get_state_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+tcb_set_state function  
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_set_state_body"><span class="id" title="definition">f_tcb_set_state_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TCB_pool"><span class="id" title="abbreviation">TCB_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_proc_index"><span class="id" title="definition">_proc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#state"><span class="id" title="abbreviation">state</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_state"><span class="id" title="definition">_state</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_set_state"><span class="id" title="definition">f_tcb_set_state</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_proc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_state</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_tcb_set_state_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+tcb_get_CPU_ID_state function 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_get_CPU_ID_state_body"><span class="id" title="definition">f_tcb_get_CPU_ID_state_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TCB_pool"><span class="id" title="abbreviation">TCB_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_proc_index"><span class="id" title="definition">_proc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#cpu_id"><span class="id" title="abbreviation">cpu_id</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_get_CPU_ID_state"><span class="id" title="definition">f_tcb_get_CPU_ID_state</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_proc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_tcb_get_CPU_ID_state_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+tcb_set_CPU_ID_state function 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_set_CPU_ID_state_body"><span class="id" title="definition">f_tcb_set_CPU_ID_state_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TCB_pool"><span class="id" title="abbreviation">TCB_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_proc_index"><span class="id" title="definition">_proc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#cpu_id"><span class="id" title="abbreviation">cpu_id</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_cpu_id"><span class="id" title="definition">_cpu_id</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_set_CPU_ID_state"><span class="id" title="definition">f_tcb_set_CPU_ID_state</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_proc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_cpu_id</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_tcb_set_CPU_ID_state_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+tcb_get_prev function 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_get_prev_body"><span class="id" title="definition">f_tcb_get_prev_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TCB_pool"><span class="id" title="abbreviation">TCB_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_proc_index"><span class="id" title="definition">_proc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#prev"><span class="id" title="abbreviation">prev</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_get_prev"><span class="id" title="definition">f_tcb_get_prev</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_proc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_tcb_get_prev_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+tcb_set_prev function 
+</div>
+<div class="code">
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_set_prev_body"><span class="id" title="definition">f_tcb_set_prev_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TCB_pool"><span class="id" title="abbreviation">TCB_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_proc_index"><span class="id" title="definition">_proc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#prev"><span class="id" title="abbreviation">prev</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_prev"><span class="id" title="definition">_prev</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_set_prev"><span class="id" title="definition">f_tcb_set_prev</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_proc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_prev</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_tcb_set_prev_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+tcb_get_next function 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_get_next_body"><span class="id" title="definition">f_tcb_get_next_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TCB_pool"><span class="id" title="abbreviation">TCB_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_proc_index"><span class="id" title="definition">_proc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#next"><span class="id" title="abbreviation">next</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_get_next"><span class="id" title="definition">f_tcb_get_next</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_proc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_tcb_get_next_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+tcb_set_next function 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_set_next_body"><span class="id" title="definition">f_tcb_set_next_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TCB_pool"><span class="id" title="abbreviation">TCB_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_proc"><span class="id" title="abbreviation">num_proc</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_proc_index"><span class="id" title="definition">_proc_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB_node"><span class="id" title="definition">t_struct_TCB_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#next"><span class="id" title="abbreviation">next</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_next"><span class="id" title="definition">_next</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tcb_set_next"><span class="id" title="definition">f_tcb_set_next</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_proc_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_next</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_tcb_set_next_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+tdq_get_head function 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tdq_get_head_body"><span class="id" title="definition">f_tdq_get_head_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TDQ_pool"><span class="id" title="abbreviation">TDQ_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_chan_index"><span class="id" title="definition">_chan_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#head"><span class="id" title="abbreviation">head</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tdq_get_head"><span class="id" title="definition">f_tdq_get_head</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chan_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_tdq_get_head_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+tdq_set_head function 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tdq_set_head_body"><span class="id" title="definition">f_tdq_set_head_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TDQ_pool"><span class="id" title="abbreviation">TDQ_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_chan_index"><span class="id" title="definition">_chan_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#head"><span class="id" title="abbreviation">head</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_head"><span class="id" title="definition">_head</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tdq_set_head"><span class="id" title="definition">f_tdq_set_head</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chan_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_head</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_tdq_set_head_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+tdq_get_tail function 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tdq_get_tail_body"><span class="id" title="definition">f_tdq_get_tail_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sreturn</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TDQ_pool"><span class="id" title="abbreviation">TDQ_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_chan_index"><span class="id" title="definition">_chan_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>) (<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tail"><span class="id" title="abbreviation">tail</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>))).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tdq_get_tail"><span class="id" title="definition">f_tdq_get_tail</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chan_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_tdq_get_tail_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+tdq_set_tail function 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tdq_set_tail_body"><span class="id" title="definition">f_tdq_set_tail_body</span></a> :=<br/>
+&nbsp;&nbsp;(<span class="id" title="constructor">Sassign</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ederef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Ebinop</span> <span class="id" title="constructor">Oadd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Efield</span> (<span class="id" title="constructor">Evar</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#TCBPool_LOC"><span class="id" title="definition">TCBPool_LOC</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TCB"><span class="id" title="definition">t_struct_TCB</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#TDQ_pool"><span class="id" title="abbreviation">TDQ_pool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tarray"><span class="id" title="abbreviation">tarray</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a> <a class="idref" href="mcertikos.layerlib.Constant.html#num_chan"><span class="id" title="abbreviation">num_chan</span></a>)) (<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_chan_index"><span class="id" title="definition">_chan_index</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<a class="idref" href="mcertikos.clib.CDataTypes.html#tptr"><span class="id" title="abbreviation">tptr</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a>)) <a class="idref" href="mcertikos.clib.CDataTypes.html#t_struct_TDQ_node"><span class="id" title="definition">t_struct_TDQ_node</span></a>) <a class="idref" href="mcertikos.clib.CDataTypes.html#tail"><span class="id" title="abbreviation">tail</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="constructor">Etempvar</span> <a class="idref" href="mcertikos.proc.PSleeperCSource.html#_tail"><span class="id" title="definition">_tail</span></a> <a class="idref" href="mcertikos.clib.CDataTypes.html#tuint"><span class="id" title="abbreviation">tuint</span></a>)).<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="f_tdq_set_tail"><span class="id" title="definition">f_tdq_set_tail</span></a> := <br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_return</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">tvoid</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_callconv</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">cc_default</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_params</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">((</span><span class="id" title="constructor">_chan_index</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">(</span><span class="id" title="constructor">_tail</span><span class="id" title="constructor">,</span> <span class="id" title="constructor">tuint</span><span class="id" title="constructor">)</span> <span class="id" title="constructor">::</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">);</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_vars</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_temps</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">nil</span><span class="id" title="constructor">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">fn_body</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">f_tdq_set_tail_body</span><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

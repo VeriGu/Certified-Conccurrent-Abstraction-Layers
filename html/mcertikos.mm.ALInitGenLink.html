@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.mm.ALInitGenLink</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.mm.ALInitGenLink</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LinkTemplate.html#"><span class="id" title="library">LinkTemplate</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.mm.MALInit.html#"><span class="id" title="library">MALInit</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.mm.ALInitGen.html#"><span class="id" title="library">ALInitGen</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.mm.ALInitGenLinkSource.html#"><span class="id" title="library">ALInitGenLinkSource</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.mm.ALInitGenAsm.html#"><span class="id" title="library">ALInitGenAsm</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.mm.MContainer.html#"><span class="id" title="library">MContainer</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.mm.MContainerCSource.html#"><span class="id" title="library">MContainerCSource</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.mm.MContainerCode.html#"><span class="id" title="library">MContainerCode</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="WITHCOMPCERTIKOS"><span class="id" title="section">WITHCOMPCERTIKOS</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">compcertikos_prf</span>: <a class="idref" href="mcertikos.layerlib.CompCertiKOSproof.html#CompCertiKOS"><span class="id" title="class">CompCertiKOS</span></a>} `{<span class="id" title="var">real_params_prf</span>: <a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">multi_oracle_prop</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleProp"><span class="id" title="class">MultiOracleProp</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">multi_oracle_link</span>: !<a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleLink"><span class="id" title="class">MultiOracleLink</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="init_correct"><span class="id" title="lemma">init_correct</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#init_correct_type"><span class="id" title="definition">init_correct_type</span></a> <a class="idref" href="mcertikos.mm.ALInitGenLinkSource.html#MALInit_module"><span class="id" title="definition">MALInit_module</span></a> <a class="idref" href="mcertikos.mm.MContainer.html#mcontainer"><span class="id" title="definition">mcontainer</span></a> <a class="idref" href="mcertikos.mm.MALInit.html#malinit"><span class="id" title="definition">malinit</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">init_correct</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#relateat"><span class="id" title="method">relateat</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> !<span class="id" title="lemma">ZMap.gi</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">ofs</span> <span class="id" title="var">Hofs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">edestruct</span> (<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#init_mem_characterization&acute;"><span class="id" title="lemma">init_mem_characterization&acute;</span></a> <span class="id" title="var">p</span> <span class="id" title="var">b2</span>) <span class="id" title="keyword">as</span> (<span class="id" title="var">Hp</span> &amp; <span class="id" title="var">_</span> &amp; <span class="id" title="var">_</span> &amp; <span class="id" title="var">Hz</span>); <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">∃</span> <span class="id" title="definition">Vzero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#conj"><span class="id" title="constructor">conj</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">simpl</span> <span class="id" title="keyword">in</span> <span class="id" title="var">Hz</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">Hz</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">Hz</span> <span class="id" title="var">_</span>]; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.layerlib.LinkTemplate.html#load_four_bytes_zero"><span class="id" title="lemma">load_four_bytes_zero</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">∃</span> <span class="id" title="var">ofs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">intros</span> <span class="id" title="var">i</span> <span class="id" title="var">Hi</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Hz</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">omega</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">i</span> <span class="id" title="var">Hi</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Hp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="definition">globvar_map</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="keyword">in</span> <span class="id" title="var">Hi</span> |- ×.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.max"><span class="id" title="definition">Z.max</span></a> ?<span class="id" title="var">x</span> <span class="id" title="var">_</span>) <span class="id" title="keyword">with</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">xomega</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">∃</span> <span class="id" title="var">ofs</span>; <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">ZMap.gi</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">ofs</span> <span class="id" title="var">Hofs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">edestruct</span> (<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#init_mem_characterization&acute;"><span class="id" title="lemma">init_mem_characterization&acute;</span></a> <span class="id" title="var">p</span> <span class="id" title="var">b1</span>) <span class="id" title="keyword">as</span> (<span class="id" title="var">Hp</span> &amp; <span class="id" title="var">_</span> &amp; <span class="id" title="var">_</span> &amp; <span class="id" title="var">Hz</span>); <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="keyword">in</span> <span class="id" title="var">Hz</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">Hz</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">Hz</span> <span class="id" title="var">_</span>]; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">∃</span> <span class="id" title="definition">Vzero</span>, <span class="id" title="definition">Vzero</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#conj"><span class="id" title="constructor">conj</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.layerlib.LinkTemplate.html#load_four_bytes_zero"><span class="id" title="lemma">load_four_bytes_zero</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">∃</span> (<span class="id" title="var">ofs</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#88e34ed7a73f02772126289867960764"><span class="id" title="notation">×</span></a> 2); <span class="id" title="tactic">omega</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">intros</span> <span class="id" title="var">i</span> <span class="id" title="var">Hi</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Hz</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">omega</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.layerlib.LinkTemplate.html#load_four_bytes_zero"><span class="id" title="lemma">load_four_bytes_zero</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">∃</span> (<span class="id" title="var">ofs</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#88e34ed7a73f02772126289867960764"><span class="id" title="notation">×</span></a> 2 <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a3448b794f7a26d611ad36492b5d640b"><span class="id" title="notation">+</span></a> 1); <span class="id" title="tactic">omega</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">intros</span> <span class="id" title="var">i</span> <span class="id" title="var">Hi</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Hz</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">omega</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">i</span> <span class="id" title="var">Hi</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Hp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="definition">globvar_map</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="keyword">in</span> <span class="id" title="var">Hi</span> |- ×.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.max"><span class="id" title="definition">Z.max</span></a> ?<span class="id" title="var">x</span> <span class="id" title="var">_</span>) <span class="id" title="keyword">with</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">omega</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">∃</span> (<span class="id" title="var">ofs</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#88e34ed7a73f02772126289867960764"><span class="id" title="notation">×</span></a> 2); <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">omega</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">intros</span> <span class="id" title="var">i</span> <span class="id" title="var">Hi</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="var">Hp</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <span class="id" title="definition">globvar_map</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">simpl</span> <span class="id" title="keyword">in</span> <span class="id" title="var">Hi</span> |- ×.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">change</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#Z.max"><span class="id" title="definition">Z.max</span></a> ?<span class="id" title="var">x</span> <span class="id" title="var">_</span>) <span class="id" title="keyword">with</span> <span class="id" title="var">x</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">omega</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">∃</span> (<span class="id" title="var">ofs</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#88e34ed7a73f02772126289867960764"><span class="id" title="notation">×</span></a> 2 <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.ZArith.BinInt.html#a3448b794f7a26d611ad36492b5d640b"><span class="id" title="notation">+</span></a> 1); <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">omega</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">ZMap.gi</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">edestruct</span> (<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#init_mem_characterization&acute;"><span class="id" title="lemma">init_mem_characterization&acute;</span></a> <span class="id" title="var">p</span> <span class="id" title="var">b3</span>) <span class="id" title="keyword">as</span> (<span class="id" title="var">Hp</span> &amp; <span class="id" title="var">_</span> &amp; <span class="id" title="var">Hz</span> &amp; <span class="id" title="var">_</span>); <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">Hz</span> <span class="id" title="keyword">as</span> [<span class="id" title="var">Hz</span> <span class="id" title="var">_</span>]; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#conj"><span class="id" title="constructor">conj</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">∃</span> 0; <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="link_correct_aux"><span class="id" title="lemma">link_correct_aux</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#link_correct_aux_type"><span class="id" title="definition">link_correct_aux_type</span></a> <a class="idref" href="mcertikos.mm.ALInitGenLinkSource.html#MALInit_module"><span class="id" title="definition">MALInit_module</span></a> <a class="idref" href="mcertikos.mm.MContainer.html#mcontainer"><span class="id" title="definition">mcontainer</span></a> <a class="idref" href="mcertikos.mm.MALInit.html#malinit"><span class="id" title="definition">malinit</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">link_correct_aux</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span> <a class="idref" href="mcertikos.mm.ALInitGenFresh.html#getatu_spec_ref"><span class="id" title="lemma">getatu_spec_ref</span></a> <a class="idref" href="mcertikos.mm.MContainerCode.html#MCONTAINERCODE.at_get_code_correct"><span class="id" title="lemma">MCONTAINERCODE.at_get_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span> <a class="idref" href="mcertikos.mm.ALInitGenFresh.html#getatnorm_spec_ref"><span class="id" title="lemma">getatnorm_spec_ref</span></a> <a class="idref" href="mcertikos.mm.MContainerCode.html#MCONTAINERCODE.is_norm_code_correct"><span class="id" title="lemma">MCONTAINERCODE.is_norm_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span> <a class="idref" href="mcertikos.mm.ALInitGenFresh.html#getatc_spec_ref"><span class="id" title="lemma">getatc_spec_ref</span></a> <a class="idref" href="mcertikos.mm.MContainerCode.html#MCONTAINERCODE.at_get_c_code_correct"><span class="id" title="lemma">MCONTAINERCODE.at_get_c_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span> <a class="idref" href="mcertikos.mm.ALInitGenFresh.html#setatu_spec_ref"><span class="id" title="lemma">setatu_spec_ref</span></a> <a class="idref" href="mcertikos.mm.MContainerCode.html#MCONTAINERCODE.at_set_code_correct"><span class="id" title="lemma">MCONTAINERCODE.at_set_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span> <a class="idref" href="mcertikos.mm.ALInitGenFresh.html#setatnorm_spec_ref"><span class="id" title="lemma">setatnorm_spec_ref</span></a> <a class="idref" href="mcertikos.mm.MContainerCode.html#MCONTAINERCODE.set_norm_correct"><span class="id" title="lemma">MCONTAINERCODE.set_norm_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span> <a class="idref" href="mcertikos.mm.ALInitGenFresh.html#setatc_spec_ref"><span class="id" title="lemma">setatc_spec_ref</span></a> <a class="idref" href="mcertikos.mm.MContainerCode.html#MCONTAINERCODE.at_set_c_code_correct"><span class="id" title="lemma">MCONTAINERCODE.at_set_c_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span> <a class="idref" href="mcertikos.mm.ALInitGenFresh.html#setnps_spec_ref"><span class="id" title="lemma">setnps_spec_ref</span></a> <a class="idref" href="mcertikos.mm.MContainerCode.html#MCONTAINERCODE.set_nps_correct"><span class="id" title="lemma">MCONTAINERCODE.set_nps_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span> <a class="idref" href="mcertikos.mm.ALInitGenFresh.html#getnps_spec_ref"><span class="id" title="lemma">getnps_spec_ref</span></a> <a class="idref" href="mcertikos.mm.MContainerCode.html#MCONTAINERCODE.get_nps_code_correct"><span class="id" title="lemma">MCONTAINERCODE.get_nps_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_asmfunction</span> <a class="idref" href="mcertikos.mm.ALInitGenFresh.html#acquire_lock_AT_spec_ref"><span class="id" title="lemma">acquire_lock_AT_spec_ref</span></a> <a class="idref" href="mcertikos.mm.ALInitGenAsm.html#acquire_lock_AT_code_correct"><span class="id" title="lemma">acquire_lock_AT_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_asmfunction</span> <a class="idref" href="mcertikos.mm.ALInitGenFresh.html#release_lock_AT_spec_ref"><span class="id" title="lemma">release_lock_AT_spec_ref</span></a> <a class="idref" href="mcertikos.mm.ALInitGenAsm.html#release_lock_AT_code_correct"><span class="id" title="lemma">release_lock_AT_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.mm.ALInitGenPassthrough.html#passthrough_correct"><span class="id" title="lemma">passthrough_correct</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="cl_backward_simulation"><span class="id" title="lemma">cl_backward_simulation</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#cl_backward_simulation_type"><span class="id" title="definition">cl_backward_simulation_type</span></a> <a class="idref" href="mcertikos.mm.ALInitGenLinkSource.html#MALInit_module"><span class="id" title="definition">MALInit_module</span></a> <a class="idref" href="mcertikos.mm.MContainer.html#mcontainer"><span class="id" title="definition">mcontainer</span></a> <a class="idref" href="mcertikos.mm.MALInit.html#malinit"><span class="id" title="definition">malinit</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cl_backward_simulation</span> <a class="idref" href="mcertikos.mm.ALInitGenLink.html#init_correct"><span class="id" title="lemma">init_correct</span></a> <a class="idref" href="mcertikos.mm.ALInitGenLink.html#link_correct_aux"><span class="id" title="lemma">link_correct_aux</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="make_program_exists"><span class="id" title="lemma">make_program_exists</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#make_program_exist_type"><span class="id" title="definition">make_program_exist_type</span></a> <a class="idref" href="mcertikos.mm.ALInitGenLinkSource.html#MALInit_module"><span class="id" title="definition">MALInit_module</span></a> <a class="idref" href="mcertikos.mm.MContainer.html#mcontainer"><span class="id" title="definition">mcontainer</span></a> <a class="idref" href="mcertikos.mm.MALInit.html#malinit"><span class="id" title="definition">malinit</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">make_program_exists</span> <a class="idref" href="mcertikos.mm.ALInitGenLink.html#link_correct_aux"><span class="id" title="lemma">link_correct_aux</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.mm.ALInitGenLink.html#WITHCOMPCERTIKOS"><span class="id" title="section">WITHCOMPCERTIKOS</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.mm.ALGenLinkSource</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.mm.ALGenLinkSource</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatLayers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatClightSem</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LAsmModuleSemDef.html#"><span class="id" title="library">LAsmModuleSemDef</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.CompCertiKOS.html#"><span class="id" title="library">CompCertiKOS</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#"><span class="id" title="library">GlobIdent</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CDataTypes.html#"><span class="id" title="library">CDataTypes</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.CompCertiKOSproof.html#"><span class="id" title="library">CompCertiKOSproof</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.RealParams.html#"><span class="id" title="library">RealParams</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">I64Layer</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.mm.MALOpCSource.html#"><span class="id" title="library">MALOpCSource</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.mm.MALOp.html#"><span class="id" title="library">MALOp</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="WITHCOMPCERTIKOS"><span class="id" title="section">WITHCOMPCERTIKOS</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">compcertikos_prf</span>: <a class="idref" href="mcertikos.layerlib.CompCertiKOSproof.html#CompCertiKOS"><span class="id" title="class">CompCertiKOS</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">real_params_prf</span> : <a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">multi_oracle_prop</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleProp"><span class="id" title="class">MultiOracleProp</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="MALT_impl"><span class="id" title="definition">MALT_impl</span></a>: <span class="id" title="inductive">res</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#module"><span class="id" title="definition">LAsm.module</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">M_palloc</span> <span class="id" title="notation">&lt;-</span> <a class="idref" href="mcertikos.layerlib.CompCertiKOS.html#transf_module"><span class="id" title="definition">CompCertiKOS.transf_module</span></a> (<a class="idref" href="mcertikos.layerlib.GlobIdent.html#palloc"><span class="id" title="definition">palloc</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.mm.MALOpCSource.html#f_palloc"><span class="id" title="definition">f_palloc</span></a>)<span class="id" title="notation">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">M_pfree</span> <span class="id" title="notation">&lt;-</span> <a class="idref" href="mcertikos.layerlib.CompCertiKOS.html#transf_module"><span class="id" title="definition">CompCertiKOS.transf_module</span></a> (<a class="idref" href="mcertikos.layerlib.GlobIdent.html#pfree"><span class="id" title="definition">pfree</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.mm.MALOpCSource.html#f_pfree"><span class="id" title="definition">f_pfree</span></a>)<span class="id" title="notation">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">M</span> <span class="id" title="notation">&lt;-</span> <span class="id" title="method">ret</span> (<span class="id" title="notation">(</span><span class="id" title="var">M_palloc</span> <span class="id" title="notation">⊕</span> <span class="id" title="var">M_pfree</span><span class="id" title="notation">)</span> <span class="id" title="notation">⊕</span> <span class="id" title="notation">∅</span>) <span class="id" title="notation">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">_</span> <span class="id" title="notation">&lt;-</span> <span class="id" title="definition">eassert</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> (<span class="id" title="class">LayerOK</span> (<span class="id" title="notation">〚</span><span class="id" title="var">M</span> <span class="id" title="notation">〛</span> (<a class="idref" href="mcertikos.mm.MALOp.html#malop"><span class="id" title="definition">malop</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>) <span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.mm.MALOp.html#malop"><span class="id" title="definition">malop</span></a> <span class="id" title="notation">⊕</span> <span class="id" title="definition">L64</span>))<span class="id" title="notation">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;</div>
+
+<div class="doc">
+watch out parentheses here: 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="method">ret</span> (<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+
+<div class="doc">
+group primitives according to the global variables that they use 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">M</span> </div>
+
+<div class="doc">
+for L64 and other passthrough primitives 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.mm.ALGenLinkSource.html#WITHCOMPCERTIKOS"><span class="id" title="section">WITHCOMPCERTIKOS</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.conlib.conmtlib.SingleOracleDef</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.conlib.conmtlib.SingleOracleDef</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Maps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.ASTExtra.html#"><span class="id" title="library">ASTExtra</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Floats</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">MemoryX</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Events</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Globalenvs</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Smallstep</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Asm</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Conventions</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Machregs</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AuxLemma.html#"><span class="id" title="library">AuxLemma</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Maps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.Constant.html#"><span class="id" title="library">Constant</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Maps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.ASTExtra.html#"><span class="id" title="library">ASTExtra</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Floats</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">MemoryX</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Events</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Globalenvs</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.logic.PTreeModules</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compcertx.MemWithData</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compcertx.Stencil</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatData</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatPrimSem</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatLayers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatExternalCalls</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Decision</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#"><span class="id" title="library">LAsm</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#"><span class="id" title="library">GlobIdent</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.flatmem.FlatMemory.html#"><span class="id" title="library">FlatMemory</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.AlgebraicMem.html#"><span class="id" title="library">AlgebraicMem</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="lval"><span class="id" title="inductive">lval</span></a>:=<br/>
+| <a name="Lint"><span class="id" title="constructor">Lint</span></a> (<span class="id" title="var">n</span>: <span class="id" title="abbreviation">int</span>)<br/>
+| <a name="Lptr"><span class="id" title="constructor">Lptr</span></a> (<span class="id" title="var">b</span>: <span class="id" title="definition">block</span>) (<span class="id" title="var">ofs</span>: <span class="id" title="abbreviation">int</span>).<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="VAL2LVAL"><span class="id" title="section">VAL2LVAL</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Inductive</span> <a name="val2Lval"><span class="id" title="inductive">val2Lval</span></a>: <span class="id" title="inductive">val</span> → <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#lval"><span class="id" title="inductive">lval</span></a> → <span class="id" title="keyword">Prop</span>:=<br/>
+&nbsp;&nbsp;| <a name="VAL2LVALINT"><span class="id" title="constructor">VAL2LVALINT</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">n</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#val2Lval"><span class="id" title="inductive">val2Lval</span></a> (<span class="id" title="constructor">Vint</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#n"><span class="id" title="variable">n</span></a>) (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#Lint"><span class="id" title="constructor">Lint</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#n"><span class="id" title="variable">n</span></a>)<br/>
+&nbsp;&nbsp;| <a name="VAL2LVALPTR"><span class="id" title="constructor">VAL2LVALPTR</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">n</span> <span class="id" title="var">ofs</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#val2Lval"><span class="id" title="inductive">val2Lval</span></a> (<span class="id" title="constructor">Vptr</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#n"><span class="id" title="variable">n</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#ofs"><span class="id" title="variable">ofs</span></a>) (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#Lptr"><span class="id" title="constructor">Lptr</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#n"><span class="id" title="variable">n</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#ofs"><span class="id" title="variable">ofs</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Inductive</span> <a name="val2Lval_list"><span class="id" title="inductive">val2Lval_list</span></a>: (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <span class="id" title="inductive">val</span>) → (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#lval"><span class="id" title="inductive">lval</span></a>) → <span class="id" title="keyword">Prop</span>:=<br/>
+&nbsp;&nbsp;| <a name="VAL2LVALNIL"><span class="id" title="constructor">VAL2LVALNIL</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#val2Lval_list"><span class="id" title="inductive">val2Lval_list</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a><br/>
+&nbsp;&nbsp;| <a name="VAL2LVALCON"><span class="id" title="constructor">VAL2LVALCON</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">v</span> <span class="id" title="var">v&acute;</span> <span class="id" title="var">l</span> <span class="id" title="var">l&acute;</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#val2Lval"><span class="id" title="inductive">val2Lval</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#v"><span class="id" title="variable">v</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#v&acute;"><span class="id" title="variable">v&acute;</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#val2Lval_list"><span class="id" title="inductive">val2Lval_list</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#l&acute;"><span class="id" title="variable">l&acute;</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#val2Lval_list"><span class="id" title="inductive">val2Lval_list</span></a> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#v"><span class="id" title="variable">v</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a><a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#l"><span class="id" title="variable">l</span></a>) (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#v&acute;"><span class="id" title="variable">v&acute;</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a><a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#l&acute;"><span class="id" title="variable">l&acute;</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="val2Lval_lessdef"><span class="id" title="lemma">val2Lval_lessdef</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">v</span> <span class="id" title="var">v&acute;</span> <span class="id" title="var">gv</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="inductive">Val.lessdef</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#v"><span class="id" title="variable">v</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#v&acute;"><span class="id" title="variable">v&acute;</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#val2Lval"><span class="id" title="inductive">val2Lval</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#v"><span class="id" title="variable">v</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#gv"><span class="id" title="variable">gv</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#val2Lval"><span class="id" title="inductive">val2Lval</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#v&acute;"><span class="id" title="variable">v&acute;</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#gv"><span class="id" title="variable">gv</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>. <span class="id" title="var">inv</span> <span class="id" title="var">H0</span>; <span class="id" title="var">inv</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="val2Lval_list_lessdef"><span class="id" title="lemma">val2Lval_list_lessdef</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> <span class="id" title="var">v</span> <span class="id" title="var">v&acute;</span> <span class="id" title="var">gv</span>,<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="inductive">Val.lessdef_list</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#v"><span class="id" title="variable">v</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#v&acute;"><span class="id" title="variable">v&acute;</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#val2Lval_list"><span class="id" title="inductive">val2Lval_list</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#v"><span class="id" title="variable">v</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#gv"><span class="id" title="variable">gv</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#val2Lval_list"><span class="id" title="inductive">val2Lval_list</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#v&acute;"><span class="id" title="variable">v&acute;</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#gv"><span class="id" title="variable">gv</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">v</span>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">inv</span> <span class="id" title="var">H</span>; <span class="id" title="var">inv</span> <span class="id" title="var">H0</span>. <span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">inv</span> <span class="id" title="var">H</span>. <span class="id" title="var">inv</span> <span class="id" title="var">H0</span>. <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#val2Lval_lessdef"><span class="id" title="lemma">val2Lval_lessdef</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#VAL2LVAL"><span class="id" title="section">VAL2LVAL</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#"><span class="id" title="library">SingleAbstractDataType</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.DeviceStateDataType.html#"><span class="id" title="library">DeviceStateDataType</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#"><span class="id" title="library">AuxStateDataType</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Record</span> <a name="privDataSnap"><span class="id" title="record">privDataSnap</span></a> :=<br/>
+&nbsp;&nbsp;<a name="mk_privDataSnap"><span class="id" title="constructor">mk_privDataSnap</span></a> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="tiSnap"><span class="id" title="projection">tiSnap</span></a>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#trapinfo"><span class="id" title="definition">trapinfo</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="ikernSnap"><span class="id" title="projection">ikernSnap</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="ihostSnap"><span class="id" title="projection">ihostSnap</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="HPSnap"><span class="id" title="projection">HPSnap</span></a>: <a class="idref" href="mcertikos.flatmem.FlatMemory.html#flatmem"><span class="id" title="abbreviation">flatmem</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="ACSnap"><span class="id" title="projection">ACSnap</span></a> : <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#Container"><span class="id" title="record">Container</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="uctxtSnap"><span class="id" title="projection">uctxtSnap</span></a> : <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#UContext"><span class="id" title="definition">UContext</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="ppermSnap"><span class="id" title="projection">ppermSnap</span></a>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#PPermT"><span class="id" title="definition">PPermT</span></a>;  <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="PTSnap"><span class="id" title="projection">PTSnap</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="ptpoolSnap"><span class="id" title="projection">ptpoolSnap</span></a>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#PMapPool"><span class="id" title="definition">PMapPool</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="iptSnap"><span class="id" title="projection">iptSnap</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="syncchpoolSnap"><span class="id" title="projection">syncchpoolSnap</span></a> : <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#SyncChanPool"><span class="id" title="definition">SyncChanPool</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="bufferSnap"><span class="id" title="projection">bufferSnap</span></a>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#PageBufferPool"><span class="id" title="definition">PageBufferPool</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="eptSnap"><span class="id" title="projection">eptSnap</span></a>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#EPT"><span class="id" title="definition">EPT</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="vmcsSnap"><span class="id" title="projection">vmcsSnap</span></a>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#VMCS"><span class="id" title="inductive">VMCS</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="vmxSnap"><span class="id" title="projection">vmxSnap</span></a>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#VMX"><span class="id" title="definition">VMX</span></a>;  <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="com1Snap"><span class="id" title="projection">com1Snap</span></a>: <a class="idref" href="mcertikos.layerlib.DeviceStateDataType.html#SerialData"><span class="id" title="definition">SerialData</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="drv_serialSnap"><span class="id" title="projection">drv_serialSnap</span></a>: <a class="idref" href="mcertikos.layerlib.DeviceStateDataType.html#SerialDriver"><span class="id" title="record">SerialDriver</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="console_concreteSnap"><span class="id" title="projection">console_concreteSnap</span></a>: <a class="idref" href="mcertikos.layerlib.DeviceStateDataType.html#ConsoleDriverConcrete"><span class="id" title="record">ConsoleDriverConcrete</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="consoleSnap"><span class="id" title="projection">consoleSnap</span></a>: <a class="idref" href="mcertikos.layerlib.DeviceStateDataType.html#ConsoleDriver"><span class="id" title="record">ConsoleDriver</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="ioapicSnap"><span class="id" title="projection">ioapicSnap</span></a>: <a class="idref" href="mcertikos.layerlib.DeviceStateDataType.html#IoApicData"><span class="id" title="definition">IoApicData</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="lapicSnap"><span class="id" title="projection">lapicSnap</span></a>: <a class="idref" href="mcertikos.layerlib.DeviceStateDataType.html#LApicData"><span class="id" title="definition">LApicData</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="tfSnap"><span class="id" title="projection">tfSnap</span></a>: <a class="idref" href="mcertikos.layerlib.DeviceStateDataType.html#TrapFrames"><span class="id" title="definition">TrapFrames</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="tf_regSnap"><span class="id" title="projection">tf_regSnap</span></a>: <span class="id" title="inductive">val</span>; </div>
+
+<div class="doc">
+temporary place to save an intermediate tf regiter 
+</div>
+<div class="code">
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="curr_intr_numSnap"><span class="id" title="projection">curr_intr_numSnap</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="intr_flagSnap"><span class="id" title="projection">intr_flagSnap</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="saved_intr_flagsSnap"><span class="id" title="projection">saved_intr_flagsSnap</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="in_intrSnap"><span class="id" title="projection">in_intrSnap</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a>; <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="i_dev_serialSnap"><span class="id" title="projection">i_dev_serialSnap</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="LogEventUnit"><span class="id" title="inductive">LogEventUnit</span></a> :=<br/>
+| <a name="LogYield"><span class="id" title="constructor">LogYield</span></a> (<span class="id" title="var">n</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#positive"><span class="id" title="inductive">positive</span></a>)<br/>
+| <a name="LogSleep"><span class="id" title="constructor">LogSleep</span></a> (<span class="id" title="var">i</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">n</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#positive"><span class="id" title="inductive">positive</span></a>) (<span class="id" title="var">syncch</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#SyncChanPool"><span class="id" title="definition">AuxStateDataType.SyncChanPool</span></a>)<br/>
+| <a name="LogPrim"><span class="id" title="constructor">LogPrim</span></a> (<span class="id" title="var">id</span>: <span class="id" title="definition">ident</span>) (<span class="id" title="var">args</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#lval"><span class="id" title="inductive">lval</span></a>) (<span class="id" title="var">choice</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">dprocSnap</span> : <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#privDataSnap"><span class="id" title="record">privDataSnap</span></a>) <br/>
+<br/>
+   <br/>
+<br/>
+| <a name="LogYieldBack"><span class="id" title="constructor">LogYieldBack</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="LogEventType"><span class="id" title="inductive">LogEventType</span></a> :=<br/>
+| <a name="LogYieldTy"><span class="id" title="constructor">LogYieldTy</span></a><br/>
+| <a name="LogOtherTy"><span class="id" title="constructor">LogOtherTy</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="LogEvent"><span class="id" title="inductive">LogEvent</span></a> :=<br/>
+| <a name="LEvent"><span class="id" title="constructor">LEvent</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a> → <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogEventUnit"><span class="id" title="inductive">LogEventUnit</span></a> → <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogEvent"><span class="id" title="inductive">LogEvent</span></a>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Function</span> <span class="id" title="var">getLogEventUnitType</span> (<span class="id" title="var">le</span> : <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogEventUnit"><span class="id" title="inductive">LogEventUnit</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#le"><span class="id" title="variable">le</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogYield"><span class="id" title="constructor">LogYield</span></a> <span class="id" title="var">_</span> ⇒ <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogYieldTy"><span class="id" title="constructor">LogYieldTy</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogSleep"><span class="id" title="constructor">LogSleep</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> ⇒ <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogYieldTy"><span class="id" title="constructor">LogYieldTy</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> ⇒ <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogOtherTy"><span class="id" title="constructor">LogOtherTy</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Function</span> <span class="id" title="var">getLogEventType</span> (<span class="id" title="var">le</span> : <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogEvent"><span class="id" title="inductive">LogEvent</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#le"><span class="id" title="variable">le</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LEvent"><span class="id" title="constructor">LEvent</span></a> <span class="id" title="var">_</span> <span class="id" title="var">t</span> ⇒ <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#getLogEventUnitType"><span class="id" title="definition">getLogEventUnitType</span></a> <span class="id" title="var">t</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Function</span> <span class="id" title="var">getLogEventUnitNB</span> (<span class="id" title="var">le</span> : <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogEventUnit"><span class="id" title="inductive">LogEventUnit</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#le"><span class="id" title="variable">le</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogYield"><span class="id" title="constructor">LogYield</span></a> <span class="id" title="var">n</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">n</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogSleep"><span class="id" title="constructor">LogSleep</span></a> <span class="id" title="var">_</span> <span class="id" title="var">n</span> <span class="id" title="var">_</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">n</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Function</span> <span class="id" title="var">getLogEventNB</span> (<span class="id" title="var">le</span> : <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogEvent"><span class="id" title="inductive">LogEvent</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#le"><span class="id" title="variable">le</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LEvent"><span class="id" title="constructor">LEvent</span></a> <span class="id" title="var">_</span> <span class="id" title="var">t</span> ⇒ <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#getLogEventUnitNB"><span class="id" title="definition">getLogEventUnitNB</span></a> <span class="id" title="var">t</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Function</span> <span class="id" title="var">getThrdID</span> (<span class="id" title="var">le</span> : <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogEvent"><span class="id" title="inductive">LogEvent</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#le"><span class="id" title="variable">le</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LEvent"><span class="id" title="constructor">LEvent</span></a> <span class="id" title="var">cid</span> <span class="id" title="var">_</span> ⇒ <span class="id" title="var">cid</span><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="Log"><span class="id" title="definition">Log</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogEvent"><span class="id" title="inductive">LogEvent</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="Auxiliary"><span class="id" title="section">Auxiliary</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Set Implicit Arguments</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Variable</span> <a name="Auxiliary.A"><span class="id" title="variable">A</span></a> : <span class="id" title="keyword">Type</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Fixpoint</span> <a name="last_op"><span class="id" title="definition">last_op</span></a> (<span class="id" title="var">l</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#Auxiliary.A"><span class="id" title="variable">A</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#Auxiliary.A"><span class="id" title="variable">A</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#l"><span class="id" title="variable">l</span></a> <span class="id" title="keyword">with</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">hd</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a><span class="id" title="var">_</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">hd</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="remove_hd"><span class="id" title="definition">remove_hd</span></a> (<span class="id" title="var">l</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#Auxiliary.A"><span class="id" title="variable">A</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#Auxiliary.A"><span class="id" title="variable">A</span></a> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#l"><span class="id" title="variable">l</span></a> <span class="id" title="keyword">with</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">ev</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a><span class="id" title="var">l&acute;</span> ⇒ <span class="id" title="var">l&acute;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="eq_lst_has_same_length"><span class="id" title="lemma">eq_lst_has_same_length</span></a>: <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">l</span> <span class="id" title="var">l&acute;</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#Auxiliary.A"><span class="id" title="variable">A</span></a>),<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#l&acute;"><span class="id" title="variable">l&acute;</span></a> → <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#l&acute;"><span class="id" title="variable">l&acute;</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">l</span>; <span class="id" title="tactic">intros</span>; <span class="id" title="var">inv</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="all_lst_has_length"><span class="id" title="lemma">all_lst_has_length</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">l</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#Auxiliary.A"><span class="id" title="variable">A</span></a>), <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">∃</span></a> <span class="id" title="var">n</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">,</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#n"><span class="id" title="variable">n</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">induction</span> <span class="id" title="var">l</span>; <span class="id" title="tactic">intros</span>; [<span class="id" title="tactic">∃</span> 0%<span class="id" title="var">nat</span> |]; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">IHl</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="cons_lst_succ_length"><span class="id" title="lemma">cons_lst_succ_length</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">l</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#Auxiliary.A"><span class="id" title="variable">A</span></a>) (<span class="id" title="var">e</span>: <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#Auxiliary.A"><span class="id" title="variable">A</span></a>) <span class="id" title="var">n</span>, <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#n"><span class="id" title="variable">n</span></a> → <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#length"><span class="id" title="definition">length</span></a> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#e"><span class="id" title="variable">e</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a><a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#l"><span class="id" title="variable">l</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#S"><span class="id" title="constructor">S</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#n"><span class="id" title="variable">n</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">l</span>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">simpl</span> <span class="id" title="keyword">in</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="cons_lst_eq_lst_contradiction"><span class="id" title="lemma">cons_lst_eq_lst_contradiction</span></a>: <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">∀</span> (<span class="id" title="var">l</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#Auxiliary.A"><span class="id" title="variable">A</span></a>) <span class="id" title="var">e</span>, <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#e"><span class="id" title="variable">e</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a><a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#l"><span class="id" title="variable">l</span></a> → <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#False"><span class="id" title="inductive">False</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>; <span class="id" title="tactic">generalize</span> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#all_lst_has_length"><span class="id" title="lemma">all_lst_has_length</span></a> <span class="id" title="var">l</span>); <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">H0</span> <span class="id" title="keyword">as</span> (<span class="id" title="var">n</span>, <span class="id" title="var">H0</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">generalize</span> <span class="id" title="var">H0</span>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#eq_lst_has_same_length"><span class="id" title="lemma">eq_lst_has_same_length</span></a> <span class="id" title="keyword">in</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#cons_lst_succ_length"><span class="id" title="lemma">cons_lst_succ_length</span></a> <span class="id" title="keyword">with</span> (<span class="id" title="var">e</span> := <span class="id" title="var">e</span>) <span class="id" title="keyword">in</span> <span class="id" title="var">H1</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">H1</span>, <span class="id" title="var">H0</span> <span class="id" title="keyword">in</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">generalize</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">clear</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>; <span class="id" title="tactic">induction</span> <span class="id" title="var">n</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">inv</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">inversion</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <span class="id" title="var">IHn</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Unset Implicit Arguments</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#Auxiliary"><span class="id" title="section">Auxiliary</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Function</span> <span class="id" title="var">lastEvType</span> (<span class="id" title="var">lg</span> : <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#Log"><span class="id" title="definition">Log</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogEventType"><span class="id" title="inductive">LogEventType</span></a> :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#last_op"><span class="id" title="definition">last_op</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#lg"><span class="id" title="variable">lg</span></a>) <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">ev</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#getLogEventType"><span class="id" title="definition">getLogEventType</span></a> <span class="id" title="var">ev</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="ThreadIDSet"><span class="id" title="definition">ThreadIDSet</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

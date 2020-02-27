@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.mcslock.MCSStateDataType</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.mcslock.MCSStateDataType</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+This file provide some <span class="inlinecode"><span class="id" title="var">data</span></span> <span class="inlinecode"><span class="id" title="var">types</span></span> that will be used in the layer definitions and refinement proofs
+</div>
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.Constant.html#"><span class="id" title="library">Constant</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Maps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">AST</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">AsmX</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.layerlib.AuxFunctions.html#"><span class="id" title="library">AuxFunctions</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+*Data types for abstract data
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="MCSSTATEFORINTROLEVELS"><span class="id" title="section">MCSSTATEFORINTROLEVELS</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="NULL"><span class="id" title="definition">NULL</span></a> := <a class="idref" href="mcertikos.layerlib.Constant.html#TOTAL_CPU"><span class="id" title="abbreviation">TOTAL_CPU</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="MCSNodePool"><span class="id" title="definition">MCSNodePool</span></a> : <span class="id" title="keyword">Type</span> := <span class="id" title="definition">ZMap.t</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#bool"><span class="id" title="inductive">bool</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#d19c7eafd0e2d195d10df94b392087b5"><span class="id" title="notation">×</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="MCSNodePoolInit"><span class="id" title="definition">MCSNodePoolInit</span></a> := <span class="id" title="definition">ZMap.init</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#false"><span class="id" title="constructor">false</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <a class="idref" href="mcertikos.mcslock.MCSStateDataType.html#NULL"><span class="id" title="definition">NULL</span></a><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Agent Container 
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Inductive</span> <a name="MCSStruct"><span class="id" title="record">MCSStruct</span></a> : <span class="id" title="keyword">Type</span> := <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="mkMCSStruct"><span class="id" title="constructor">mkMCSStruct</span></a> {<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="last"><span class="id" title="projection">last</span></a> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="nodepool"><span class="id" title="projection">nodepool</span></a> : <a class="idref" href="mcertikos.mcslock.MCSStateDataType.html#MCSNodePool"><span class="id" title="definition">MCSNodePool</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="MCSLockPool"><span class="id" title="definition">MCSLockPool</span></a> : <span class="id" title="keyword">Type</span> := <span class="id" title="definition">ZMap.t</span> <a class="idref" href="mcertikos.mcslock.MCSStateDataType.html#MCSStruct"><span class="id" title="record">MCSStruct</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="mcs_lock_pool_init"><span class="id" title="definition">mcs_lock_pool_init</span></a> := <span class="id" title="definition">ZMap.init</span> (<a class="idref" href="mcertikos.mcslock.MCSStateDataType.html#mkMCSStruct"><span class="id" title="constructor">mkMCSStruct</span></a> <a class="idref" href="mcertikos.mcslock.MCSStateDataType.html#NULL"><span class="id" title="definition">NULL</span></a> <a class="idref" href="mcertikos.mcslock.MCSStateDataType.html#MCSNodePoolInit"><span class="id" title="definition">MCSNodePoolInit</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.mcslock.MCSStateDataType.html#MCSSTATEFORINTROLEVELS"><span class="id" title="section">MCSSTATEFORINTROLEVELS</span></a>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

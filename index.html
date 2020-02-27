@@ -1,0 +1,2295 @@
+-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+  <HEAD>
+    <TITLE>Certified Concurrent Abstraction Layers Artifact Instructions</TITLE>
+    <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+    <style type="text/css">
+      body {
+      color: black; background: white;
+      margin-left: 10%; margin-right: 10%;
+      }
+      h2 { margin-left: -4%;}
+      h3 { margin-left: -2%; }
+      h1,h2,h3 { font-family: sans-serif; }
+      hr { margin-left: 5%; margin-right: 5%; }
+      a:visited {color : #416DFF; text-decoration : none; font-weight : bold}
+      a:link {color : #416DFF; text-decoration : none; font-weight : bold}
+      a:hover {color : Red; text-decoration : underline; }
+      a:active {color : Red; text-decoration : underline; }
+      table {width: 90%; border: 1px solid black}
+      th {width: 20%;}
+      table, th, td {border: 1px solid black;  border-collapse: collapse; padding:3pt}
+      div { width: 80%; padding: 0px; margin: 0%; margin-left: 10%; background-color:#e6ffe6 }
+
+    </style>
+
+  </HEAD>
+  <BODY>
+
+
+    <!----------------------------------------------------------------------------------------
+	TO DO:
+
+	(1. writing this page / 1st round proof reading - done)
+	(2. resolve XXXYYY in this page - done)
+	(3. make html files - done)
+	(4. link html files with this file - done)
+	(5. make ccal and mc2  - done (need to update mc2 if we fix glue codes to run kernel in kvm))
+	(6. clean up ccal a little bit - done)
+	(7. write down some comments in ccal - done)
+	(7. move ccal and mc2 into Virtual Box image - done)
+	(8. add video for extraction and running - done)
+	9. 2nd round proof reading - for all sections.
+
+      ---------------------------------------------------------------------------------------->
+
+
+    <!----------------------------------------------------------------------------------
+	Intro
+      ----------------------------------------------------------------------------------->
+    <H1 align="center" id="instruction">Instructions for PLDI'18 "Certified Concurrent Abstraction Layers" Artifact Evaluation</H1>
+
+
+    <p>This document contains the instructions for compiling and evaluating the framework described in our PLDI submission:
+      "Certified Concurrent Abstraction Layers (CCAL)". We intend to clarify in this document every detail the AEC members
+      may need to consider. The first section shows the structure of our artifact files. From Section 2 to Section 3,
+      we show how to compile our framework files as well as two examples that use our framework. Section 4 describes
+      how artifact files are related to our CCAL by pointing out the exact files and definitions in our artifacts that correspond
+      to the definitions or sections in our submission.</p>
+
+    <p>The remaining section, Section 5, is for the examples using CCAL. All examples are part of a fully verified concurrent kernel
+      with fine-grained concurrency, which we call mC2. Section 5 illustrates the examples that we provided in our submission with indexed HTML
+      files for AECs to find the corresponding parts easily. Those files also can be found in either of our submitted ZIP files.
+      The section also shows the full structure of mC2. We also provide the key theorem of mC2 in the section to show how our CCAL can link programs on
+      a multicore machine, per-CPU layers, and per-thread layers. Section 6 shows how we can extract the code of mC2 and how we can run the extracted code.</p>
+
+    <p>If you have any questions, please do not hesitate to send an email to:</p>
+
+    <ul>
+     <li>Ronghui Gu (ronghui.gu@columbia.edu)</li>
+    </ul>
+
+    <!----------------------------------------------------------------------------------
+	1. The structure of the package
+      ----------------------------------------------------------------------------------->
+    <h2 id="1-the-structure-of-the-package">1. The structure of the package</h2>
+
+    <p>We submit our artifact files together with a Virtual Box image.</p>
+
+
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+     +-- ccal.tar.gz                      # Source code of CCAL and two examples
+     +-- mc2.tar.gz                       # Source code of CCAL and mC2 (Fully verified kernel built on CCAL)
+     +-- PLDI18AE_Ubuntu16.04_x86_64.ova  # Virtual Box image
+    </span></span></span></div></pre>
+
+    <p>We will explain each of the files in the main directory in more detail below.</p>
+
+
+    <h3 id="1-1-ccal-tar-gz-">1-1. <code>ccal.tar.gz</code></h3>
+
+    <p>This file contains the CCAL framework and two examples using CCAL.
+      The whole kernel (mC2) with CCAL is very large, and compiling all of the files takes quite a long time.
+      Therefore, we provide this lightweight ZIP file for AECs, which will be sufficient to evaluate CCAL.
+      If you want to look at the whole kernel built using CCAL,
+      you can extract files from <code>mc2.tar.gz</code> of our package.</p>
+
+    <p>The <code>ccal.tar.gz</code> file contains CCAL files, two examples (multicore linking and ticket lock module),
+      and some dependent files from mC2 that CCAL is currently relying on.
+      CCAL still has some dependencies on mC2, especially relating to some (high-level) specifications of mC2 functions and memory model related definitions.
+      We are working on removing dependencies between CCAL and mC2 for better usability.
+      The file also contains two examples using CCAL: multicore linking and a ticket lock module.
+      The ZIP file consists of the following directories:</p>
+
+    <table border = 1 bordercolor = solid black>
+      <thead>
+	<tr>
+	  <th>Folder</th>
+	  <th>Description</th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr>
+	  <td> <b>compcert</b></td>
+	  <td><b>the CompCert compiler</b></td>
+	</tr>
+	<tr>
+	  <td> <b>compcertx</b></td>
+	  <td><b>the extended CompCert</b></td>
+	</tr>
+	<tr>
+	  <td> <b>liblayers</b></td>
+	  <td><b>the layer library</b></td>
+	</tr>
+	<tr>
+	  <td> mcertikos</td>
+	  <td><b>other CCAL framework</b> and example files</td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- <b>layerlib</b></td>
+	  <td><b>Asm program verifier and the multilayer linking library</b></td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- <b>clib</b></td>
+	  <td><b>C program verifier</b></td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- <b>conlib</b></td>
+	  <td><b>library for concurrent linking</b></td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- <b>driver, extraction</b></td>
+	  <td><b>top-level linking (for source code and proof) and code extraction</b></td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- objects</td>
+	  <td>high level specifications of mC2</td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- flatmem</td>
+	  <td>memory model and memory accessors</td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- multicore</td>
+	  <td>multicore linking proofs for mC2 using CCAL</td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- ticketlog</td>
+	  <td>ticket lock module</td>
+	</tr>
+      </tbody>
+    </table>
+
+    <p>Directories with bold characters are the directories solely for CCAL (and Compcert, which is our base tool).
+      We provide detailed explanations for them in Section 4.</p>
+
+    <h3 id="1-1-mc2-tar-gz-">1-2. <code>mc2.tar.gz</code></h3>
+    <p>The second ZIP file of our package (<code>mc2.tar.gz</code>) contains the whole mC2 kernel alongside the whole CCAL framework.
+       Section 5 contains explanations about some parts of the kernel, especially the parts that we have described in our submission.
+       In addition, we provide a table describing the whole kernel in that section.
+       In section 6, there are instructions to compile and extract the verified kernel, and to run the extracted kernel.
+       The structure of the file is as follows:</p>
+
+    <table border = 1 bordercolor = solid black>
+      <thead>
+	<tr>
+	  <th>Folder</th>
+	  <th>Description</th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr>
+	  <td> compcert</td>
+	  <td>the CompCert compiler</td>
+	</tr>
+	<tr>
+	  <td> compcertx</td>
+	  <td>the extended CompCert</td>
+	</tr>
+	<tr>
+	  <td> liblayers</td>
+	  <td>the layer library</td>
+	</tr>
+	<tr>
+	  <td> mcertikos</td>
+	  <td>other CCAL framework and example files</td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- layerlib</td>
+	  <td>Asm program verifier and the multilayer linking library</td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- clib</td>
+	  <td>C program verifier</td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- conlib</td>
+	  <td>library for concurrent linking</td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- driver, extraction</td>
+	  <td>top-level linking (for source code and proof) and code extraction</td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- invlemma</td>
+	  <td>invariant proofs common to multiple layers</td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- objects</td>
+	  <td>high level specifications of mC2</td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- flatmem</td>
+	  <td>memory model and memory accessors</td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- multicore</td>
+	  <td>multicore linking proofs for mC2 using CCAL</td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- multithread</td>
+	  <td>multithreaded linking proofs for mC2 using CCAL</td>
+	</tr>
+	<tr>
+	  <td>&nbsp;&nbsp;+-- {ticketlog, mcslock, device, mm, proc, ipc, trap}</td>
+	  <td>mC2 modules that are implemented using CCAL</td>
+	</tr>
+      </tbody>
+    </table>
+
+
+    <h3 id="1-3-virtual-box-image">1-3. <code>PLDI18AE_Ubuntu16.04_x86_64.ova</code></h3>
+
+    <p>This is the virtual box image that contains a preset environment.
+      The sudo password of this virtual machine is "<code>ccal-pldi18</code>".
+    </p>
+
+
+    <!----------------------------------------------------------------------------------
+	2. Preparation of the environment
+      ----------------------------------------------------------------------------------->
+    <H2 id="2-preparation-for-the-environment">2. Preparation of the environment</H2>
+
+    <p>Inside the Virtual Box image <code>PLDI18AE_Ubuntu16.04_x86_64.ova</code>, we have installed Ubuntu 16.04,
+      and included our two packages in <code>$HOME/workspace/ccal</code> and <code>$HOME/workspace/mc2</code>.
+      Building the first one (<code>$HOME/workspace/ccal</code>) is possible within the virtual machine, but we recommend that you instead build both packages on your local machine, as the build process will take significantly longer in the VM.
+      Building all of the files in <code>ccal.tar.gz</code> takes less than five hours
+      on an 8 core (with hyperthreading) machine with 32 GB of memory and a maximum of 8 parallel threads (<code>make -j8</code>).</p>
+
+
+    <p>To compile the files, the following tools are needed:</p>
+
+    <ul>
+      <li>Operating System: Linux (Ubuntu 16.04 is recommended). </li>
+      <li>Coq: version 8.4.6 (Coq 8.5 and 8.6 are not supported due to compatibility issues with CompCert).</li>
+      <li>OCaml: version 4.01.0 (used for code extraction) </li>
+      <li>Menhir: version 20151112 </li>
+      <li>build-essential: (for 'make' system)</li>
+    </ul>
+
+    <p>The easiest way to satisfy these requirements is to install
+      Coq and OCaml using <b>OPAM</b>, the OCaml Package Manager.</p>
+
+    <p>We recommend starting the evaluation process with the following four steps:</p>
+
+    <ul>
+      <li>Install the necessary software to compile CCAL (<code>ccal.tar.gz</code>),
+        and follow instructions in the next sections to make sure every proof compilation works.</li>
+      <li>Inspect files in <code>ccal.tar.gz</code> using the detailed descriptions in Sections 4 and 5 as guidelines.</li>
+      <li>Using descriptions in Section 5, see the indexed HTML files of mC2 or the files in <code>mc2.tar.gz</code> to check the additional examples,
+        theorems, and other parts of the mC2 kernel that are not included in <code>ccal.tar.gz</code>.</li>
+      <li>That is enough to evaluate CCAL itself. If you want to look at the entire mC2 kernel, please see Sections 5 and 6.</li>
+    </ul>
+
+    <p>In case you want to build everything locally, we will explain how you can install all the necessary tools on a clean amd64 version of Ubuntu 16.04 (which can be downloaded
+      from <a href="http://releases.ubuntu.com/16.04">here</a>).
+      Then, install the essential tools as follows: </p>
+
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+      $ sudo apt-get install gcc-multilib libc6-i386 build-essential git menhir ruby opam
+      $ opam init
+      $ opam update
+      $ opam switch 4.01.0              # use opam version 4.01.0
+      $ eval `opam config env`
+      $ opam install coq=8.4.6          # use Coq version 8.4.6
+    </span></span></span></div></pre>
+
+    <p>More information about installing OPAM can be found <a href=https://opam.ocaml.org/doc/Install.html>here</a>.</p>
+
+    <p><b><i>NOTE</i></b>: Coq 8.4pl4 should be fine to compile our packages. We checked our proofs with both Coq 8.4pl4 and Coq8.4.6.
+      But we recommend you use the tools specified in these instructions to avoid unnecessary trial and error.</p>
+
+    <!----------------------------------------------------------------------------------
+	3. Proof Check
+      ----------------------------------------------------------------------------------->
+    <H2 id="3-proof-check">3. Proof checking</H2>
+    <p>To build the proof, first unzip the <code>ccal</code> directory and configure it on the platform:</p>
+
+    <pre class="editor-colors lang-text">
+     <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+      $ tar vxzf ccal.tar.gz
+      $ cd ccal
+
+      # for linux
+      $ ./configure ia32-linux
+    </span></span></span></pre>
+
+    <p>Then you should see the following message, which indicates that you are ready to compile our artifacts:</p>
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+
+      Testing assembler support for CFI directives... yes
+      Testing Coq... version 8.4pl6 -- good!
+      Testing OCaml... version 4.01.0 -- good!
+      Testing Menhir... version 20151112 -- good!
+
+      CompCert configuration:
+          Target architecture........... ia32
+          Application binary interface.. standard
+          OS and development env........ linux
+          C compiler.................... gcc -m32
+          C preprocessor................ gcc -m32 -U__GNUC__ -E
+          Assembler..................... gcc -m32 -c
+          Assembler supports CFI........ true
+          Assembler for runtime lib..... gcc -m32 -c
+          Linker........................ gcc -m32
+          Math library.................. -lm
+          Binaries installed in......... /usr/local/bin
+          Runtime library provided...... true
+          Library files installed in.... /usr/local/lib/compcert
+          cchecklink tool supported..... false
+
+      If anything above looks wrong, please edit file ./Makefile.config to correct.
+    </span></span></span></div></pre>
+
+    <p>Then use <code>make</code> to do the proof checking.
+      It takes less than five hours to finish the proof checking when running on an 8-core machine with 32GB memory and 8 parallel jobs (<code>make -j8</code>).
+      When the compilation is complete, it prompts a message similar to the following:</p>
+
+
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+      $ make -j8
+
+      >>> ...
+      >>>
+      >>> mkdir -p fakedir
+      >>> (cd fakedir && xargs coqdep -R .. . \
+      >>>   -R ../compcert/ia32 compcert.ia32 \
+      >>>   -R ../mcertikos/ticketlog mcertikos.ticketlog) \
+      >>>   <.filelist >.depend.n 2>/dev/null
+      >>> rmdir fakedir
+      >>> mv .depend.n .depend
+      >>>
+      >>> ...
+      >>>
+      >>> cd .. && \
+      >>> ocamlbuild -no-hygiene -no-links -j 2 -I mcertikos/extraction -I
+      >>> mcertikos/driver -I compcert/lib -I compcert/common -I compcert/ia32/standard -I
+      >>> compcert/ia32 -I compcert/backend -I compcert/cfrontend -I compcert/flocq/Core -I
+      >>> compcert/flocq/Prop -I compcert/flocq/Calc -I compcert/flocq/Appli -I compcert/driver -I
+      >>> compcert/cparser  CertiKOSDriver.native && \
+      >>> mv _build/mcertikos/driver/CertiKOSDriver.native mcertikos/ccertikos
+      >>> Finished, 0 targets (0 cached) in 00:00:00.
+      >>> Finished, 1008 targets (1007 cached) in 00:00:05.
+      >>>
+      >>> ...
+      >>>
+      >>> coqc multicore/Concurrent_Linking
+      >>> coqc driver/CertiKOSproof
+      >>> make[1]: Leaving directory '/.../ccal/mcertikos'
+    </span></span></span></div></pre>
+
+    <p>If you want to walk through the proofs step by step, you can use <code>./pg</code> (for Linux) or <code>./pgmac</code> (for Mac) in the <code>ccal/mcertikos/</code> directory.
+      Those commands require two additional tools, <a href=https://proofgeneral.github.io/>Proof General</a> and <a href=https://www.gnu.org/software/emacs/>Emacs</a>.
+      We pre-installed these in our virtual box image, so you may find it easier to walk through the proofs within the virtual machine.</p>
+
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+      $ ./pg conlib/conmclib/Concurrent_Linking_Def.v              # an example of ./pg command
+    </span></span></span></div></pre>
+
+    <!----------------------------------------------------------------------------------
+         4. CCAL framework
+      ----------------------------------------------------------------------------------->
+
+    <h2 id="4-ccal-library">4. CCAL framework</h2>
+
+    <center>
+      <p>
+	<img src = "fig/toolchain.png"
+             alt = "System architecture of the CCAL programming toolkit. - Fig. 2 in the submission" width="50%" align="middle">
+	<figcaption>Figure 1. System architecture of the CCAL programming toolkit.</figcaption>
+      </p>
+    </center>
+
+     <p>Figure 1 (the same as Fig. 2 in the submission) shows all important components of our CCAL framework.
+       There are multiple components that are not described in our submission in detail.
+       This is because we built CCAL on top of the "certified abstraction layer" (CAL) framework [1], and CCAL reuses or slightly extends the libraries that already exist in CAL (for multi-layer linking, C and Asm verifier,
+       CompCertX, etc).
+       Therefore, instead of explaining all components of the CCAL toolkit, we focus on the parts that are most closely related to concurrency.
+       Among the components in Fig. 1, <b>Certified Multi-core Linking</b>, <b>Certified Multithreaded Linking</b>,
+       <b>Thread Safe CompCertX</b>, and
+       <b>Concurrent Layer Interface</b> (<b>PerCoreLayer</b> and <b>PerThreadLayer</b>)
+       are the most important components of CCAL,
+       which we claim as the main contributions of our submission.</p>
+     <p>In our artifact, the files related to these components are mostly within the <code>ccal/mcertikos/conlib/</code> directory.
+       Almost all files in <code>ccal/{compcert/, compcertx/, liblayer/}</code> and <code>ccal/mcertikos/{layerlib/, clib/}</code> are reused or slightly extended from CAL.
+     </p>
+
+    <h3 id="4-1-c-verifier-assembly-verifier-refinement-library-compositional-semantic-model">4-1. C and Assembly Verifier / Refinement Library / Multilayer Linking / ...</h3>
+    <p>Figure 1 (in this document), Fig. 2 (in the submission), and Table 1 (in the submission) show multiple components of our toolkit.
+      Among them, most files related to C and Assembly verification, the refinement library, the multilayer linking library, and the simulation library are reused or
+      improved from the previous work, CAL [1]. Since they are not main contributions of our CCAL submission,
+      we will only briefly explain some of those files in the following table:</p>
+
+    <table border = 1 bordercolor = solid black>
+    <thead>
+    <tr>
+    <th>File</th>
+    <th>Description</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+    <td width="30%"><code>ccal/layerlib/LAsm.v</code></td>
+    <td width="70%">The assembly machine model of the extended CompCert (CompCertX). This is the machine model of CAL, and also a machine model
+      for per-CPU layers in CCAL.</td>
+    </tr>
+    <tr>
+      <td width="30%"><code>ccal/layerlib/LinkSourceTemplate.v</code></td>
+      <td width="70%">Source code linking template. We use this template not only for per-CPU layers but also for per-thread layers.</td>
+    </tr>
+    <tr>
+    <td width="30%"><code>ccal/layerlib/LinkTemplate.v</code></td>
+    <td width="70%">Proof linking template. Due to the difference between per-CPU layers and per-thread layers, this template only can be used for
+      per-CPU layers. We also provide a proof linking template for per-thread layers as a part of CCAL. We will explain this in Section 4-3.</td>
+    </tr>
+    <tr>
+      <td width="30%"><code>ccal/layerlib/CommonTactic.v</code></td>
+      <td width="70%">One of the general tactic library files.</td>
+    </tr>
+    <tr>
+    <td width="30%"><code>ccal/layerlib/RefinementTactic.v</code></td>
+    <td width="70%">One of the tactic library files that makes refinement proofs easy.</td>
+    </tr>
+    <tr>
+      <td width="30%"><code>ccal/layerlib/{AsmImplLemma.v, AsmImplTactic.v}</code></td>
+      <td width="70%">Assembly verifier files that contain multiple lemmas and tactics which can be generically used for assembly verification.</td>
+    </tr>
+    <tr>
+      <td width="30%"><code>ccal/clib/{LoopProof.v, VCGen.v}</code></td>
+      <td width="70%">C verifier files that provide templates, lemmas, and tactics which can be used in C source code verification.</td>
+    </tr>
+    <tr>
+    <td align=middle width="30%">...</td>
+    <td align=middle width="70%">...</td>
+    </tr>
+    </tbody>
+    </table>
+
+    <p>In addition to those files that are on the table, there still are many other files that fall into our toolkit files.
+      For example, files in <code>ccal/{compcert/, compcertx/, liblayer/}</code> and
+      <code>ccal/mcertikos/{driver/, extraction/}</code> are also parts of our toolkit.
+      However, we focus on describing the newly introduced features in CCAL (when it is compared with CAL) instead of
+      describing all those files.
+    </p>
+
+
+     <h3 id="4-2-concurrent-layer-interface-and-calculus">4-2. Concurrent layer interface and calculus (Section 3 in the submission)</h3>
+
+    <p>Important files that are related to the concurrent layer interface and calculus (section 3 in the submission)
+      are located in the <code>ccal/mcertikos/conlib/conmclib/</code> directory. There are four files in the directory:</p>
+
+     <table border = 1 bordercolor = solid black>
+     <thead>
+     <tr>
+     <th>File</th>
+     <th>Description</th>
+     </tr>
+     </thead>
+     <tbody>
+     <tr>
+     <td width="30%"><code>Concurrent_Linking_Lib.v</code></td>
+     <td width="70%">Basic libraries for data types.</td>
+     </tr>
+     <tr>
+     <td width="30%"><code>Concurrent_Linking_Def.v</code></td>
+     <td width="70%">Definitions for the multiprocessor machine model, evaluation rules, and other intermediate languages that are useful for
+     connecting the multiprocessor machine model with LAsm. The intermediate machine models contain the concurrent layer interface and calculus.
+     </td>
+     </tr>
+     <tr>
+     <td width="30%"><code>Concurrent_Linking_Prop.v</code></td>
+     <td width="70%">Refinement proofs between machine models that are defined in <code>Concurrent_Linking_Def.v</code>.</td>
+     </tr>
+     <tr>
+     <td width="30%"><code>Concurrent_Linking_Additional_Prop.v</code></td>
+     <td width="70%">Additional properties of machine models that are defined in <code>Concurrent_Linking_Def.v</code>. The proofs in this file are not used
+                    in the verification of mC2, but may be useful for other purposes.</td>
+     </tr>
+     </tbody>
+     </table>
+
+     <p><code>Concurrent_Linking_Def.v</code> contains the abstract definition of the multiprocessor machine model,
+       <code>hardware_step</code>,
+       which is then instantiated as a concrete hardware semantics by filling in abstract definitions required by
+       the <code>hardware_step</code> rule
+       (See section 5-4 (4) in this document or <code>ccal/mcertikos/multicore/semantics/HWStepSemImpl.v</code>).</p>
+
+     <p>To define the multiprocessor machine model (Section 3.1 in the submission), we first define a template for the hardware setting (<code>HardWareSetting</code>).
+       The definitions in here correspond to the definitions in Figure 7 of our submission.
+       For example, when we link all abstract machine models with LAsm, <code>private_state</code> can be instantiated as a tuple that contains a set of registers, a memory, and
+       private abstract data of each CPU.
+       Furthermore, <code>shared_piece</code> can be instantiated as those parts of memory which are protected by
+       the push/pull model of our framework.
+       The file also contains the definition of events.
+       Among them, <code>EYIELD</code> and <code>EBACK</code> are related to scheduling transitions,
+       <code>EACQ</code> and
+       <code>EREL</code> are for the push/pull model,
+       and <code>EATOMIC</code> is for the event that will be generated by any atomic evalution.
+     </p>
+
+       <p>With this hardware setting, we also provide program transition rules of the mulitprocessor machine model (see <code>HardSemantics</code> in <code>Concurret_Linking_Def.v</code>).
+     There are four kinds of program transitions, and we define <code>hardware_local_step</code> using those abstract definitions.
+     Then, the multiprocessor machine model is defined to
+     always perform one scheduling step and one program transition step (see <code>hardware_step</code>).
+     Using the same hardware configuration and semantics,
+     the concurrent layer interface (Section 3.2 in the submission) is also defined in
+     the same file as <code>env_step</code>.
+       </p>
+
+     <p>In this way, we define a layer interface involving only one CPU, which we call the CPU-local layer interface.
+       In the file, <code>single_step</code> is already a CPU-local layer interface because it only contains a single CPU's state,
+       abstracting away other CPUs' behavior as an environmental context.
+       However, this <code>single_step</code> machine model is not suitable for building per-CPU layers because we cannot
+       directly use our multi-layer calculus and the extended CompCert.
+       To use the existing tools as much as possible without huge modifications,
+       we introduce multiple intermediate languages that can be used to link
+       <code>single_step</code> with LAsm, corresponding to the CPU-local layer interface in Section 3.2 of the submission.
+       These are:
+       <code>single_big_step</code>,
+       <code>single_big2_step</code>,
+       <code>single_split_step</code>,
+       <code>single_reorder_step</code>,
+       and <code>single_separate_step</code>.
+       These languages are also defined in <code>Concurrent_Linking_Def.v</code>.</p>
+
+     <p>After the lowest layer of our CPU-local layer interface is defined (<code>mboot</code> layer in our artifact file - see
+       Section 5-4 (4) in this document or <code>ccal/mcertikos/ticketlog/MBoot.v</code>),
+       our toolkit can connect all machine models for multicore linking by using refinement proofs provided by
+       <code>Concurrent_Linking_Prop.v</code>.
+       This is mostly straightforward, and is illustrated
+       by our example 5-4. (4) (see the definitions and proofs in <code>mcertikos/multicore</code>).
+       One exception is the refinement proof between <code>single_separate_step</code> layer and the <code>LAsm</code> layer, as
+       this is not part of our toolkit (since this proof heavily relies on the definition of the <code>mboot</code> layer
+       in our mC2 example).</p>
+
+
+     <h3 id="4-3-multithreaded-linking-and-thread-safe-compcertx">4-3. Building certified multithreaded layers (Section 5 in the submission)</h3>
+    <p>The multithreaded-layer-building files are located in the <code>ccal/ccalmtlib/</code> directory.
+      They contain: multiple machine models used to build a per-thread layer interface;
+      abstract definitions to build the proper context necessary for the per-thread layer interface;
+      the memory model for per-thread layers;
+      proofs (including refinement) connecting those machine models;
+      and proofs of compositionality of our machine models.
+      The directory contains three intermediate machine models and the per-thread machine model, described as follows:</p>
+
+    <table border = 1 bordercolor = solid black>
+      <thead>
+	<tr>
+	  <th>File</th>
+	  <th>Description</th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr>
+	  <td width="30%"><code>EAsmCommon.v</code></td>
+	  <td width="70%">Common definitions for EAsm and IIEAsm in the below.</td>
+	</tr>
+	<tr>
+	  <td width="30%"><code>EAsm.v</code></td>
+	  <td width="70%">Multithreaded machine model with environmental context and a single global memory for all threads
+            (Section 5.2 in the submission). This is the lowest-level machine model
+            in our multi-threaded linking library.
+	    This machine model in the view of multithreaded linking is related to <code>env_step</code> in
+            <code>Concurrent_Linking_Def.v</code> in the multicore linking.
+	  </td>
+	</tr>
+	<tr>
+	  <td width="30%"><code>IIEAsm.v</code></td>
+	  <td width="70%">Multithreaded machine model with environmental context and divided memories (related to Section 5.2 in the submission), separating the current thread from other threads. This machine model makes it easy to prove the
+	    refinement between the single threaded machine model (TAsm) and the multithreaded machine model with a single global memory (EAsm).</td>
+	</tr>
+	<tr>
+	  <td width="30%"><code>TAsm.v</code></td>
+	  <td width="70%">Single threaded machine model with an explicit environment step in its evaluation rule (related to Section 5.3 in the submission).
+	    This machine model is already
+	    a thread-local machine model, but we cannot use our thread-safe CompCertX with this model due to the difference between the underlying machine model of
+	    CompCert (and its extensions) and this TAsm. Therefore, we add one more machine model, HAsm, to fully facilitate the power of CompCert.</td>
+	</tr>
+	<tr>
+	  <td width="30%"><code>HAsm.v</code></td>
+	  <td width="70%">Single threaded machine model for thread-safe CompCertX. This one is quite similar to LAsm (the machine model of CompCertX),
+	    but it can dynamically allocate
+	    the initial state for each thread (related to Section 5.3 in the submission).</td>
+	</tr>
+	<tr>
+	  <td width="30%"><code>HAsmLinkTemplate.v</code></td>
+	  <td width="70%">Vertical and horizontal linking template for per-thread layers.</td>
+	</tr>
+      </tbody>
+    </table>
+
+    <p>Building certified multithreaded layers also requires us to define the proper memory model, as described in
+      Section 5.5 of our submission. There are three files in our artifact that are related to this memory extension.</p>
+
+    <table border = 1 bordercolor = solid black>
+      <thead>
+	<tr>
+	  <th>File</th>
+	  <th>Description</th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr>
+	  <td width="30%"><code>AlgebraicMem.v</code></td>
+	  <td width="70%">Algebraic memory model for multithreaded layer interface.</td>
+	</tr>
+	<tr>
+	  <td width="30%"><code>AlgebraicMemImpl.v</code></td>
+	  <td width="70%">Algebraic memory model implementation.</td>
+	</tr>
+	<tr>
+	  <td width="30%"><code>LAsmAbsDataProperty.v</code></td>
+	  <td width="70%">LAsm properties for Algebraic memory model.</td>
+	</tr>
+      </tbody>
+    </table>
+
+    <p>
+    <p>Building the thread local layer interface also requires providing the proper context for the interface.
+      For this purpose, we provide multiple abstract definitions and functions, as well as properties of those definitions/functions, that must be instantiated
+      when one uses our toolkit to verify an actual program.
+      The following table shows the files that are related to those abstract definitions. We also provide an
+      example illustrating how to use them in our example section (see Section 5-4 (3) in this document).</p>
+
+    <table border = 1 bordercolor = solid black>
+      <thead>
+	<tr>
+	  <th>File</th>
+	  <th>Description</th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr>
+	  <td width="30%"><code>SingleAbstractDataType.v</code></td>
+	  <td width="70%">Abstract data definitions for intermediate machine models (EAsm, IIEAsm, and TAsm) in multithreaded linking library.</td>
+    </tr>
+	<tr>
+	  <td width="30%"><code>RegsetLessdef.v</code></td>
+	  <td width="70%">Properties related to register values.</td>
+	</tr>
+	<tr>
+	  <td width="30%"><code>SingleOracleDef.v</code></td>
+	  <td width="70%">Event definitions for multithreaded program linking.</td>
+	</tr>
+	<tr>
+	  <td width="30%"><code>SingleOracle.v</code></td>
+	  <td width="70%">Properties of the global log, an environmental context, and other definitions that are required to
+	    build the proper context for the per-thread layer interface as well as for multithreaded linking.</td>
+	</tr>
+	<tr>
+	  <td width="30%"><code>SingleConfiguration.v</code></td>
+	  <td width="70%">Top-level configuration definitions for multithreaded linking. This includes
+	  the definitions in <code>SingleOracle.v</code> and other definitions that are related to building
+	    the per-thread layer interface and multithreaded linking
+	    (e.g., variables for current thread id, main thread of the CPU, active thread set in the CPU, etc).</td>
+	</tr>
+      </tbody>
+    </table>
+
+    <p>Similar to the multicore library in our CCAL, the multithreaded library also provides several proofs that can be generically applied to programs;
+      these proofs can be used with any layer definitions and programs as long as they can fulfill the requirements of our toolkit.
+      There are six files relating to these proofs:</p>
+
+    <table border = 1 bordercolor = solid black>
+      <thead>
+	<tr>
+	  <th>File</th>
+	  <th>Description</th>
+	</tr>
+      </thead>
+      <tbody>
+	<tr>
+	  <td width="30%"><code>EAsmPropLib.v</code></td>
+	  <td width="70%">Basic properties related to EAsm, used in the refinement theorems for those machine models as well as
+            in the proofs of compositionality of EAsm.</td>
+	</tr>
+	<tr>
+	  <td width="30%"><code>AsmIIE2E.v</code></td>
+	  <td width="70%">Refinement theorem between IIEAsm and EAsm. Both are multithreaded layers with a full active thread set, but their memory models are slightly different.</td>
+	</tr>
+	<tr>
+	  <td width="30%"><code>AsmIIE2IIE.v</code></td>
+	  <td width="70%">Refinement theorem between IIEAsm with one single thread and IIEAsm with a full active thread set on the CPU.</td>
+	</tr>
+	<tr>
+	  <td width="30%"><code>AsmT2IIE.v</code></td>
+	  <td width="70%">Refinement theorem between TAsm (single threaded machine) and IIEAsm with one single thread.</td>
+	</tr>
+	<tr>
+	  <td width="30%">{<code>EAsmCompose.v</code>, <code>EAsmComposeRefinement.v</code>}</td>
+	  <td width="70%">Compositionality of EAsm (not used in mC2 example).</td>
+	</tr>
+      </tbody>
+    </table>
+
+
+    <!----------------------------------------------------------------------------------
+         5. Examples
+      ----------------------------------------------------------------------------------->
+    <h2 id="5-example">5. Examples</h2>
+    <p>To demonstrate CCAL, we verify different versions of a concurrent operating system with fine-grained lock support (mC2).
+      In this section, we will first explain the examples that we presented in our submission and will explain key theorems that we have shown for mC2.
+      Those key theorems also contain interesting examples that use our CCAL toolkit.
+      If we do not explicitly mention that the example is in <code>ccal.tar.gz</code>, you can find them in <code>mc2.tar.gz</code> instead.</p>
+
+    <h3 id="5-1-ticket-lock-and-mcs-lock">5-1. Spinlock (ticket lock and MCS lock)</h3>
+    <p>Section 4.1 in the submission illustrates a spin lock example. Ticket lock is one of two spinlock algorithms that we verified as a part of mC2.
+      In the artifact, almost all files that correspond to that part in the submission can be found in <code>ccal/mcertikos/ticketlog</code>.</p>
+    <ul>
+      <li><b>Bottom interface</b>: The bottom interface of our ticket lock module is the <code>mboot</code> layer defined in <code>ccal/mcertikos/ticketlog/MBoot.v</code>.
+	This is also the bottom layer of our full mC2, mentioned in Section 4-2 of this document.
+	Among the primitives defined in <code>mboot</code>, <code>atomic_FAI</code>, <code>log_get</code>, and <code>log_incr</code> correspond to
+	<code>FAI_t</code>, <code>get_n</code>, and <code>inc_n</code> in the submission (lines 768-769), respectively.
+	Their log replay functions are defined in <code>ccal/mcertikos/objects/LogReplay.v</code>.
+	There are multiple replay functions; among them, the one that is most relevant at this level is
+	<code>CalTicketLock</code>. The transition of this replay function corresponds to the automata on line 406 of our submisison.
+      </li></br>
+      <li><b>Fun-Lift</b>: To prove functional correctness, we establish two layers on top of our bottom interface, which are
+	<code>mticketlockintro</code> and <code>mticketlockop</code>. Those two layer definitions can be found in
+	<code>ccal/mcertikos/ticketlog/MTicketLockIntro.v</code> and <code>ccal/mcertikos/ticketlog/MTicketLockOp.v</code>, respectively.
+	The simulation relation "R" for this fun-lift is defined in <code>ccal/mcertikos/ticketlog/TicketLockIntroGenDef.v</code>.
+	The relation "R" actually uses a replay function with an event type described previously.
+	Instead of using <code>CalTicketLock</code> directly at the this level,
+	we use <code>CalTicketLockWraparound</code> to handle a potential buffer overflow issue first.
+	Then, we replace this with  <code>CalTicketLock</code>, with a "rely condition" stating that the number of CPUs is less than 2<sup>32</sup> (lines 794-798 in the submission).
+        </br></br>
+	<b><i>NOTE</i></b>: There is actually one additional layer in between <code>mboot</code> and <code>mticketlockintro</code>, called <code>mcurid</code>
+	(in <code>ccal/mcertikos/ticketlog/MCurID.v</code>). This layer is not related to the ticket lock module at all, so we do not count it
+	in the above description.
+      </li></br>
+      <li><b>Log-Lift</b>: Two layers in our example are related to log-lift refinement: <code>mqticketlockop</code> and
+	<code>mhticketlockop</code>, defined in <code>ccal/mcertikos/ticketlog/MQTicketLockOp.v</code> and <code>ccal/mcertikos/ticketlog/MHTicketLockOp.v</code>, respectively.
+	To provide the atomicity of ticket lock with rely and guarantee conditions, we show liveness of this lock in <code>ccal/mcertikos/ticketlog/StarvationFreedomTicketLock.v</code>.
+	This allows us to expose the atomic specifications of ticket lock to the modules that are built based on the <code>mhticketlockop</code> layer.
+	This <code>mhticketlockop</code> layer maps <code>pass_lock</code> and <code>wait_lock</code> (which are lock release/acquire functions)
+	to <code>pass_hlock_spec</code>  and <code>wait_hlock_spec</code> in <code>ccal/mcertkos/ojects/ObjQLock.v</code>. It uses the log replay function <code>H_CalLock</code>
+	(defined in <code>ccal/mcertikos/objects/LogReplay.v</code>) to provide atomic behavior for those two functions
+	(the automata in line 434 of our submission precisely corresponds to this <code>H_CalLock</code> log replay function).
+	In addition, this is the first time that we intensively use rely and guarantee conditions for log-lift pattern proofs.
+	The <code>mqticketlockop</code> layer contains multiple rely and guarantee conditions as its high-level invariants
+	(e.g., <code>valid_multi_oracle_pool_inv</code>, <code>get_free_qlock_oracle_pool_inv</code>, etc).
+      </li>
+    </ul>
+
+    <p>One other lock algorithm that we have verified is an MCS lock.
+      Since we only mention this MCS lock in Table 1 in the submission, we will not describe it here in depth.
+      The proof structure for MCS lock is similar to the proof structure for ticket lock, but the complexity of the proof is much greater than that of ticket lock.
+      There is previous work that explains this model in detail [3].</p>
+
+
+    <h3 id="5-2-sequential-queue-and-shared-queue">5-2. Sequential queue and shared queue</h3>
+    <p><b><i>NOTE</i></b>: This example is not included in <code>ccal.tar.gz</code>.
+      If you are interested in looking at this example, please look at the files in <code>mc2.tar.gz</code>.</p>
+
+    <p>Section 4.2 in the submission illustrates shared queue objects.
+      Four layers (<code>pqueueintro</code>, <code>pqueueinit</code>, <code>pabqueue</code>, and <code>pabqueue_atomic</code>) defined in
+      <code>mc2/mcertikos/proc/{PQueueIntro.v, PQueueInit.v, PAbQueue.v, PAbQueueAtomic.v}</code> are the layers for the implementation and verification of shared queue objects.
+      The first three are closely related to fun-lift and the last one is closely related to fun- and log-lift that you can see in Section 4.2 of our submission.
+    </p>
+    <ul>
+      <li><b>Fun-Lift</b>: When looking at the <code>pqueueintro_fresh</code> defined in the <code>PQueueIntro.v</code> file, we can see that
+	there are several getter and setter functions for the doubly linked list queue.
+	To hide the memory and to replace those functions with primitives operating on abstract data (which is a common pattern in our CCAL as well as CAL, as described in our submission),
+	we use two simulation relations <code>match_TDQPool</code> and <code>match_TCBBPool</code>, defined in <code>mc2/objects/cpulocaldef/OracleTCBRel.v</code>.
+	Using these simulation relations, we can successfully lift those getter and setter functions as the primitives operating on abstract data.
+	Their refinement proofs can be found in <code>mc2/mcertikos/proc/QueueIntroGenFresh.v</code>.
+	Using the getter and setter functions,
+	we provide four new primitives in the <code>pqueueinit</code> layer: <code>enqueue</code>, <code>dequeue</code>, <code>queue_rmv</code>, and <code>tdqueue_init</code>.
+	To simplify specifications of these functions, as well as our queue data structure,
+	we introduce another layer, <code>pabqueue</code>, using the simulation relation
+	<code>AbQ_RealQ</code> defined in <code>mc2/objects/cpulocaldef/OracleABTCBRel.v</code>.
+	In this way, we expose the dequeue primitive as a layer interface with the specification defined in our submission (lines 848-855).
+      </li> </br>
+      <li><b>Fun- and Log-Lift</b>: The <code>pabqueue_atomic</code> layer introduces two primitives, <code>enqueue_atomic</code> and <code>dequeue_atomic</code>; the dequeue primitive
+	corresponds to lines 856-866 in our submission.
+	These two newly-introduced primitives are shared queue protected by acquire lock and release lock primitives that we have already verified in
+	the ticket lock module.
+	Thanks to the power of CCAL,
+	it is simple to build shared queue primitives on top of sequential queue and spinlock primitives, as we can reuse many proofs.</li>
+    </ul>
+
+
+  <h3 id="5-3-queuing-lock">5-3. Queuing lock</h3>
+
+  <p><b><i>NOTE</i></b>: This example is not included in <code>ccal.tar.gz</code>. If you are interested in looking at this example, please look at the files in <code>mc2.tar.gz</code>.</p>
+
+
+  <p>This example is first introduced in the <code>pipcintro</code> layer that is in <code>mc2/mcertikos/ipc/PIPCIntro.v</code>.
+    There are two primitives that are newly introduced in the layer, <code>syncsendto_chan_pre</code> and <code>tryreceive_chan</code>.
+    While the names of these two primitives are different from Fig. 11 in our submission,
+    it is straightforward to check that they actually correspond to the queueing lock example in our submission.
+    Please check the source code of these primitives in <code>mc2/mceritkos/ipc/PHThreadCSource.v</code>.</p>
+
+  <h3 id="5-4-the-main-theorem-of-mc2">5-4. The main theorem of mC2</h3>
+
+  <p><b><i>NOTE</i></b>: Except for "(4) Contextual refinement theorem for multicore linking", none of the following examples are included in <code>ccal.tar.gz</code>.
+    If you are interested in looking at them, please see the files in <code>mc2.tar.gz</code> or the provided indexed html links.</p>
+
+  <h4 id="main-contextual-refinement-theorem">Main contextual refinement theorem</h4>
+
+    <li><b>Theorem</b>:<a href="html/mcertikos.driver.CertiKOSproof.html#CertiKOS_correct">CertiKOS_correct</a></p></li>
+
+  <p>After all proofs are done, we can link everything together using our CCAL toolkit.
+    The end-to-end theorem of mC2 guarantees the following fact:
+  </p>
+
+      <center>
+	<p><i>"Any context program CTXT running on the tsyscall layer (the top-most layer of mC2) with HAsm,
+	    a machine model for a per-thread layer interface,</br>
+	    contextually refines
+	    the context program CTXT plus mC2 kernel code running on mboot layer (the bottom-most layer of mC2) with a hardware step semantics </br>
+	    describing a non-deterministic x86 multicore machine model."</i></p>
+      </center>
+
+      <p>Proving this theorem requires multiple sub-theorems, which are:
+	<ul>
+	  <li>Contextual refinement for per-thread layers of mC2</li>
+	  <li>Contextual refinement for per-CPU layers of mC2</li>
+	  <li>Contextual refinement for multithreaded linking</li>
+	  <li>Contextual refinement for multicore layers</li>
+	</ul>
+
+      <p>Let's first decompose the full mC2 as two parts, <code>per_thread_mC2</code> and <code>per_CPU_mC2</code>.
+	Then, we can prove that those two program parts satisfy contextual refinement property by using
+	the proofs for each layer, along with our multilayer linking library (Sections 4-1 and 4-2 in this document).
+	Then, we can link those two proofs with the multithreaded linking of our CCAL toolkit (Section 4-4 in this document).
+	This gives us a theorem for the contextual refinement of the entire mC2 kernel.
+	However, it is still insufficient to argue that this is an end-to-end theorem because its bottom-level machine model
+	is a per-CPU layer (the "mboot" layer).
+	Therefore, we propagate the contextual refinement theorem all the way down to the non-deterministic x86 multicore machine
+	by using our certified multi-core linking library (Section 4-2 in this document).
+	We explain all steps below:</p>
+
+      <h4 id="contextual-refinement-theorem-for-per-thread-modules">(1) Contextual refinement theorem for per-thread modules</h4>
+
+      <li><b>Theorem</b>:<a href="html/mcertikos.driver.CertiKOSproof.html#Per_Thread_CertiKOS_correct">Per_Thread_CertiKOS_correct</a></p></li>
+
+      <p>This theorem shows that "any context program <code>CTXT</code>
+	running on the <code>tsyscall</code> layer contextually refines the context program <code>CTXT</code> plus <code>per_thread_mC2</code>
+	running on <code>phthread</code> (the bottom-most layer interface of per-thread layers) with HAsm". HAsm is described in
+	Section 4-2 in this document; it can use CompCertX to propagate the C proofs down to the assembly level (HAsm), and it
+	has the power to dynamically allocate the proper initial state for each thread.
+	To link the proofs for all layers together, we use the
+        <code>LinkSourceTemplate.v</code> library for source code in all layers,
+        and the <code>HAsmLinkTemplate.v</code> library (both libraries are mentioned in Section 4 of this document) for proofs in all layers.</p>
+
+
+      <h4 id="contextual-refinement-theorem-for-per-cpu-modules">(2) Contextual refinement theorem for per CPU modules:</h4>
+      <li><b>Theorem</b>: <a href="html/mcertikos.driver.CertiKOSproof.html#Per_CPU_CertiKOS_correct">Per_CPU_CertiKOS_correct</a></li>
+
+      <p>This theorem shows that "any context program <code>CTXT</code> running on the <code>pbthread</code> layer (the top-most layer interface of
+	per-CPU layers) contextually refines the context program <code>CTXT</code> plus <code>per_CPU_mC2</code>
+	running on <code>mboot</code> (the bottom-most layer interface of per-thread layers) with LAsm".
+	It can be achieved by linking all the existing proofs for all layers using the multi-layer linking library.
+	To link the proofs for all layers together, we used
+        the <code>LinkSourceTemplate.v</code> library for source code in all layers,
+        and the <code>LinkTemplate.v</code> library (both are mentioned in Section 4 of this document) for all proofs in all layers.</p>
+
+      <h4 id="contextual-refinement-theorem-for-mutlithreaded-linking">(3) Contextual refinement theorem for mutlithreaded linking </h4>
+      <li><b>Theorem</b>: <a href="html/mcertikos.multithread.SingleProcessor_Refinement.html#SingleCore_backward_simulation">SingleCore_backward_simulation</a></li>
+
+      <p>Using the multithreaded linking library, we can freely achieve the contextual refinement proof between
+	the program (with any layer interface that satisfies the constraints of our toolkit) running on TAsm with the exact same program running on EAsm.
+	To link such generic proofs with mC2, the following three steps are required:</p>
+
+	<ul>
+	  <li>Introduce an intermediate layer interface (we call it <code>phbthread</code>) that will be used as a layer instance on TAsm, IIEAsm, and EAsm
+	    (see files in the "mc2/mcertikos/multithread/phbthread/" directory). We have instantiated several abstract definitions provided by
+	    our multithreaded linking library, and we have proved that these abstract definitions satisfy the requirements of our toolkit.
+	  </li></br>
+
+	  <li>Link <code>phbthread</code> with the bottom-most layer interface of per-thread layers (<code>phthread</code>). This work consists of two parts:
+	    (1) showing that any program on <code>phthread</code> with HAsm contextually refines any program on a certain layer interface with TAsm, when all primitives
+	    and memory accessors in <code>phthread</code> and the
+	    given layer for TAsm satisfy desired conditions; and
+	    (2) showing that the definition of <code>phbthread</code> can become the proper layer in the previous proof context by proving
+	    that those desired conditions in the previous step are valid with both <code>phthread</code> and <code>phbthread</code>.
+	    <ol>
+              <li><code>mc2/mcertikos/multithread/highrefins/AsmPHThrad2T.v</code> contains the proofs for the first step, but the proof
+		relies on one big abstract context, <code>AbstractRelT</code>. This context allows us to avoid using the concrete definition of
+		<code>phbthread</code> in this contextual refinement proof. In this sense,
+		most proofs in this file are quite generic and can be reused.
+		Even though we use them in a general way, we do not include this file as a toolkit file because it heavily relies on the definition
+		of <code>phthread</code>.
+              <li>Other files in <code>mc2/mcertikos/multithread/highrefins/</code> show that all primitives in <code>phthread</code> and
+		<code>phbthread</code> satisfy the condition in our previous step, <code>AbstractRelT</code>.
+	      </li>
+	    </ol>
+	  </li></br>
+	  <li>Link <code>phbthread</code> with the top-most layer interface of per-CPU layers (<code>pbthread</code>). Similar to the linking with per-thread layers,
+	    this work consists of two parts:
+	    (1) showing that any program on a certain layer interface with EAsm contextually refines
+	    any program on <code>pbthread</code> with LAsm, when all primitives
+	    and memory accessors in the
+	    given layer for EAsm and <code>pbthread</code> satisfy desired conditions; and
+	    (2) showing that the definition of <code>phbthread</code> can become the proper layer in the previous proof context by proving
+	    that those desired conditions in the previous step are valid with both <code>phbthread</code> and <code>pbthread</code>.
+	    <ol>
+              <li><code>mc2/mcertikos/multithread/lowrefins/AsmE2L.v</code> contains the proofs for the first step, but the proof
+		relies on one big abstract context, <code>AbstractRel</code>. Similar to the proofs in <code>AsmPHThread2T.v</code>,
+		this context allows us to avoid using the concrete definition of
+		<code>phbthread</code> in this contextual refinement proof.
+              <li>Other files in <code>mc2/mcertikos/multithread/lowrefins/</code> show that all primitives in <code>phbthread</code> and
+		<code>pbthread</code> satisfy the condition in our previous step, <code>AbstractRel</code>.
+	      </li>
+	    </ol>
+	</ul>
+
+     <p>After separating these three components, proving the main theorem for multithreaded-linking, "any context program <code>CTXT</code> running on the <code>phthread</code> layer (with HAsm)
+       contextually refines the context program <code>CTXT</code> running on the <code>pbthread</code> layer (with LAsm)", is
+       straightforward by using our multithreaded linking library.</p>
+
+     <p><b><i>NOTE</i></b>: Compiling the proofs in this module takes a long time. This is because several proofs in this module rely on complex context.
+       For example, one <code>Qed</code> in <code>AsmPHThread2T.v</code> takes around 43,000 sec. (approximately 11.5 hours), while some other <code>Qeds</code> take around
+       3-6 hours. Please do not interrupt the compilation even though it will take a very long time.</p>
+
+      <h4 id="contextual-refinement-theorem-for-processor-linking">(4) Contextual refinement theorem for multicore linking </h4>
+      <li><b>Theorem</b>: <a href="html/mcertikos.multicore.Concurrent_Linking.html#concurrent_backward_simulation">Concurrent_Linking</a></li>
+
+      <p>Similar to the multithreaded linking, a few steps are required to use our CCAL multicore linking library with mC2.</p>
+
+      <ul>
+	<li>Instantiate hardware setting (<code>HardWareSetting</code>) and program transition rules (<code>HardSemantics</code>) that are
+	  required to instantiate all machine models in <code>Concurrent_Linking_Def.v</code>.
+	  Explanations about them can be found in Section 4-2 in this document.
+	  In our artifact, you can find the related definitions in <code>{ccal, mc2}/mcertikos/multicore/semantics/HWSemImpl.v</code>.
+	<li>Instantiate all the machine models by using the instances of <code>HardWareSetting</code> and <code>HardSemantics</code> from
+	  the previous step. Please look at all files ending with <code>*SemImpl.v</code> in <code>{ccal, mc2}/mcertikos/multicore/semantics/</code>, except
+	  <code>HWSemImpl.v</code>.
+	  You can also compare them with the abstract definitions of those machine models in <code>{ccal, mc2}/mcertikos/conlib/conmclib/Concurrent_Linking_Def.v</code>.</li>
+	<li>Prove that any program on the <code>mboot</code> layer with LAsm contextually refines
+	  the program on the <code>mboot</code> layer with <code>single_separate_semantics</code>,
+	  which is the adjacent machine model with LAsm in our multicore linking framework.
+	  This proof is not provided by our CCAL toolkit because it heavily depends on the definition of the <code>mboot</code> layer.</li>
+	<li>Instantiate all refinement proofs in <code>Concurrent_Linking_Prop.v</code> with concrete machine models defined in the previous step.
+	  This guarantees that "any program on the <code>mboot</code> layer with <code>single_separate_semantics</code> contextually refines
+	  that program on the <code>mboot</code> layer with <code>hwstep_semantics</code> (which is the non-deterministic x86 multicore semantics)".
+	  Thanks to our framework, most proofs in this step can be directly achieved by
+	  applying the existing refinement proofs in our library.</li>
+      </ul>
+
+      <p>In this way, we can finally prove that "any context program <code>CTXT</code> running on the <code>mboot</code> layer with LAsm
+      contextually refines the context program <code>CTXT</code> running on the <code>mboot</code> layer with <code>hwstep_semantics</code>".</p>
+
+
+    <H3 id="5-5-full-kernel-structure">5-5. Full kernel structure</H3>
+
+   <p>We provide the top-level program definition, which links the whole program modules, and
+     the instance of the top-level program for extraction.
+     The program instance is defined by providing multiple concrete pieces of evidence for the contexts that the
+     top-level program relies on.
+     In addition, we provide the top-level theorem that we have discussed in Section 5-4 in the table.
+     We also provide the full indexed files for mC2.
+     For details on the mC2 kernel structure, the previous work [2] may be helpful.</p>
+
+    <H4 id="mc2-kernel">Top-level mC2 source code and proof</H4>
+
+    <TABLE cellpadding="7.5%">
+      <TR align="left", valign="top">
+	<TH>Source code linking</TH>
+	<TH>CertiKOS instacne for extraction</TH>
+	<TH>Proof linking</TH>
+      </TR>
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.driver.CertiKOS.html">CertiKOS</A></TD>
+	<TD><A HREF="html/mcertikos.driver.CertiKOSExtraction.html">CertiKOS Instance</A></TD>
+	<TD><A HREF="html/mcertikos.driver.CertiKOSproof.html#CertiKOS_correct">CertiKOS_correct</A></TD>
+      </TR>
+
+
+    </TABLE>
+
+    <H4 id="layers-for-per-thread">Layers for per-thread</H4>
+
+    <TABLE cellpadding="7.5%">
+      <TR align="left", valign="top">
+	<TH>Layer</TH>
+	<TH>Refinement proof</TH>
+	<TH>Code verification</TH>
+	<TH>Source code</TH>
+	<TH>Proof linking</TH>
+      </TR>
+
+      <!-- Layer Definitions for Trap Module  -->
+
+      <TR align="left", valign="top">
+	<TH>Trap module</TH>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.trap.TSysCall.html">TSysCall</A></TD>
+	<TD><A HREF="html/mcertikos.trap.SysCallGen.html">SysCallGen</A></TD>
+	<TD><A HREF="html/mcertikos.trap.SysCallGenAsm.html">TDispatchAsmCode1</A></TD>
+        <TD><A HREF="html/mcertikos.trap.SysCallGenAsmSource.html">TDispatchAsmSource</A></TD>
+	<TD><A HREF="html/mcertikos.trap.SysCallGenLink.html">SysCallGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+	<TD><A HREF="html/mcertikos.trap.SysCallGenAsm2.html">TDispatchAsmCode2</A></TD>
+	<TD></TD>
+	<TD></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.trap.TDispatch.html">TDispatch</A></TD>
+	<TD><A HREF="html/mcertikos.trap.DispatchGen.html">DispatchGen</A></TD>
+        <TD><A HREF="html/mcertikos.trap.TTrapCode.html">TTrapCode</A></TD>
+        <TD><A HREF="html/mcertikos.trap.TTrapCSource.html">TTrapCSource</A></TD>
+	<TD><A HREF="html/mcertikos.trap.DispatchGenLink.html">DispatchGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.trap.TTrap.html">TTrap</A></TD>
+	<TD><A HREF="html/mcertikos.trap.TrapGen.html">TrapGen</A></TD>
+	<TD><A HREF="html/mcertikos.trap.TTrapArgCode.html">TTrapArgCode1</A></TD>
+        <TD><A HREF="html/mcertikos.trap.TTrapArgCSource.html">TTrapArgCSource1</A></TD>
+        <TD><A HREF="html/mcertikos.trap.TrapGenLink.html">TrapGenLink</A></TD>
+      </TR>
+
+      <TR valign="top">
+        <TD></TD>
+        <TD></TD>
+	<TD><A HREF="html/mcertikos.trap.TTrapArgCode1.html">TTrapArgCode2</A></TD>
+        <TD><A HREF="html/mcertikos.trap.TTrapArgCSource2.html">TTrapArgCSource2</A></TD>
+        <TD></TD>
+      </TR>
+
+      <TR valign="top">
+        <TD></TD>
+        <TD></TD>
+	<TD><A HREF="html/mcertikos.trap.TTrapArgCode2.html">TTrapArgCode3</A></TD>
+        <TD></TD>
+        <TD></TD>
+      </TR>
+
+      <TR valign="top">
+        <TD></TD>
+        <TD></TD>
+	<TD><A HREF="html/mcertikos.trap.TTrapArgCode3.html">TTrapArgCode4</A></TD>
+        <TD></TD>
+        <TD></TD>
+      </TR>
+
+      <TR valign="top">
+        <TD></TD>
+        <TD></TD>
+	<TD><A HREF="html/mcertikos.trap.TTrapArgCode4.html">TTrapArgCode5</A></TD>
+        <TD></TD>
+        <TD></TD>
+      </TR>
+
+      <TR valign="top">
+        <TD></TD>
+        <TD></TD>
+	<TD><A HREF="html/mcertikos.trap.TTrapArgCode5.html">TTrapArgCode6</A></TD>
+        <TD></TD>
+        <TD></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.trap.TTrapArg.html">TTrapArg</A></TD>
+	<TD><A HREF="html/mcertikos.trap.TrapArgGen.html">TrapArgGen</A></TD>
+        <TD><A HREF="html/mcertikos.trap.PIPCCode.html">PProcCode</TD>
+        <TD><A HREF="html/mcertikos.trap.PIPCCSource.html">PProcCSource</TD>
+ 	<TD><A HREF="html/mcertikos.trap.TrapArgGenLink.html">TrapArgGenLink</A></TD>
+      </TR>
+
+      <!-- Layer Definitions for IPC Module  -->
+
+      <TR align="left", valign="top">
+	<TH>IPC module</TH>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.ipc.PIPC.html">PIPC</A></TD>
+	<TD><A HREF="html/mcertikos.ipc.IPCGen.html">IPCGen</A></TD>
+	<TD><A HREF="html/mcertikos.ipc.PIPCIntroCode.html">PIPCIntroCode</A></TD>
+	<TD><A HREF="html/mcertikos.ipc.PIPCIntroCSource.html">PIPCIntroCSource</A></TD>
+	<TD><A HREF="html/mcertikos.ipc.IPCGenLink.html">IPCGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.ipc.PIPCIntro.html">PIPCIntro</A></TD>
+    	<TD><A HREF="html/mcertikos.ipc.IPCIntroGen.html">IPCIntroGen</A></TD>
+	<TD><A HREF="html/mcertikos.ipc.PHThreadCode.html">PHThreadCode</A></TD>
+	<TD><A HREF="html/mcertikos.ipc.PHThreadCSource.html">PHThreadCSource</A></TD>
+	<TD><A HREF="html/mcertikos.ipc.IPCIntroGenLink.html">IPCIntroGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TH>Multithreaded linking interface</TH>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.ipc.PHThread.html">PHThread</A></TD>
+	<TD><A HREF="html/mcertikos.multithread.highrefins.PHThread2TGen.html">HThreadGen</A></TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD><A HREF="html/mcertikos.multithread.highrefins.AsmPHThread2T.html">HThreadGenLink</A></TD>
+      </TR>
+
+    </TABLE>
+
+    <H4 id="layers-for-thread-linking">Intermediate layer interface for multithreaded linking</H4>
+
+    <TABLE cellpadding="7.5%">
+      <TR align="left", valign="top">
+        <TH>Layer</TH>
+        <TH>Refinement proof</TH>
+        <TH>Code verification</TH>
+        <TH>Source code</TH>
+        <TH>Proof linking</TH>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.multithread.phbthread.PHBThread.html">PHBThread</A></TD>
+	<TD><A HREF="html/mcertikos.multithread.lowrefins.E2PBThreadGen.html">HBThreadGen</A></TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD><A HREF="html/mcertikos.multithread.lowrefins.AsmE2L.html">HBThreadGenLink</A></TD>
+      </TR>
+
+    </TABLE>
+
+    <!-- Layer Definitions for Per-CPU  -->
+
+    <H4>Layers for per-CPU</H4>
+
+
+    <TABLE cellpadding="7.5%">
+      <TR align="left", valign="top">
+        <TH>Layer</TH>
+        <TH>Refinement proof</TH>
+        <TH>Code verification</TH>
+        <TH>Source code</TH>
+        <TH>Proof linking</TH>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TH>Thread linking interface</TH>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.PBThread.html">PBThread</A></TD>
+	<TD><A HREF="html/mcertikos.proc.BThreadGen.html">BThreadGen</A></TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD><A HREF="html/mcertikos.proc.BThreadGenLink.html">BThreadGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TH>Virtual machine management module</TH>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.VVMXInit.html">VVMXInit</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VMXInitGen.html">VMXInitGen</A></TD>
+        <TD><A HREF="html/mcertikos.proc.VVMXIntroCode.html">VVMXIntroCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VVMXIntroCSource.html">VVMXIntroCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VMXInitGenLink.html">VMXInitGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+        <TD><A HREF="html/mcertikos.proc.VMXInitGenAsm.html">VVMXIntroAsmCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VMXInitGenAsmSource.html">VVMXIntroAsmSource</A></TD>
+	<TD></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.VVMXIntro.html">VVMXIntro</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VMXIntroGen.html">VMXIntroGen</A></TD>
+        <TD><A HREF="html/mcertikos.proc.VVMCSInitCode.html">VVMCSInitCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VVMCSInitCSource.html">VVMCSInitCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VMXIntroGenLink.html">VMXIntroGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+        <TD><A HREF="html/mcertikos.proc.VMXIntroGenAsm.html">VVMCSInitAsmCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VMXIntroGenAsmSource.html">VVMCSInitAsmSource</A></TD>
+	<TD></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.VVMCSInit.html">VVMCSInit</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VMCSInitGen.html">VMCSInitGen</A></TD>
+        <TD><A HREF="html/mcertikos.proc.VVMCSIntroCode.html">VVMCSIntroCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VVMCSIntroCSource.html">VVMCSIntroCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VMCSInitGenLink.html">VMCSInitGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+        <TD><A HREF="html/mcertikos.proc.VVMCSIntroCodeSetDesc.html">VVMCSIntroCodeSetDesc</A></TD>
+	<TD></TD>
+	<TD></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+        <TD><A HREF="html/mcertikos.proc.VVMCSIntroCodeSetDefaults.html">VVMCSIntroCodeSetDefaults</A></TD>
+	<TD></TD>
+	<TD></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.VVMCSIntro.html">VVMCSIntro</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VMCSIntroGen.html">VMCSIntroGen</A></TD>
+        <TD><A HREF="html/mcertikos.proc.VEPTInitCode.html">VEPTInitCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VEPTInitCSource.html">VEPTInitCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VMCSIntroGenLink.html">VMCSIntroGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+        <TD><A HREF="html/mcertikos.proc.VMCSIntroGenAsm.html">VEPTInitAsmCode1</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VMCSIntroGenAsmSource.html">VEPTInitAsmSource</A></TD>
+	<TD></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+        <TD><A HREF="html/mcertikos.proc.VMCSIntroGenAsm1.html">VEPTInitAsmCode2</A></TD>
+	<TD></TD>
+	<TD></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.VEPTInit.html">VEPTInit</A></TD>
+	<TD><A HREF="html/mcertikos.proc.EPTInitGen.html">EPTInitGen</A></TD>
+        <TD><A HREF="html/mcertikos.proc.VEPTOpCode.html">VEPTOpCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VEPTOpCSource.html">VEPTOpCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.EPTInitGenLink.html">EPTInitGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.VEPTOp.html">VEPTOp</A></TD>
+	<TD><A HREF="html/mcertikos.proc.EPTOpGen.html">EPTOpGen</A></TD>
+        <TD><A HREF="html/mcertikos.proc.VEPTIntroCode.html">VEPTIntroCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.VEPTIntroCSource.html">VEPTIntroCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.EPTOpGenLink.html">EPTOpGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+        <TD><A HREF="html/mcertikos.proc.VEPTIntroCodeEPTInit.html">VEPTIntroCodeEPTInit</A></TD>
+	<TD></TD>
+	<TD></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.VEPTIntro.html">VEPTIntro</A></TD>
+	<TD><A HREF="html/mcertikos.proc.EPTIntroGen.html">EPTIntroGen</A></TD>
+        <TD><A HREF="html/mcertikos.proc.PProcCode.html">PProcCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.PProcCSource.html">PProcCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.EPTIntroGenLink.html">EPTIntroGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+        <TD><A HREF="html/mcertikos.proc.EPTIntroGenAsm.html">PProcAsmCode</A></TD>
+        <TD><A HREF="html/mcertikos.proc.EPTIntroGenAsmSource.html">PProcAsmSource</A></TD>
+	<TD></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TH>User context management module</TH>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.PProc.html">PProc</A></TD>
+	<TD><A HREF="html/mcertikos.proc.ProcGen.html">ProcGen</A></TD>
+        <TD><A HREF="html/mcertikos.proc.PUCtxtIntroCode.html">PUCtxtCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.PUCtxtIntroCSource.html">PUCtxtCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.ProcGenLink.html">ProcGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+	<TD><A HREF="html/mcertikos.proc.ProcGenAsm.html">PUCtxtAsmCode1</A></TD>
+	<TD><A HREF="html/mcertikos.proc.ProcGenAsmSource.html">PUCtxtAsmSource</A></TD>
+	<TD></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+	<TD><A HREF="html/mcertikos.proc.ProcGenAsm1.html">PUCtxtAsmCode2</A></TD>
+	<TD></TD>
+	<TD></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+        <TD><A HREF="html/mcertikos.proc.PUCtxtIntro.html">PUCtxt</A></TD>
+      	<TD><A HREF="html/mcertikos.proc.UCtxtIntroGen.html">UCtxtGen</A></TD>
+	<TD><A HREF="html/mcertikos.proc.PQThreadCode.html">PQThreadCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.PQThreadCSource.html">PQThreadCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.UCtxtIntroGenLink.html">UCtxtGenLink</A></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TH>Process management module</TH>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.PQThread.html">PQThread</A></TD>
+	<TD><A HREF="html/mcertikos.proc.QThreadGen.html">QThreadGen</A></TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD><A HREF="html/mcertikos.proc.QThreadGenLink.html">QThreadGenLink</A></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.PThread.html">PThread</A></TD>
+	<TD><A HREF="html/mcertikos.proc.ThreadGen.html">ThreadGen</A></TD>
+	<TD><A HREF="html/mcertikos.proc.ThreadGenAsm.html">PThreadSchedAsmCode1</A></TD>
+	<TD><A HREF="html/mcertikos.proc.ThreadGenAsmSource.html">PThreadSchedAsmSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.ThreadGenLink.html">ThreadGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+	<TD><A HREF="html/mcertikos.proc.ThreadGenAsm1.html">PThreadSchedAsmCode2</A></TD>
+	<TD></TD>
+	<TD></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.PThreadSched.html">PThreadSched</A></TD>
+	<TD><A HREF="html/mcertikos.proc.ThreadSchedGen.html">ThreadSchedGen</A></TD>
+        <TD><A HREF="html/mcertikos.proc.PCVOpCode.html">PCVOpCode</A></TD>
+        <TD><A HREF="html/mcertikos.proc.PCVOpCSource.html">PCVOpCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.ThreadSchedGenLink.html">ThreadSchedGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+	<TD><A HREF="html/mcertikos.proc.ThreadSchedGenAsm.html">PCVOpAsmCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.ThreadSchedGenAsmSource.html">PCVOpAsmSource</A></TD>
+	<TD></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.PCVOp.html">PCVOp</A></TD>
+    	<TD><A HREF="html/mcertikos.proc.CVOpGen.html">CVOpGen</A></TD>
+	<TD><A HREF="html/mcertikos.proc.PCVIntroCode.html">PCVIntroCode1</A></TD>
+	<TD><A HREF="html/mcertikos.proc.PCVIntroCSource.html">PCVIntroCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.CVOpGenLink.html">CVOpGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+	<TD><A HREF="html/mcertikos.proc.PCVIntroCode2.html">PCVIntroCode2</A></TD>
+	<TD></TD>
+	<TD></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.PCVIntro.html">PCVIntro</A></TD>
+    	<TD><A HREF="html/mcertikos.proc.CVIntroGen.html">CVIntroGen</A></TD>
+	<TD><A HREF="html/mcertikos.proc.PAbQueueAtomicCode.html">PAbQueueAtomicCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.PAbQueueAtomicCSource.html">PAbQueueAtomicCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.CVIntroGenLink.html">CVIntroGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.PAbQueueAtomic.html">PAbQueueAtomic</A></TD>
+    	<TD><A HREF="html/mcertikos.proc.AbQueueAtomicGen.html">AbQueueAtomicGen</A></TD>
+	<TD><A HREF="html/mcertikos.proc.PAbQueueCode.html">PAbQueueCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.PAbQueueCSource.html">PAbQueueCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.AbQueueAtomicGenLink.html">AbQueueAtomicGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.PAbQueue.html">PAbQueue</A></TD>
+    	<TD><A HREF="html/mcertikos.proc.AbQueueGen.html">AbQueueGen</A></TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD><A HREF="html/mcertikos.proc.AbQueueGenLink.html">AbQueueGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.PQueueInit.html">PQueueInit</A></TD>
+    	<TD><A HREF="html/mcertikos.proc.QueueInitGen.html">QueueInitGen</A></TD>
+	<TD><A HREF="html/mcertikos.proc.PQueueIntroCode.html">PQueueIntroCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.PQueueIntroCSource.html">PQueueIntroCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.QueueInitGenLink.html">QueueInitGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+	<TD><A HREF="html/mcertikos.proc.PQueueIntroCodeTDQueueInit.html">PQueueIntroCodeTDQueueInit</A></TD>
+	<TD></TD>
+	<TD></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.PQueueIntro.html">PQueueIntro</A></TD>
+    	<TD><A HREF="html/mcertikos.proc.QueueIntroGen.html">QueueIntroGen</A></TD>
+	<TD><A HREF="html/mcertikos.proc.PSleeperCode.html">PSleeperCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.PSleeperCSource.html">PSleeperCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.QueueIntroGenLink.html">QueueIntroGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.PSleeper.html">PSleeper</A></TD>
+	<TD><A HREF="html/mcertikos.proc.SleeperGen.html">SleeperGen</A></TD>
+        <TD><A HREF="html/mcertikos.proc.PKContextNewCode.html">PKContextNewCode</A></TDi>
+	<TD><A HREF="html/mcertikos.proc.PKContextNewCSource.html">PKContextNewCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.SleeperGenLink.html">SleeperGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.PKContextNew.html">PKContextNew</A></TD>
+	<TD><A HREF="html/mcertikos.proc.KContextNewGen.html">KContextNewGen</A></TD>
+        <TD><A HREF="html/mcertikos.proc.PKContextCode.html">PKContextCode</A></TDi>
+	<TD><A HREF="html/mcertikos.proc.PKContextCSource.html">PKContextCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.KContextNewGenLink.html">KContextNewGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.proc.PKContext.html">PKContext</A></TD>
+	<TD><A HREF="html/mcertikos.proc.KContextGen.html">KContextGen</A></TD>
+	<TD><A HREF="html/mcertikos.proc.MShareCode.html">MShareCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.MShareCSource.html">MShareCSource</A></TD>
+	<TD><A HREF="html/mcertikos.proc.KContextGenLink.html">KContextGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+        <TD></TD>
+	<TD><A HREF="html/mcertikos.proc.KContextGenAsm.html">MShareAsmCode</A></TD>
+	<TD><A HREF="html/mcertikos.proc.KContextGenAsmSource.html">MShareAsmSource</A></TD>
+        <TD></TD>
+      </TR>
+
+      <!-- Layer Definitions for Memory Management -->
+
+      <TR align="left", valign="top">
+	<TH>Memory management module</TH>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mm.MShare.html">MShare</A></TD>
+	<TD><A HREF="html/mcertikos.mm.ShareGen.html">ShareGen</A></TD>
+	<TD><A HREF="html/mcertikos.mm.MShareOpCode.html">MShareOpCode</A></TD>
+	<TD><A HREF="html/mcertikos.mm.MShareOpCSource.html">MShareOpCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mm.ShareGenLink.html">ShareGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mm.MShareOp.html">MShareOp</A></TD>
+	<TD><A HREF="html/mcertikos.mm.ShareOpGen.html">ShareOpGen</A></TD>
+	<TD><A HREF="html/mcertikos.mm.MShareIntroCode.html">MShareIntroCode</A></TD>
+	<TD><A HREF="html/mcertikos.mm.MShareIntroCSource.html">MShareIntroCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mm.ShareOpGenLink.html">ShareOpGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+        <TD></TD>
+        <TD></TD>
+	<TD><A HREF="html/mcertikos.mm.MShareIntroCodeSharedMemInit.html">MShareIntroCodeSharedMemInit</A></TD>
+        <TD></TD>
+        <TD></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mm.MShareIntro.html">MShareIntro</A></TD>
+        <TD><A HREF="html/mcertikos.mm.ShareIntroGen.html">ShareIntroGen</A></TD>
+	<TD><A HREF="html/mcertikos.mm.MPTNewCode.html">MPTNewCode</A></TD>
+	<TD><A HREF="html/mcertikos.mm.MPTNewCSource.html">MPTNewCSource</A></TD>
+        <TD><A HREF="html/mcertikos.mm.ShareIntroGenLink.html">ShareIntroGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mm.MPTNew.html">MPTNew</A></TD>
+	<TD><A HREF="html/mcertikos.mm.PTNewGen.html">PTNewGen</A></TD>
+	<TD><A HREF="html/mcertikos.mm.MPTInitCode.html">MPTInitCode</A></TD>
+	<TD><A HREF="html/mcertikos.mm.MPTInitCSource.html">MPTInitCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mm.PTNewGenLink.html">PTNewGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mm.MPTInit.html">MPTInit</A></TD>
+	<TD><A HREF="html/mcertikos.mm.PTInitGen.html">PTInitGen</A></TD>
+        <TD><A HREF="html/mcertikos.mm.MPTKernCode.html">MPTKernCode</A></TD>
+        <TD><A HREF="html/mcertikos.mm.MPTKernCSource.html">MPTKernCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mm.PTInitGenLink.html">PTInitGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mm.MPTKern.html">MPTKern</A></TD>
+	<TD><A HREF="html/mcertikos.mm.PTKernGen.html">PTKernGen</A></TD>
+        <TD><A HREF="html/mcertikos.mm.MPTCommonCode.html">MPTComCode</A></TD>
+        <TD><A HREF="html/mcertikos.mm.MPTCommonCSource.html">MPTComCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mm.PTKernGenLink.html">PTKernGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+        <TD><A HREF="html/mcertikos.mm.MPTCommonCodePTInitKern.html">MPTCommonCodePTInitKern</A></TD>
+	<TD></TD>
+	<TD></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mm.MPTCommon.html">MPTCom</A></TD>
+	<TD><A HREF="html/mcertikos.mm.PTCommGen.html">PTComGen</A></TD>
+        <TD><A HREF="html/mcertikos.mm.MPTOpCode.html">MPTOpCode</A></TD>
+        <TD><A HREF="html/mcertikos.mm.MPTOpCSource.html">MPTOpCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mm.PTCommGenLink.html">PTComGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mm.MPTOp.html">MPTOp</A></TD>
+	<TD><A HREF="html/mcertikos.mm.PTOpGen.html">PTOpGen</A></TD>
+        <TD><A HREF="html/mcertikos.mm.MPTIntroCode.html">MPTIntroCode</A></TD>
+        <TD><A HREF="html/mcertikos.mm.MPTIntroCSource.html">MPTIntroCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mm.PTOpGenLink.html">PTOpGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mm.MPTIntro.html">MPTIntro</A></TD>
+	<TD><A HREF="html/mcertikos.mm.PTIntroGen.html">PTIntroGen</A></TD>
+        <TD><A HREF="html/mcertikos.mm.MALHCode.html">MALHCode</A></TD>
+        <TD><A HREF="html/mcertikos.mm.MALHCSource.html">MALHCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mm.PTIntroGenLink.html">PTIntroGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mm.MALH.html">MALH</A></TD>
+	<TD><A HREF="html/mcertikos.mm.ALGen.html">ALHGen</A></TD>
+  <TD>--</TD>
+  <TD>--</TD>
+	<TD><A HREF="html/mcertikos.mm.ALHGenLink.html">ALHGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mm.MALT.html">MALT</A></TD>
+	<TD><A HREF="html/mcertikos.mm.ALGen.html">ALGen</A></TD>
+        <TD><A HREF="html/mcertikos.mm.MALOpCode.html">MALOpCode</A></TD>
+        <TD><A HREF="html/mcertikos.mm.MALOpCSource.html">MALOpCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mm.ALGenLink.html">ALGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mm.MALOp.html">MALOp</A></TD>
+	<TD><A HREF="html/mcertikos.mm.ALOpGen.html">ALOpGen</A></TD>
+	<TD><A HREF="html/mcertikos.mm.MALInitCode.html">MALInitCode</A></TD>
+	<TD><A HREF="html/mcertikos.mm.MALInitCSource.html">MALInitCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mm.ALOpGenLink.html">ALOpGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mm.MALInit.html">MALInit</A></TD>
+    	<TD><A HREF="html/mcertikos.mm.ALInitGen.html">ALInitGen</A></TD>
+	<TD><A HREF="html/mcertikos.mm.MContainerCode.html">MContainerCode</A></TD>
+	<TD><A HREF="html/mcertikos.mm.MContainerCSource.html">MContainerCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mm.ALInitGenLink.html">ALInitGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+	<TD><A HREF="html/mcertikos.mm.ALInitGenAsm.html">MContainerAsmCode</A></TD>
+	<TD><A HREF="html/mcertikos.mm.ALInitGenAsmSource.html">MContainerAsmCSource</A></TD>
+	<TD></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mm.MContainer.html">MContainer</A></TD>
+	<TD><A HREF="html/mcertikos.mm.ContainerGen.html">ContainerGen</A></TD>
+	<TD><A HREF="html/mcertikos.mm.MContainerIntroCode.html">MContainerIntroCode</A></TD>
+	<TD><A HREF="html/mcertikos.mm.MContainerIntroCSource.html">MContainerIntroCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mm.ContainerGenLink.html">ContainerGenLInk</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mm.MContainerIntro.html">MContainerIntro</A></TD>
+	<TD><A HREF="html/mcertikos.mm.ContainerIntroGen.html">ContainerIntroGen</A></TD>
+	<TD><A HREF="html/mcertikos.mm.DAbsHandlerCode.html">DAbsHandlerCode</A></TD>
+	<TD><A HREF="html/mcertikos.mm.DAbsHandlerCSource.html">DAbsHandlerCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mm.ContainerIntroGenLink.html">ContainerIntroGenLInk</A></TD>
+      </TR>
+
+
+      <!-- Layer Definitions for Device Drivers -->
+
+      <TR align="left", valign="top">
+	<TH>Device drivers module [4]</TH>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.devdrivers.DAbsHandler.html">DAbsHandler</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.AbsHandlerGen.html">AbsHandlerGen</A></TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD><A HREF="html/mcertikos.devdrivers.AbsHandlerGenLink.html">AbsHandlerGenLink</A></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.devdrivers.DHandler.html">DHandler</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.HandlerGen.html">HandlerGen</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DHandlerOpCode.html">DHandlerOpCode</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DHandlerOpCSource.html">DHandlerOpCSource</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.HandlerGenLink.html">HandlerGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.devdrivers.DHandlerOp.html">DHandlerOp</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.HandlerOpGen.html">HandlerOpGen</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DHandlerCxtCode.html">DHandlerCxtCode</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DHandlerCxtCSource.html">DHandlerCxtCSource</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.HandlerOpGenLink.html">HandlerOpGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.devdrivers.DHandlerCxt.html">DHandlerCxt</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.HandlerCxtGen.html">HandlerCxtGen</A></TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD><A HREF="html/mcertikos.devdrivers.HandlerCxtGenLink.html">HandlerCxtGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.devdrivers.DHandlerAsm.html">DHandlerAsm</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.HandlerAsmGen.html">HandlerAsmGen</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DHandlerSwAsmCode.html">DHandlerSwAsmCode</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DHandlerSwAsmSource.html">DHandlerSwAsmSource</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.HandlerAsmGenLink.html">HandlerAsmGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.devdrivers.DHandlerSw.html">DHandlerSw</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.HandlerSwGen.html">HandlerSwGen</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DHandlerIntroCode.html">DHandlerIntroCode</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DHandlerIntroCSource.html">DHandlerIntroCSource</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.HandlerSwGenLink.html">HandlerSwGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.devdrivers.DHandlerIntro.html">DHandlerIntro</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.HandlerIntroGen.html">HandlerIntroGen</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DConsoleCode.html">DConsoleCode</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DConsoleCSource.html">DConsoleCSource</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.HandlerIntroGenLink.html">HandlerIntroGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.devdrivers.DConsole.html">DConsole</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.ConsoleGen.html">ConsoleGen</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DLApicCode.html">DLApicCode</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DLApicCSource.html">DLApicCSource</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.ConsoleGenLink.html">ConsoleGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.devdrivers.DLApic.html">DLApic</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.LApicGen.html">LApicGen</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DIoApicCode.html">DIoApicCode</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DIoApicCSource.html">DIoApicCSource</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.LApicGenLink.html">LApicGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.devdrivers.DIoApic.html">DIoApic</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.IoApicGen.html">IoApicGen</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DSerialCode.html">DSerialCode</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DSerialCSource.html">DSerialCSource</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.IoApicGenLink.html">IoApicGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.devdrivers.DSerial.html">DSerial</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.SerialGen.html">SerialGen</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DSerialIntroCode.html">DSerialIntroCode</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DSerialIntroCSource.html">DSerialIntroCSource</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.SerialGenLink.html">SerialGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.devdrivers.DSerialIntro.html">DSerialIntro</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.SerialIntroGen.html">SerialIntroGen</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DAbsConsoleBuffIntroCode.html">DAbsConsoleBuffIntroCode</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.DAbsConsoleBuffIntroCSource.html">DAbsConsoleBuffIntroCSource</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.SerialIntroGenLink.html">SerialIntroGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.devdrivers.DAbsConsoleBuffIntro.html">DAbsConsoleBuffIntro</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.AbsConsoleBuffIntroGen.html">AbsConsoleBuffIntroGen</A></TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD><A HREF="html/mcertikos.devdrivers.AbsConsoleBuffIntroGenLink.html">AbsConsoleBuffIntroGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.devdrivers.DConsoleBuffIntro.html">DConsoleBuffIntro</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.ConsoleBuffIntroGen.html">ConsoleBuffIntroGen</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.MQTicketLockCode.html">MQTicketLockCode</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.MQTicketLockCSource.html">MQTicketLockCSource</A></TD>
+	<TD><A HREF="html/mcertikos.devdrivers.ConsoleBuffIntroGenLink.html">ConsoleBuffIntroGenLink</A></TD>
+      </TR>
+
+      <!-- Layer Definitions for Ticket Lock -->
+
+      <TR align="left", valign="top">
+	<TH>Lock modules</TH>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TH><i>Common interface</i></TH>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.ticketlog.MQTicketLock.html">MQTicketLock</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.QTicketLockGen.html">QTicketLockGen</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.QTicketLockGenAsm.html">MHTicketLockIntroAsmCode</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.QTicketLockGenAsmSource.html">MHTicketLockIntroAsmSource</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.QTicketLockGenLink.html">QTicketLockGenLInk</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TH><i>MCS lock</i></TH>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mcslock.MHMCSLockOp.html">MHMCSLockOp</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.HMCSLockOpGen.html">HMCSLockOpGen</A></TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD><A HREF="html/mcertikos.mcslock.QMCSLockOpGenLink.html">HMCSLockOpGenLink</A></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mcslock.MQMCSLockOp.html">MQMCSLockOp</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.QMCSLockOpGen.html">QMCSLockOpGen</A></TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD><A HREF="html/mcertikos.mcslock.QMCSLockOpGenLink.html">QMCSLockOpGenLink</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mcslock.MMCSLockOp.html">MMCSLockOp</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MCSLockOpGen.html">MCSLockOpGen</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MMCSLockAbsIntroCodeMCSWaitLock.html">MMCSLockAbsIntroCodeWaitLock</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MMCSLockAbsIntroCSource.html">MMCSLockAbsIntroCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MCSLockOpGenLink.html">MCSLockOpGenLink</A></TD>
+      </TR>
+
+     <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MMCSLockAbsIntroCodeMCSPassLock.html">MMCSLockAbsIntroCodePassLock</A></TD>
+	<TD></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mcslock.MMCSLockAbsIntro.html">MMCSLockAbsIntro</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MCSLockAbsIntroGen.html">MCSLockAbsIntroGen</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MMCSLockIntroCode.html">MMCSLockIntroCode</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MMCSLockIntroCSource.html">MMCSLockIntroCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MCSLockAbsIntroGenLink.html">MCSLockAbsIntroGenLink</A></TD>
+      </TR>
+
+     <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MMCSLockIntroCodeMCSLockInit.html">MMCSLockIntroCodeInit</A></TD>
+	<TD></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mcslock.MMCSLockIntro.html">MMCSLockIntro</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MCSLockIntroGen.html">MCSLockIntroGen</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MCSMCurIDCode.html">MCSMCurIDCode</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MCSMCurIDCSource.html">MCSMCurIDCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MCSLockIntroGenLink.html">MCSLockIntroGenLInk</A></TD>
+      </TR>
+
+     <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MCSLockIntroGenAsm.html">MCSMCurIDAsmCode</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MCSLockIntroGenAsmSource.html">MCSMCurIDAsmSource</A></TD>
+	<TD></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mcslock.MCSMCurID.html">MCSMCurID</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MCSCurIDGen.html">MCSCurIDGen</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MCSMBootCode.html">MCSMBootCode</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MCSMBootCSource.html">MCSMBootCSource</A></TD>
+	<TD><A HREF="html/mcertikos.mcslock.MCSCurIDGenLink.html">MCSCurIDGenLInk</A></TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.mcslock.MCSMBoot.html">MCSBoot</A></TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD>--</TD>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TH><i>Ticket lock</i></TH>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.ticketlog.MHTicketLockOp.html">MHTicketLockOp</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.HTicketLockOpGen.html">HTicketLockOpGen</A></TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD><A HREF="html/mcertikos.ticketlog.QTicketLockOpGenLink.html">HTicketLockOpGenLink</A></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.ticketlog.MQTicketLockOp.html">MQTicketLockOp</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.QTicketLockOpGen.html">QTicketLockOpGen</A></TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD><A HREF="html/mcertikos.ticketlog.QTicketLockOpGenLink.html">QTicketLockOpGenLink</A></TD>
+      </TR>
+
+
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.ticketlog.MTicketLockOp.html">MTicketLockOp</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.TicketLockOpGen.html">TickecLockOpGen</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.MTicketLockIntroCode.html">MTicketLockIntroCode</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.MTicketLockIntroCSource.html">MTicketLockIntroCSource</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.TicketLockOpGenLink.html">TicketLockOpGenLink</A></TD>
+      </TR>
+
+     <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.MTicketLockIntroCodeTicketLockInit.html">MTicketLockIntroCodeInit</A></TD>
+	<TD></TD>
+      </TR>
+
+      <!-- mticketlockintro -->
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.ticketlog.MTicketLockIntro.html">MTicketLockIntro</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.TicketLockIntroGen.html">TicketLockIntroGen</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.MCurIDCode.html">MCurIDCode</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.MCurIDCSource.html">MCurIDCSource</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.TicketLockIntroGenLink.html">TicketLockIntroGenLInk</A></TD>
+      </TR>
+
+     <TR align="left", valign="top">
+	<TD></TD>
+	<TD></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.TicketLockIntroGenAsm.html">MCurIDAsmCode</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.TicketLockIntroGenAsmSource.html">MCurIDAsmSource</A></TD>
+	<TD></TD>
+      </TR>
+
+      <!-- mcurid layer -->
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.ticketlog.MCurID.html">MCurID</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.CurIDGen.html">CurIDGen</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.MBootCode.html">MBootCode</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.MBootCSource.html">MBootCSource</A></TD>
+	<TD><A HREF="html/mcertikos.ticketlog.CurIDGenLink.html">CurIDGenLInk</A></TD>
+      </TR>
+
+      <!-- mboot layer -->
+      <TR align="left", valign="top">
+	<TD><A HREF="html/mcertikos.ticketlog.MBoot.html">MBoot</A></TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD>--</TD>
+      </TR>
+
+    </TABLE>
+
+
+
+    <H4 id="mc2_multicore-linking">Multicore linking</H4>
+
+    <TABLE cellpadding="7.5%">
+      <TR align="left", valign="top">
+        <TH>Layer</TH>
+        <TH>Refinement proof</TH>
+        <TH>Code verification</TH>
+        <TH>Source code</TH>
+        <TH>Proof linking</TH>
+      </TR>
+
+      <TR align="left", valign="top">
+	<TD>--</TD>
+	<TD></TD>
+	<TD>--</TD>
+	<TD>--</TD>
+	<TD><A HREF="html/mcertikos.multicore.Concurrent_Linking.html">MulticoreLinking</A></TD>
+      </TR>
+
+    </TABLE>
+
+    <!----------------------------------------------------------------------------------
+         6. mC2 proof check and test
+      ----------------------------------------------------------------------------------->
+
+    <H2 id="6-mC2-proof-check-and-test">6. mC2 proof check and test</H2>
+
+    <H3 id="6-1-preparation-for-the-environment-for-the-whole-kernel">6-1. Additional preparation for the environment</H3>
+
+    <p>Inside the Virtual Box image <code>PLDI18AE_Ubuntu16.04_x86_64.ova</code>, we also include
+     the full source code of mC2 alongside CCAL (in <code>$HOME/workspace/mc2</code>).
+      We also provide the extracted verified assembly code from mC2 (in <code>$HOME/workspace/mc2/kernel/sys/kern/certikos.S</code>).
+      While building the whole proof and extraction can be fully done within the virtual guest machine,
+      it will take an extremely long time to complete.
+      Thus, we strongly recommend building the proof directly on a Linux workstation.
+      To give you a rough idea, it takes approximately three days to compile the full proof and extract the certified assembly code
+      on an 8 core (with hyperthreading) machine with 32 GB of memory, with a maximum of 6 parallel threads (<code>make -j6</code>).
+      While compiling, you will likely find that the machine becomes quite slow due to high CPU and memory usage.
+    </p>
+
+    <p>If you want to compile the files that are only related to the code extraction,
+      compilation time will be much less than that for the whole kernel and the proofs.
+      It takes less than 3 hours on an 8 core (with hyperthreading) machine with 32 GB of memory, with a maximum of 8 parallel threads (<code>make -j8</code>).
+      We also provide the instruction about the compilation only for the code extraction in the below.
+    </p>
+
+    <p>To compile the kernel with extracted mC2 assembly and to build the mC2 kernel image, the following tools are needed in addition to the tools mentioned in Section 2:</p>
+
+    <ul>
+      <li>gcc: (32 bit version)</li>
+      <li>libc6: (32 bit version)</li>
+    </ul>
+
+     <p> mC2 is used in a special testbed platform, which requires certain hardware.
+         As a result, it cannot run on top of an arbitrary computer. There are two ways to test the built mC2 image:
+     </p>
+
+     <ul>
+       <li><p>A bare-metal machine satisfying the following specification:</p>
+	 <ul>
+	   <li>ITX Motherboard Chassis System (1407664/2809001)</li>
+	   <li>120 Watt AC/DC Adapter 120 Watt DC-DC ATX Pico Power Supply</li>
+	   <li>Intel&#174; Desktop Board DQ67EP / DQ77KB</li>
+	   <li>Intel Quad Core i7-2600S 2.8GHz (Max Turbo Frequency 3.8GHz) CPU</li>
+	   <li>8GB DDR3 Memory Modules</li>
+	   <li>Bootable Compact Flash Converter</li>
+	   <li>PCI-Express Mini Card, 120GB 2.5&quot; MLC SSD</li>
+	   <li>9&quot; 9-Pin to 10-Pin Adapter with Applicable Cables</li>
+	   <li>A USB stick with 32.0+ GB space</li>
+	 </ul>
+       </li>
+       <li><p>An easier way is to use 'qemu-kvm';.</p>
+       </li>
+     </ul>
+
+    <p>In case you want to build everything in the <code>mc2</code> directory locally, we will explain how you can install all the necessary tools on a clean amd64 version of Ubuntu 16.04 (as we did in Section 2).
+      First, install the essential tools (including the tools mentioned in Section 2)  by </br>
+
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+      $ sudo apt-get install gcc-multilib libc6-i386 build-essential qemu-utils qemu-system-x86 git menhir ruby \
+                             qemu-kvm libvirt-bin virtinst bridge-utils cpu-checker opam
+      $ opam init
+      $ opam update
+      $ opam switch 4.01.0              # use opam version 4.01.0
+      $ eval `opam config env`
+      $ opam install coq=8.4.6          # use Coq version 8.4.6
+    </span></span></span></div></pre>
+
+
+    <H3 id="6-2-proof-check-and-source-code-extraction">6-2. Proof check and source code extraction</H3>
+    <p>To build the proof, first unzip the <code>mc2</code> directory and configure it on the platform:</p>
+
+    <pre class="editor-colors lang-text">
+     <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+      $ tar vxzf mc2.tar.gz
+      $ cd mc2
+
+      # for linux
+      $ ./configure ia32-linux
+    </span></span></span></pre>
+
+    <p>Then you should see the following message, indicating that you are ready to compile the system (it's the same as the message for <code>ccal</code>):</p>
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+
+      Testing assembler support for CFI directives... yes
+      Testing Coq... version 8.4pl6 -- good!
+      Testing OCaml... version 4.01.0 -- good!
+      Testing Menhir... version 20151112 -- good!
+
+      CompCert configuration:
+          Target architecture........... ia32
+          Application binary interface.. standard
+          OS and development env........ linux
+          C compiler.................... gcc -m32
+          C preprocessor................ gcc -m32 -U__GNUC__ -E
+          Assembler..................... gcc -m32 -c
+          Assembler supports CFI........ true
+          Assembler for runtime lib..... gcc -m32 -c
+          Linker........................ gcc -m32
+          Math library.................. -lm
+          Binaries installed in......... /usr/local/bin
+          Runtime library provided...... true
+          Library files installed in.... /usr/local/lib/compcert
+          cchecklink tool supported..... false
+
+      If anything above looks wrong, please edit file ./Makefile.config to correct.
+    </span></span></span></div></pre>
+
+
+      <p>Then use <code>make</code> to do the proof checking and code extraction. If you want to compile the whole mC2,
+	we recommend forking multiple jobs when making mC2 to reduce the compilation time.
+	It takes approximately three days  to finish the proof checking when running on an 8-core machine with 32GB memory with 6 parallel jobs (<code>make -j6</code>).
+	The code extraction will start automatically in the middle of the proof checking process. It prompts a message similar to the following:</p>
+
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+      $ make -j6
+
+      >>> ...
+      >>>
+      >>> mkdir -p fakedir
+      >>> (cd fakedir && xargs coqdep -R .. . \
+      >>>   -R ../compcert/ia32 compcert.ia32 \
+      >>>   -R ../mcertikos/mm mcertikos.mm) \
+      >>>   <.filelist >.depend.n 2>/dev/null
+      >>> rmdir fakedir
+      >>> mv .depend.n .depend
+      >>> set -e; \
+      >>> for d in compcert compcertx liblayers mcertikos ; do \
+      >>>   make -C $d all; \
+      >>> done
+      >>>
+      >>> ...
+      >>>
+      >>> cd .. && \
+      >>> ocamlbuild -no-hygiene -no-links -j 2 -I mcertikos/extraction -I
+      >>> mcertikos/driver -I compcert/lib -I compcert/common -I compcert/ia32/standard -I
+      >>> compcert/ia32 -I compcert/backend -I compcert/cfrontend -I compcert/flocq/Core -I
+      >>> compcert/flocq/Prop -I compcert/flocq/Calc -I compcert/flocq/Appli -I compcert/driver -I
+      >>> compcert/cparser  CertiKOSDriver.native && \
+      >>> mv _build/mcertikos/driver/CertiKOSDriver.native mcertikos/ccertikos
+      >>> Finished, 0 targets (0 cached) in 00:00:02.
+      >>> Finished, 1956 targets (0 cached) in 00:05:14.
+      >>>
+      >>> ...
+      >>>
+      >>> coqc driver/CertiKOSproof
+      >>> make[1]: Leaving directory '/.../mc2/mcertikos'
+    </span></span></span></div></pre>
+
+    <p><b><i>NOTE</i></b>: Occasionally, compilation for some files may fail due to lack of memory.
+      If that happens, you'll need to re-compile them with fewer parallel threads.
+      We usually compile everything with more than 6 parallel threads, but using the <code style="white-space: nowrap;">-k</code> option.
+      This lets the compilation ignore failed files (e.g., <code style="white-space: nowrap;">make -j12 -k</code>).
+      Then, we re-compile failed files with fewer threads.</p>
+
+
+   <p>Another way to reduce the compilation time for the code extraction is to compile the files that are just relevant to the code extraction.
+     If you want to compile and extract the code without the whole proof check,
+     do the following commands. It takes approximately less than 3 hours in total to finish the whole processes.</p>
+
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+      $ make clean
+      $ make .depend               # compute dependencies
+      $ cd compcert
+      $ make -j8                   # comiple comcpert
+      $ cd ../compcertx
+      $ make -j8                   # compile compcertx
+      $ cd ../liblayers
+      $ make -j8                   # compile layer library
+      $ cd ../mcertikos
+      $ make mcertikos -j8         # compile files for code extraction
+    </span></span></span></div></pre>
+
+    <p>When complete, an executable named <code>mcertikos/ccertikos</code> will be generated. Finally, the mC2 assembly (<code>certikos.s</code>) can be generated by executing the produced binary:</p>
+
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+      $ ./mcertikos/ccertikos -S
+    </span></span></span></div></pre>
+
+    <p>To compile and execute the CertiKOS kernel, you need to insert it into the bootstrapping environment by:</p>
+
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+      $ mv certikos.s kernel/sys/kern/certikos.S
+    </span></span></span></div></pre>
+
+    <h3 id="6-3-execution-of-the-certified-code">6-3. Execution of the certified code</h3>
+    <p>To compile the mC2 kernel, you should first switch the working directory to <code>mc2/kernel/</code>, and then use sudo <code>./make.sh</code> to compile the kernel.</p>
+
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+      $ cd kernel
+      $ sudo ./make.sh
+      # password: pldi18-ccal
+    </span></span></span></div></pre>
+
+     <p>If everything goes well, the following messages will be shown on the screen:</p>
+
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+      >>>  *** make certikos kernel (DEBUG_MSG=1 SERIAL_DEBUG=1 ):  ***
+      >>>  *** [as: 14, cc: 66, ccomp: 0, ld: 16] ***
+      >>>  *** [boot0: 238, boot1: 12400, loader: 15844, kernel: 1390196] ***
+      >>>  >>> done! <<<
+      >>>  *** build image ***
+      >>> Building Certikos Image...
+      >>>
+      >>> creating disk...
+      >>> 131040+0 records in
+      >>> 131040+0 records out
+      >>> 67092480 bytes (67 MB, 64 MiB) copied, 0.261108 s, 257 MB/s
+      >>> done.
+      >>>
+      >>> writing mbr...
+      >>> 0+1 records in
+      >>> 0+1 records out
+      >>> 238 bytes copied, 8.1639e-05 s, 2.9 MB/s
+      >>> 24+1 records in
+      >>> 24+1 records out
+      >>> 12400 bytes (12 kB, 12 KiB) copied, 0.000114048 s, 109 MB/s
+      >>> done.
+      >>>
+      >>> copying kernel files...
+      >>> kernel starts at sector 2048
+      >>>
+      >>> make file system...
+      >>> mke2fs 1.42.13 (17-May-2015)
+      >>> Discarding device blocks: done
+      >>> Creating filesystem with 64496 1k blocks and 16128 inodes
+      >>> Filesystem UUID: b91f3ee1-431b-4f9e-9aec-f5aa9f541911
+      >>> Superblock backups stored on blocks:
+      >>> 	8193, 24577, 40961, 57345
+      >>>
+      >>> Allocating group tables: done
+      >>> Writing inode tables: done
+      >>> Creating journal (4096 blocks): done
+      >>> Writing superblocks and filesystem accounting information: done
+      >>>
+      >>>
+      >>> mount disk...
+      >>>
+      >>> copy kernel...
+      >>> mkdir: created directory '/mnt/boot'
+      >>> 'obj/boot/loader' -> '/mnt/boot/loader'
+      >>> 'obj/sys/kernel' -> '/mnt/boot/kernel'
+      >>>
+      >>> unmount...
+      >>> done
+      >>>
+      >>> All done.
+      >>>  >>> done! <<<
+      >>>  *** convert to vmware hard disk ***
+      >>>     (100.00/100%)
+      >>>  >>> done! <<<
+      >>>  *** all done! ***
+    </span></span></span></div></pre>
+
+
+
+    <p>Below is an illustrating video recorded on our local machine. You
+      also can test it in our virtual machine:</p>
+
+    <center>
+    <video width="50%" controls>
+      <source src="fig/extraction.ogv">
+    </video>
+    </center>
+
+    <p>To make a usb with mC2, use <code>sudo ./usb.sh</code>.</p>
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+      $ cd kernel
+      $ sudo ./usb.sh
+      # password: pldi18-ccal
+    </span></span></span></div></pre>
+
+     <p>If everything goes well, the following messages will be shown on the screen:</p>
+
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+      >>>  *** check sdc is a usb stick ***
+      >>> yes
+      >>> size: 31G ==> yes.
+      >>>  *** write image to usb stick ***
+      >>> 31+1 records in
+      >>> 31+1 records out
+      >>> 67092480 bytes (67 MB, 64 MiB) copied, 0.0274786 s, 2.4 GB/s
+      >>>  >>> done! <<<
+      >>>  *** all done! ***
+      >>> please use ./eject.sh to safely remove the USB stick
+    </span></span></span></div></pre>
+
+
+     <p>mC2 can be directly run by <code>./run.sh</code> using qemu-kvm. On the terminal, you can see that the kernel is correctly
+     booted and the kernel runs some benchmark programs.
+
+     Since our VirtualBox image does not support CPU virtualization that is necessary for KVM,
+     you may need to run it on your own machine if you want to see the result.
+     This is the command that you can use to run our extracted kernel on your local machine using KVM.</p>
+    <pre class="editor-colors lang-text">
+      <div padding="1px" class="line"><span class="text plain"><span class="meta paragraph text"><span>
+      $ sudo ./run.sh
+      # password: xxxxx      # password of your local machine
+    </span></span></span></div></pre>
+
+    <p>We have recorded the result on our machine. Our kernel tries to run a one benchmark program after the kernel has been initialized and
+    booted:</p>
+     <center>
+       <video width="50%" controls>
+	 <source src="fig/kvm_run.ogv">
+       </video>
+     </center>
+
+
+<hr>
+<p>[1]  Ronghui Gu , Jeremie Koenig , Tahina Ramananandro , Zhong Shao , Xiongnan (Newman) Wu , Shu-Chun Weng , Haozhong Zhang , Yu Guo, Deep Specifications and Certified Abstraction Layers, Proceedings of the 42nd Annual ACM SIGPLAN-SIGACT Symposium on Principles of Programming Languages, January 15-17, 2015, Mumbai, India </p>
+<p>[2] Ronghui Gu , Zhong Shao , Hao Chen , Xiongnan Wu , Jieung Kim , Vilhelm Sjoberg , David Costanzo, CertiKOS: an extensible architecture for building certified concurrent OS kernels, Proceedings of the 12th USENIX conference on Operating Systems Design and Implementation, November 02-04, 2016, Savannah, GA, USA</p>
+<p>[3] Jieung Kim, Vilhelm Sjoberg, Ronghui Gu, and Zhong Shao, Safety and Liveness of MCS Lock- Layer by Layer, Proceedings of the 15th Asian Symposium on Programming Languages and Systems (APLAS'17), November 2017.</p>
+<p>[4] Hao Chen , Xiongnan (Newman) Wu , Zhong Shao , Joshua Lockerman , Ronghui Gu, Toward compositional verification of interruptible OS kernels and device drivers, Proceedings of the 37th ACM SIGPLAN Conference on Programming Language Design and Implementation, June 13-17, 2016, Santa Barbara, CA, USA </p>
+
+  </BODY>
+</HTML>

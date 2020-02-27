@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.proc.VMXInitGenLinkSource</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.proc.VMXInitGenLinkSource</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#"><span class="id" title="library">LinkSourceTemplate</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.proc.VVMXIntro.html#"><span class="id" title="library">VVMXIntro</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.proc.VVMXIntroCSource.html#"><span class="id" title="library">VVMXIntroCSource</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.proc.VMXInitGenAsmSource.html#"><span class="id" title="library">VMXInitGenAsmSource</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="VVMXInit_module"><span class="id" title="definition">VVMXInit_module</span></a>: <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_module"><span class="id" title="record">link_module</span></a> :=<br/>
+&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lm_cfun</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">:=</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lcf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">vmx_get_reg</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">f_vmx_get_reg</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lcf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">vmx_set_reg</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">f_vmx_set_reg</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lcf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">vmx_get_next_eip</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">f_vmx_get_next_eip</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lcf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">vmx_get_io_width</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">f_vmx_get_io_width</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lcf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">vmx_get_io_write</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">f_vmx_get_io_write</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lcf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">vmx_get_exit_qualification</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">f_vmx_get_exit_qualification</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lcf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">vmx_get_exit_io_rep</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">f_vmx_get_exit_io_rep</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lcf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">vmx_get_exit_io_str</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">f_vmx_get_exit_io_str</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lcf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">vmx_get_exit_io_port</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">f_vmx_get_exit_io_port</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lcf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">vmx_set_mmap</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">f_vmx_set_mmap</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lcf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">vmx_init</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">f_vmx_init</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">nil</span></a><a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lm_asmfun</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">:=</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">laf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">vmx_run_vm</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">vm_run_function</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">laf</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">vmx_return_from_guest</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">vmx_return_from_guest_function</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">::</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">nil</span></a><a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">;</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">lm_gvar</span></a> <a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">:=</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#Build_link_module"><span class="id" title="constructor">nil</span></a><br/>
+&nbsp;&nbsp;|}.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="VVMXInit_impl"><span class="id" title="definition">VVMXInit_impl</span></a> `{<a class="idref" href="mcertikos.layerlib.CompCertiKOSproof.html#CompCertiKOS"><span class="id" title="class">CompCertiKOS</span></a>} `{<a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>} `{<a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleProp"><span class="id" title="class">MultiOracleProp</span></a>} :=<br/>
+&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkSourceTemplate.html#link_impl"><span class="id" title="definition">link_impl</span></a> <a class="idref" href="mcertikos.proc.VMXInitGenLinkSource.html#VVMXInit_module"><span class="id" title="definition">VVMXInit_module</span></a> <a class="idref" href="mcertikos.proc.VVMXIntro.html#vmxintro"><span class="id" title="definition">vmxintro</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

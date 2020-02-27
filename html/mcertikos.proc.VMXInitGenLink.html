@@ -1,0 +1,129 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.proc.VMXInitGenLink</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.proc.VMXInitGenLink</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LinkTemplate.html#"><span class="id" title="library">LinkTemplate</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.proc.VVMXInit.html#"><span class="id" title="library">VVMXInit</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.proc.VMXInitGen.html#"><span class="id" title="library">VMXInitGen</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.proc.VMXInitGenLinkSource.html#"><span class="id" title="library">VMXInitGenLinkSource</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.proc.VVMXIntro.html#"><span class="id" title="library">VVMXIntro</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.proc.VVMXIntroCSource.html#"><span class="id" title="library">VVMXIntroCSource</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.proc.VVMXIntroCode.html#"><span class="id" title="library">VVMXIntroCode</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.proc.VMXInitGenAsm.html#"><span class="id" title="library">VMXInitGenAsm</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="WITHCOMPCERTIKOS"><span class="id" title="section">WITHCOMPCERTIKOS</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">compcertikos_prf</span>: <a class="idref" href="mcertikos.layerlib.CompCertiKOSproof.html#CompCertiKOS"><span class="id" title="class">CompCertiKOS</span></a>} `{<span class="id" title="var">real_params_prf</span>: <a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">multi_oracle_prop</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleProp"><span class="id" title="class">MultiOracleProp</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">multi_oracle_link</span>: !<a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleLink"><span class="id" title="class">MultiOracleLink</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="init_correct"><span class="id" title="lemma">init_correct</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#init_correct_type"><span class="id" title="definition">init_correct_type</span></a> <a class="idref" href="mcertikos.proc.VMXInitGenLinkSource.html#VVMXInit_module"><span class="id" title="definition">VVMXInit_module</span></a> <a class="idref" href="mcertikos.proc.VVMXIntro.html#vmxintro"><span class="id" title="definition">vmxintro</span></a> <a class="idref" href="mcertikos.proc.VVMXInit.html#vmxinit"><span class="id" title="definition">vmxinit</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">init_correct</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">repeat</span> <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H1</span>, &lt;- <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">ZMap.gi</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">ZMap.gi</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">repeat</span> <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> &lt;- <span class="id" title="var">H1</span>, &lt;- <span class="id" title="var">H2</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">ZMap.gi</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span>; <span class="id" title="tactic">rewrite</span> <span class="id" title="lemma">ZMap.gi</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="link_correct_aux"><span class="id" title="lemma">link_correct_aux</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#link_correct_aux_type"><span class="id" title="definition">link_correct_aux_type</span></a> <a class="idref" href="mcertikos.proc.VMXInitGenLinkSource.html#VVMXInit_module"><span class="id" title="definition">VVMXInit_module</span></a> <a class="idref" href="mcertikos.proc.VVMXIntro.html#vmxintro"><span class="id" title="definition">vmxintro</span></a> <a class="idref" href="mcertikos.proc.VVMXInit.html#vmxinit"><span class="id" title="definition">vmxinit</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">link_correct_aux</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VMXInitGen.html#vmx_get_reg_spec_ref"><span class="id" title="lemma">vmx_get_reg_spec_ref</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VVMXIntroCode.html#VVMXINTROCODE.vmx_get_reg_code_correct"><span class="id" title="lemma">VVMXINTROCODE.vmx_get_reg_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VMXInitGen.html#vmx_set_reg_spec_ref"><span class="id" title="lemma">vmx_set_reg_spec_ref</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VVMXIntroCode.html#VVMXINTROCODE.vmx_set_reg_code_correct"><span class="id" title="lemma">VVMXINTROCODE.vmx_set_reg_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VMXInitGen.html#vmx_get_next_eip_spec_ref"><span class="id" title="lemma">vmx_get_next_eip_spec_ref</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VVMXIntroCode.html#VVMXINTROCODE.vmx_get_next_eip_code_correct"><span class="id" title="lemma">VVMXINTROCODE.vmx_get_next_eip_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VMXInitGen.html#vmx_get_io_width_spec_ref"><span class="id" title="lemma">vmx_get_io_width_spec_ref</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VVMXIntroCode.html#VVMXINTROCODE.vmx_get_io_width_code_correct"><span class="id" title="lemma">VVMXINTROCODE.vmx_get_io_width_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VMXInitGen.html#vmx_get_io_write_spec_ref"><span class="id" title="lemma">vmx_get_io_write_spec_ref</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VVMXIntroCode.html#VVMXINTROCODE.vmx_get_io_write_code_correct"><span class="id" title="lemma">VVMXINTROCODE.vmx_get_io_write_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VMXInitGen.html#vmx_get_exit_qualification_spec_ref"><span class="id" title="lemma">vmx_get_exit_qualification_spec_ref</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VVMXIntroCode.html#VVMXINTROCODE.vmx_get_exit_qualification_code_correct"><span class="id" title="lemma">VVMXINTROCODE.vmx_get_exit_qualification_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VMXInitGen.html#vmx_get_exit_io_rep_spec_ref"><span class="id" title="lemma">vmx_get_exit_io_rep_spec_ref</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VVMXIntroCode.html#VVMXINTROCODE.vmx_get_exit_io_rep_code_correct"><span class="id" title="lemma">VVMXINTROCODE.vmx_get_exit_io_rep_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VMXInitGen.html#vmx_get_exit_io_str_spec_ref"><span class="id" title="lemma">vmx_get_exit_io_str_spec_ref</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VVMXIntroCode.html#VVMXINTROCODE.vmx_get_exit_io_str_code_correct"><span class="id" title="lemma">VVMXINTROCODE.vmx_get_exit_io_str_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VMXInitGen.html#vmx_get_exit_io_port_spec_ref"><span class="id" title="lemma">vmx_get_exit_io_port_spec_ref</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VVMXIntroCode.html#VVMXINTROCODE.vmx_get_exit_io_port_code_correct"><span class="id" title="lemma">VVMXINTROCODE.vmx_get_exit_io_port_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VMXInitGen.html#vmx_set_mmap_spec_ref"><span class="id" title="lemma">vmx_set_mmap_spec_ref</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VVMXIntroCode.html#VVMXINTROCODE.vmx_set_mmap_code_correct"><span class="id" title="lemma">VVMXINTROCODE.vmx_set_mmap_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VMXInitGen.html#vmx_init_spec_ref"><span class="id" title="lemma">vmx_init_spec_ref</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VVMXIntroCode.html#VVMXINTROCODE.vmx_init_code_correct"><span class="id" title="lemma">VVMXINTROCODE.vmx_init_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_asmfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VMXInitGen.html#vmx_run_vm_spec_ref"><span class="id" title="lemma">vmx_run_vm_spec_ref</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VMXInitGenAsm.html#vmx_run_vm_code_correct"><span class="id" title="lemma">vmx_run_vm_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_asmfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VMXInitGen.html#vmx_return_from_guest_spec_ref"><span class="id" title="lemma">vmx_return_from_guest_spec_ref</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.proc.VMXInitGenAsm.html#vmx_return_from_guest_code_correct"><span class="id" title="lemma">vmx_return_from_guest_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.proc.VMXInitGen.html#passthrough_correct"><span class="id" title="lemma">passthrough_correct</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="cl_backward_simulation"><span class="id" title="lemma">cl_backward_simulation</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#cl_backward_simulation_type"><span class="id" title="definition">cl_backward_simulation_type</span></a> <a class="idref" href="mcertikos.proc.VMXInitGenLinkSource.html#VVMXInit_module"><span class="id" title="definition">VVMXInit_module</span></a> <a class="idref" href="mcertikos.proc.VVMXIntro.html#vmxintro"><span class="id" title="definition">vmxintro</span></a> <a class="idref" href="mcertikos.proc.VVMXInit.html#vmxinit"><span class="id" title="definition">vmxinit</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cl_backward_simulation</span> <a class="idref" href="mcertikos.proc.VMXInitGenLink.html#init_correct"><span class="id" title="lemma">init_correct</span></a> <a class="idref" href="mcertikos.proc.VMXInitGenLink.html#link_correct_aux"><span class="id" title="lemma">link_correct_aux</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="make_program_exists"><span class="id" title="lemma">make_program_exists</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#make_program_exist_type"><span class="id" title="definition">make_program_exist_type</span></a> <a class="idref" href="mcertikos.proc.VMXInitGenLinkSource.html#VVMXInit_module"><span class="id" title="definition">VVMXInit_module</span></a> <a class="idref" href="mcertikos.proc.VVMXIntro.html#vmxintro"><span class="id" title="definition">vmxintro</span></a> <a class="idref" href="mcertikos.proc.VVMXInit.html#vmxinit"><span class="id" title="definition">vmxinit</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">make_program_exists</span> <a class="idref" href="mcertikos.proc.VMXInitGenLink.html#link_correct_aux"><span class="id" title="lemma">link_correct_aux</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.proc.VMXInitGenLink.html#WITHCOMPCERTIKOS"><span class="id" title="section">WITHCOMPCERTIKOS</span></a>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

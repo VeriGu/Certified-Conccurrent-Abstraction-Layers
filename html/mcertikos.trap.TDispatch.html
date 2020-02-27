@@ -1,0 +1,312 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.trap.TDispatch</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.trap.TDispatch</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+This file defines the abstract data and the primitives for the VVMCBInit layer,
+which will introduce the primtives of thread
+</div>
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Maps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.ASTExtra.html#"><span class="id" title="library">ASTExtra</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Floats</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Memory</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Events</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Stacklayout</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Globalenvs</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">AsmX</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Smallstep</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#"><span class="id" title="library">AuxStateDataType</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.Constant.html#"><span class="id" title="library">Constant</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#"><span class="id" title="library">GlobIdent</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.flatmem.FlatMemory.html#"><span class="id" title="library">FlatMemory</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.CommonTactic.html#"><span class="id" title="library">CommonTactic</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AuxLemma.html#"><span class="id" title="library">AuxLemma</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.RealParams.html#"><span class="id" title="library">RealParams</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#"><span class="id" title="library">PrimSemantics</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.PrimTMSemantics.html#"><span class="id" title="library">PrimTMSemantics</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#"><span class="id" title="library">LAsm</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.XOmega.html#"><span class="id" title="library">XOmega</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.logic.PTreeModules</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.logic.LayerLogicImpl</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatLayers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatGenSem</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CalRealPTPool.html#"><span class="id" title="library">CalRealPTPool</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CalRealPT.html#"><span class="id" title="library">CalRealPT</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CalRealIDPDE.html#"><span class="id" title="library">CalRealIDPDE</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CalRealInitPTE.html#"><span class="id" title="library">CalRealInitPTE</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CalRealSMSPool.html#"><span class="id" title="library">CalRealSMSPool</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.CalRealProcModule.html#"><span class="id" title="library">CalRealProcModule</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.invariants.INVLemmaMemory.html#"><span class="id" title="library">INVLemmaMemory</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.invariants.INVLemmaThread.html#"><span class="id" title="library">INVLemmaThread</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.invariants.INVLemmaProc.html#"><span class="id" title="library">INVLemmaProc</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#"><span class="id" title="library">AbstractDataType</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.flatmem.LoadStoreSem3high.html#"><span class="id" title="library">LoadStoreSem3high</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.IntelPrimSemantics.html#"><span class="id" title="library">IntelPrimSemantics</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.trap.TTrap.html#"><span class="id" title="library">TTrap</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#"><span class="id" title="library">GlobalOracleProp</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#"><span class="id" title="library">SingleOracle</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab797"></a><h1 class="section">Abstract Data and Primitives at this layer</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <a name="WITHMEM"><span class="id" title="section">WITHMEM</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span>&nbsp;<span class="id" title="keyword">Open</span> <span class="id" title="keyword">Scope</span> <span class="id" title="var">Z_scope</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">single_oracle_prop</span>: <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#SingleOracleProp"><span class="id" title="class">SingleOracleProp</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">real_params</span> : <a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">multi_oracle_prop</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleProp"><span class="id" title="class">MultiOracleProp</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hstencil</span>: <span class="id" title="class">Stencil</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hmem</span>: <span class="id" title="class">Mem.MemoryModelX</span>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hmwd</span>: <span class="id" title="class">UseMemWithData</span> <a class="idref" href="mcertikos.trap.TDispatch.html#WITHMEM.mem"><span class="id" title="variable">mem</span></a>}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab798"></a><h1 class="section">Proofs that the primitives satisfies the invariants at this layer</h1>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Section</span> <a name="WITHMEM.Prim"><span class="id" title="section">Prim</span></a>.<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="sys_dispatch_c_inv"><span class="id" title="instance">sys_dispatch_c_inv</span></a>: <a class="idref" href="mcertikos.layerlib.TrapPrimSemantics.html#TrapProcCreateINV"><span class="id" title="class">TrapProcCreateINV</span></a> <a class="idref" href="mcertikos.objects.ObjTrap.html#sys_dispatch_c_spec"><span class="id" title="definition">sys_dispatch_c_spec</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_proc_create_inv"><span class="id" title="instance">trap_proc_create_inv</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">split</span>; <span class="id" title="tactic">unfold</span> <a class="idref" href="mcertikos.objects.ObjTrap.html#sys_dispatch_c_spec"><span class="id" title="definition">sys_dispatch_c_spec</span></a>; <span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">subdestruct</span>; <span class="id" title="tactic">try</span> (<span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrapArg.html#uctx_set_errno_high_inv"><span class="id" title="lemma">uctx_set_errno_high_inv</span></a>; <span class="id" title="tactic">eauto</span>; <span class="id" title="tactic">fail</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <span class="id" title="var">trap_proc_create_high_inv</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">functional</span> <span class="id" title="tactic">inversion</span> <span class="id" title="var">H</span>; <span class="id" title="var">inv</span> <span class="id" title="var">H1</span>; <span class="id" title="tactic">subst</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="var">inv</span> <span class="id" title="var">H0</span>; <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="var">inv</span> <span class="id" title="var">H0</span>; <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_get_tsc_offset_high_inv"><span class="id" title="lemma">trap_get_tsc_offset_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_set_tsc_offset_high_inv"><span class="id" title="lemma">trap_set_tsc_offset_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_get_exitinfo_high_inv"><span class="id" title="lemma">trap_get_exitinfo_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_mmap_high_inv"><span class="id" title="lemma">trap_mmap_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_set_reg_high_inv"><span class="id" title="lemma">trap_set_reg_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_get_reg_high_inv"><span class="id" title="lemma">trap_get_reg_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_set_seg1_high_inv"><span class="id" title="lemma">trap_set_seg1_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_set_seg2_high_inv"><span class="id" title="lemma">trap_set_seg2_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_get_next_eip_high_inv"><span class="id" title="lemma">trap_get_next_eip_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_inject_event_high_inv"><span class="id" title="lemma">trap_inject_event_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_check_pending_event_high_inv"><span class="id" title="lemma">trap_check_pending_event_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_check_int_shadow_high_inv"><span class="id" title="lemma">trap_check_int_shadow_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_intercept_int_window_high_inv"><span class="id" title="lemma">trap_intercept_int_window_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_handle_rdmsr_high_inv"><span class="id" title="lemma">trap_handle_rdmsr_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_handle_wrmsr_high_inv"><span class="id" title="lemma">trap_handle_wrmsr_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_get_quota_high_inv"><span class="id" title="lemma">trap_get_quota_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_receivechan_high_inv"><span class="id" title="lemma">trap_receivechan_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_sendtochan_high_inv"><span class="id" title="lemma">trap_sendtochan_high_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#sys_getc_inv"><span class="id" title="instance">sys_getc_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">econstructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#sys_putc_inv"><span class="id" title="instance">sys_putc_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">econstructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">subdestruct</span>; <span class="id" title="tactic">try</span> (<span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrapArg.html#uctx_set_errno_low_inv"><span class="id" title="lemma">uctx_set_errno_low_inv</span></a>; <span class="id" title="tactic">eauto</span>; <span class="id" title="tactic">fail</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <span class="id" title="var">trap_proc_create_low_inv</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">functional</span> <span class="id" title="tactic">inversion</span> <span class="id" title="var">H</span>; <span class="id" title="var">inv</span> <span class="id" title="var">H1</span>; <span class="id" title="tactic">subst</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_get_tsc_offset_low_inv"><span class="id" title="lemma">trap_get_tsc_offset_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_set_tsc_offset_low_inv"><span class="id" title="lemma">trap_set_tsc_offset_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_get_exitinfo_low_inv"><span class="id" title="lemma">trap_get_exitinfo_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_mmap_low_inv"><span class="id" title="lemma">trap_mmap_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_set_reg_low_inv"><span class="id" title="lemma">trap_set_reg_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_get_reg_low_inv"><span class="id" title="lemma">trap_get_reg_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_set_seg1_low_inv"><span class="id" title="lemma">trap_set_seg1_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_set_seg2_low_inv"><span class="id" title="lemma">trap_set_seg2_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_get_next_eip_low_inv"><span class="id" title="lemma">trap_get_next_eip_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_inject_event_low_inv"><span class="id" title="lemma">trap_inject_event_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_check_pending_event_low_inv"><span class="id" title="lemma">trap_check_pending_event_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_check_int_shadow_low_inv"><span class="id" title="lemma">trap_check_int_shadow_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_intercept_int_window_low_inv"><span class="id" title="lemma">trap_intercept_int_window_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_handle_rdmsr_low_inv"><span class="id" title="lemma">trap_handle_rdmsr_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_handle_wrmsr_low_inv"><span class="id" title="lemma">trap_handle_wrmsr_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_get_quota_low_inv"><span class="id" title="lemma">trap_get_quota_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_receivechan_low_inv"><span class="id" title="lemma">trap_receivechan_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_sendtochan_low_inv"><span class="id" title="lemma">trap_sendtochan_low_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#sys_getc_inv"><span class="id" title="instance">sys_getc_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">econstructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#sys_putc_inv"><span class="id" title="instance">sys_putc_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">econstructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">subdestruct</span>; <span class="id" title="tactic">try</span> (<span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrapArg.html#uctx_set_errno_kernel_mode"><span class="id" title="lemma">uctx_set_errno_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>; <span class="id" title="tactic">fail</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <span class="id" title="var">trap_proc_create_kernel_mode</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="var">functional</span> <span class="id" title="tactic">inversion</span> <span class="id" title="var">H</span>; <span class="id" title="var">inv</span> <span class="id" title="var">H1</span>; <span class="id" title="tactic">subst</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_get_tsc_offset_kernel_mode"><span class="id" title="lemma">trap_get_tsc_offset_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_set_tsc_offset_kernel_mode"><span class="id" title="lemma">trap_set_tsc_offset_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_get_exitinfo_kernel_mode"><span class="id" title="lemma">trap_get_exitinfo_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_mmap_kernel_mode"><span class="id" title="lemma">trap_mmap_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_set_reg_kernel_mode"><span class="id" title="lemma">trap_set_reg_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_get_reg_kernel_mode"><span class="id" title="lemma">trap_get_reg_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_set_seg1_kernel_mode"><span class="id" title="lemma">trap_set_seg1_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_set_seg2_kernel_mode"><span class="id" title="lemma">trap_set_seg2_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_get_next_eip_kernel_mode"><span class="id" title="lemma">trap_get_next_eip_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_inject_event_kernel_mode"><span class="id" title="lemma">trap_inject_event_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_check_pending_event_kernel_mode"><span class="id" title="lemma">trap_check_pending_event_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_check_int_shadow_kernel_mode"><span class="id" title="lemma">trap_check_int_shadow_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_intercept_int_window_kernel_mode"><span class="id" title="lemma">trap_intercept_int_window_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_handle_rdmsr_kernel_mode"><span class="id" title="lemma">trap_handle_rdmsr_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_handle_wrmsr_kernel_mode"><span class="id" title="lemma">trap_handle_wrmsr_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_get_quota_kernel_mode"><span class="id" title="lemma">trap_get_quota_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_receivechan_kernel_mode"><span class="id" title="lemma">trap_receivechan_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#trap_sendtochan_kernel_mode"><span class="id" title="lemma">trap_sendtochan_kernel_mode</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#sys_getc_inv"><span class="id" title="instance">sys_getc_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">econstructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.trap.TTrap.html#sys_putc_inv"><span class="id" title="instance">sys_putc_inv</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">econstructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">subdestruct</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">subdestruct</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.trap.TDispatch.html#WITHMEM.Prim"><span class="id" title="section">Prim</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab799"></a><h1 class="section">Layer Definition</h1>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="tdispatch_fresh"><span class="id" title="definition">tdispatch_fresh</span></a> : <span class="id" title="record">compatlayer</span> (<span class="id" title="definition">cdata</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#RData"><span class="id" title="record">RData</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.GlobIdent.html#syscall_dispatch_C"><span class="id" title="definition">syscall_dispatch_C</span></a>  <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.TrapPrimSemantics.html#trap_proccreate_compatsem"><span class="id" title="definition">trap_proccreate_compatsem</span></a> <a class="idref" href="mcertikos.objects.ObjTrap.html#sys_dispatch_c_spec"><span class="id" title="definition">sys_dispatch_c_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab800"></a><h1 class="section">Layer Definition</h1>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="tdispatch_passthrough"><span class="id" title="definition">tdispatch_passthrough</span></a> : <span class="id" title="record">compatlayer</span> (<span class="id" title="definition">cdata</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#RData"><span class="id" title="record">RData</span></a>) :=<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.GlobIdent.html#vmxinfo_get"><span class="id" title="definition">vmxinfo_get</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.tmobj.ObjTMVMM.html#thread_vmxinfo_get_spec"><span class="id" title="definition">thread_vmxinfo_get_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#palloc"><span class="id" title="definition">palloc</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.tmobj.ObjTMVMM.html#big2_palloc_spec"><span class="id" title="definition">big2_palloc_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#pt_read"><span class="id" title="definition">pt_read</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.tmobj.ObjTMVMM.html#thread_ptRead_spec"><span class="id" title="definition">thread_ptRead_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#pt_resv"><span class="id" title="definition">pt_resv</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.tmobj.ObjTMVMM.html#big2_ptResv_spec"><span class="id" title="definition">big2_ptResv_spec</span></a> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#uctx_get"><span class="id" title="definition">uctx_get</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.tmobj.ObjTMIPCDEVPRIM.html#thread_uctx_get_spec"><span class="id" title="definition">thread_uctx_get_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#uctx_set"><span class="id" title="definition">uctx_set</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.tmobj.ObjTMIPCDEVPRIM.html#thread_uctx_set_spec"><span class="id" title="definition">thread_uctx_set_spec</span></a><br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#get_CPU_ID"><span class="id" title="definition">get_CPU_ID</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.tmobj.ObjTMSCHED.html#thread_get_CPU_ID_spec"><span class="id" title="definition">thread_get_CPU_ID_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#get_curid"><span class="id" title="definition">get_curid</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.tmobj.ObjTMSCHED.html#thread_get_curid_spec"><span class="id" title="definition">thread_get_curid_spec</span></a><br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#vmx_run_vm"><span class="id" title="definition">vmx_run_vm</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.IntelPrimSemantics.html#primcall_vmx_enter_compatsem"><span class="id" title="definition">primcall_vmx_enter_compatsem</span></a> <a class="idref" href="mcertikos.objects.tmobj.ObjTMINTELVIRT.html#thread_vm_run_spec"><span class="id" title="definition">thread_vm_run_spec</span></a> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#vmx_run_vm"><span class="id" title="definition">vmx_run_vm</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#vmx_return_from_guest"><span class="id" title="definition">vmx_return_from_guest</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.IntelPrimSemantics.html#primcall_vmx_return_compatsem"><span class="id" title="definition">primcall_vmx_return_compatsem</span></a> <a class="idref" href="mcertikos.objects.tmobj.ObjTMINTELVIRT.html#thread_vmx_return_from_guest_spec"><span class="id" title="definition">thread_vmx_return_from_guest_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#vmx_init"><span class="id" title="definition">vmx_init</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.IntelPrimSemantics.html#vmcs_set_defaults_compatsem"><span class="id" title="definition">vmcs_set_defaults_compatsem</span></a> <a class="idref" href="mcertikos.objects.tmobj.ObjTMVMXINIT.html#thread_vmx_init_spec"><span class="id" title="definition">thread_vmx_init_spec</span></a><br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#uctx_arg1"><span class="id" title="definition">uctx_arg1</span></a>  <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjArg.html#uctx_arg1_spec"><span class="id" title="definition">uctx_arg1_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#uctx_arg2"><span class="id" title="definition">uctx_arg2</span></a>  <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjArg.html#uctx_arg2_spec"><span class="id" title="definition">uctx_arg2_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#uctx_arg3"><span class="id" title="definition">uctx_arg3</span></a>  <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjArg.html#uctx_arg3_spec"><span class="id" title="definition">uctx_arg3_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#uctx_set_errno"><span class="id" title="definition">uctx_set_errno</span></a>  <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjArg.html#uctx_set_errno_spec"><span class="id" title="definition">uctx_set_errno_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#uctx_set_retval1"><span class="id" title="definition">uctx_set_retval1</span></a>  <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjArg.html#uctx_set_retval1_spec"><span class="id" title="definition">uctx_set_retval1_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#ptfault_resv"><span class="id" title="definition">ptfault_resv</span></a>  <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjTrap.html#ptfault_resv_spec"><span class="id" title="definition">ptfault_resv_spec</span></a><br/>
+<br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#cli"><span class="id" title="definition">cli</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.tmobj.ObjTMIPCDEVPRIM.html#thread_cli_spec"><span class="id" title="definition">thread_cli_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#sti"><span class="id" title="definition">sti</span></a> <span class="id" title="notation">↦</span> <span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.tmobj.ObjTMIPCDEVPRIM.html#thread_sti_spec"><span class="id" title="definition">thread_sti_spec</span></a><br/>
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#trap_get"><span class="id" title="definition">trap_get</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_trap_info_get_compatsem"><span class="id" title="definition">primcall_trap_info_get_compatsem</span></a> <a class="idref" href="mcertikos.objects.tmobj.ObjTMIPCDEVPRIM.html#thread_trap_info_get_spec"><span class="id" title="definition">thread_trap_info_get_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#trap_set"><span class="id" title="definition">trap_set</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimSemantics.html#primcall_trap_info_ret_compatsem"><span class="id" title="definition">primcall_trap_info_ret_compatsem</span></a> <a class="idref" href="mcertikos.objects.tmobj.ObjTMIPCDEVPRIM.html#thread_trap_info_ret_spec"><span class="id" title="definition">thread_trap_info_ret_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#proc_start_user"><span class="id" title="definition">proc_start_user</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimTMSemantics.html#primcall_start_user_tm_compatsem"><span class="id" title="definition">primcall_start_user_tm_compatsem</span></a> <a class="idref" href="mcertikos.objects.tmobj.ObjTMIPCDEVPRIM.html#thread_proc_start_user_spec"><span class="id" title="definition">thread_proc_start_user_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#proc_exit_user"><span class="id" title="definition">proc_exit_user</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimTMSemantics.html#primcall_exit_user_tm_compatsem"><span class="id" title="definition">primcall_exit_user_tm_compatsem</span></a> <a class="idref" href="mcertikos.objects.tmobj.ObjTMIPCDEVPRIM.html#thread_proc_exit_user_spec"><span class="id" title="definition">thread_proc_exit_user_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#proc_start_user2"><span class="id" title="definition">proc_start_user2</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimTMSemantics.html#primcall_start_user_tm_compatsem2"><span class="id" title="definition">primcall_start_user_tm_compatsem2</span></a> <a class="idref" href="mcertikos.objects.tmobj.ObjTMIPCDEVPRIM.html#thread_proc_start_user_spec"><span class="id" title="definition">thread_proc_start_user_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#proc_exit_user2"><span class="id" title="definition">proc_exit_user2</span></a> <span class="id" title="notation">↦</span> <a class="idref" href="mcertikos.layerlib.PrimTMSemantics.html#primcall_exit_user_tm_compatsem2"><span class="id" title="definition">primcall_exit_user_tm_compatsem2</span></a> <a class="idref" href="mcertikos.objects.tmobj.ObjTMIPCDEVPRIM.html#thread_proc_exit_user_spec"><span class="id" title="definition">thread_proc_exit_user_spec</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">⊕</span> <span class="id" title="constructor">accessors</span> <span class="id" title="notation">↦</span> <span class="id" title="notation">{|</span> <span class="id" title="constructor">exec_load</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(@</span><span class="id" title="constructor">exec_loadex</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">Hmwd</span><span class="id" title="constructor">);</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">exec_store</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">(@</span><span class="id" title="constructor">exec_storeex</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">_</span> <span class="id" title="constructor">Hmwd</span><span class="id" title="constructor">)</span> <span class="id" title="notation">|}</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab801"></a><h1 class="section">Layer Definition</h1>
+
+</div>
+<div class="code">
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="tdispatch"><span class="id" title="definition">tdispatch</span></a> : <span class="id" title="record">compatlayer</span> (<span class="id" title="definition">cdata</span> <a class="idref" href="mcertikos.objects.AbstractDataType.html#RData"><span class="id" title="record">RData</span></a>) := <a class="idref" href="mcertikos.trap.TDispatch.html#tdispatch_fresh"><span class="id" title="definition">tdispatch_fresh</span></a> <span class="id" title="notation">⊕</span> <a class="idref" href="mcertikos.trap.TDispatch.html#tdispatch_passthrough"><span class="id" title="definition">tdispatch_passthrough</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.trap.TDispatch.html#WITHMEM"><span class="id" title="section">WITHMEM</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

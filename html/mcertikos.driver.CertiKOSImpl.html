@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.driver.CertiKOSImpl</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.driver.CertiKOSImpl</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">compcert.lib.Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.lib.Decision</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compcertx.ErrorMonad</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compcertx.Stencil</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compcertx.MakeProgram</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">compcertx.common.MemimplX</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compcertx.MakeProgramImpl</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">liblayers.compat.CompatLayers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LAsmModuleSemDef.html#"><span class="id" title="library">mcertikos.layerlib.LAsmModuleSemDef</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.driver.Symbols.html#"><span class="id" title="library">mcertikos.driver.Symbols</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Helpers for extraction 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="WITHDEC"><span class="id" title="section">WITHDEC</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span>&nbsp;<span class="id" title="keyword">Instance</span> <a name="list_norepet_dec"><span class="id" title="instance">list_norepet_dec</span></a> {<span class="id" title="var">A</span>}<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">A_eq_dec</span>: <span class="id" title="keyword">∀</span> <span class="id" title="var">x</span> <span class="id" title="var">y</span>: <a class="idref" href="mcertikos.driver.CertiKOSImpl.html#A"><span class="id" title="variable">A</span></a>, <span class="id" title="class">Decision</span> (<a class="idref" href="mcertikos.driver.CertiKOSImpl.html#x"><span class="id" title="variable">x</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="mcertikos.driver.CertiKOSImpl.html#y"><span class="id" title="variable">y</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">l</span>: <span class="id" title="var">_</span> <a class="idref" href="mcertikos.driver.CertiKOSImpl.html#A"><span class="id" title="variable">A</span></a>):<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="class">Decision</span> (<span class="id" title="inductive">list_norepet</span> <a class="idref" href="mcertikos.driver.CertiKOSImpl.html#l"><span class="id" title="variable">l</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="lemma">Coqlib.list_norepet_dec</span> <span class="id" title="var">A_eq_dec</span> <span class="id" title="var">l</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Program Definition</span> <a name="certikos_stencil"><span class="id" title="definition">certikos_stencil</span></a>: <span class="id" title="record">StencilImpl.stencil</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">StencilImpl.stencil_ids</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">List.map</span> <span class="id" title="constructor">fst</span> <span class="id" title="constructor">symbols</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eapply</span> <span class="id" title="definition">isTrue_correct</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">vm_compute</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Program Definition</span> <a name="nodata"><span class="id" title="definition">nodata</span></a>: <span class="id" title="record">compatdata</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{|<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="constructor">cdata_type</span> <span class="id" title="constructor">:=</span> <span class="id" title="constructor">unit</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;|}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">exact</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#tt"><span class="id" title="constructor">tt</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">exact</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#True"><span class="id" title="inductive">True</span></a>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">exact</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#True"><span class="id" title="inductive">True</span></a>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;× <span class="id" title="tactic">exact</span> (<span class="id" title="keyword">fun</span> <span class="id" title="var">_</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#True"><span class="id" title="inductive">True</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Defined</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Next</span> <span class="id" title="keyword">Obligation</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>; <span class="id" title="tactic">simpl</span>; <span class="id" title="tactic">tauto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Local</span>&nbsp;<span class="id" title="keyword">Instance</span> <a name="mwd_ops"><span class="id" title="instance">mwd_ops</span></a>: <span class="id" title="class">MemWithData.UseMemWithData</span> <span class="id" title="definition">Memimpl.mem</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="extract_module"><span class="id" title="definition">extract_module</span></a> (<span class="id" title="var">OM</span>: <span class="id" title="inductive">res</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#module"><span class="id" title="definition">LAsm.module</span></a>): <span class="id" title="inductive">res</span> (<span class="id" title="record">AST.program</span> <a class="idref" href="mcertikos.layerlib.LAsm.html#fundef"><span class="id" title="definition">LAsm.fundef</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#unit"><span class="id" title="inductive">unit</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">M</span> <span class="id" title="notation">&lt;-</span> <a class="idref" href="mcertikos.driver.CertiKOSImpl.html#OM"><span class="id" title="variable">OM</span></a><span class="id" title="notation">;</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">make_program</span> (<span class="id" title="var">Fm</span> := <a class="idref" href="mcertikos.layerlib.LAsm.html#function"><span class="id" title="record">LAsm.function</span></a>) (<span class="id" title="var">Vm</span> := <span class="id" title="inductive">Ctypes.type</span>) (<span class="id" title="var">module_ops</span> := <a class="idref" href="mcertikos.layerlib.LAsm.html#module_ops"><span class="id" title="instance">LAsm.module_ops</span></a>) (<span class="id" title="var">D</span> := <a class="idref" href="mcertikos.driver.CertiKOSImpl.html#nodata"><span class="id" title="definition">nodata</span></a>) <a class="idref" href="mcertikos.driver.CertiKOSImpl.html#certikos_stencil"><span class="id" title="definition">certikos_stencil</span></a> <span class="id" title="var">M</span> <span class="id" title="notation">∅</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.driver.CertiKOSImpl.html#WITHDEC"><span class="id" title="section">WITHDEC</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.mm.ContainerGenLink</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.mm.ContainerGenLink</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LinkTemplate.html#"><span class="id" title="library">LinkTemplate</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.mm.MContainer.html#"><span class="id" title="library">MContainer</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.mm.ContainerGen.html#"><span class="id" title="library">ContainerGen</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.mm.ContainerGenLinkSource.html#"><span class="id" title="library">ContainerGenLinkSource</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.mm.MContainerIntro.html#"><span class="id" title="library">MContainerIntro</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.mm.MContainerIntroCSource.html#"><span class="id" title="library">MContainerIntroCSource</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.mm.MContainerIntroCode.html#"><span class="id" title="library">MContainerIntroCode</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="WITHCOMPCERTIKOS"><span class="id" title="section">WITHCOMPCERTIKOS</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">compcertikos_prf</span>: <a class="idref" href="mcertikos.layerlib.CompCertiKOSproof.html#CompCertiKOS"><span class="id" title="class">CompCertiKOS</span></a>} `{<span class="id" title="var">real_params_prf</span>: <a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">multi_oracle_prop</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleProp"><span class="id" title="class">MultiOracleProp</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="init_correct"><span class="id" title="lemma">init_correct</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#init_correct_type"><span class="id" title="definition">init_correct_type</span></a> <a class="idref" href="mcertikos.mm.ContainerGenLinkSource.html#MContainer_module"><span class="id" title="definition">MContainer_module</span></a>  <a class="idref" href="mcertikos.mm.MContainerIntro.html#mcontainerintro"><span class="id" title="definition">mcontainerintro</span></a> <a class="idref" href="mcertikos.mm.MContainer.html#mcontainer"><span class="id" title="definition">mcontainer</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">init_correct</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="link_correct_aux"><span class="id" title="lemma">link_correct_aux</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#link_correct_aux_type"><span class="id" title="definition">link_correct_aux_type</span></a> <a class="idref" href="mcertikos.mm.ContainerGenLinkSource.html#MContainer_module"><span class="id" title="definition">MContainer_module</span></a> <a class="idref" href="mcertikos.mm.MContainerIntro.html#mcontainerintro"><span class="id" title="definition">mcontainerintro</span></a> <a class="idref" href="mcertikos.mm.MContainer.html#mcontainer"><span class="id" title="definition">mcontainer</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">link_correct_aux</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span> <a class="idref" href="mcertikos.mm.ContainerGen.html#container_init_spec_ref"><span class="id" title="lemma">container_init_spec_ref</span></a> <a class="idref" href="mcertikos.mm.MContainerIntroCode.html#MCONTAINERINTROCODE.container_init_code_correct"><span class="id" title="lemma">MCONTAINERINTROCODE.container_init_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span> <a class="idref" href="mcertikos.mm.ContainerGen.html#container_split_spec_ref"><span class="id" title="lemma">container_split_spec_ref</span></a> <a class="idref" href="mcertikos.mm.MContainerIntroCode.html#MCONTAINERINTROCODE.container_split_code_correct"><span class="id" title="lemma">MCONTAINERINTROCODE.container_split_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.mm.ContainerGen.html#passthrough_correct"><span class="id" title="lemma">passthrough_correct</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="cl_backward_simulation"><span class="id" title="lemma">cl_backward_simulation</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#cl_backward_simulation_type"><span class="id" title="definition">cl_backward_simulation_type</span></a>  <a class="idref" href="mcertikos.mm.ContainerGenLinkSource.html#MContainer_module"><span class="id" title="definition">MContainer_module</span></a> <a class="idref" href="mcertikos.mm.MContainerIntro.html#mcontainerintro"><span class="id" title="definition">mcontainerintro</span></a> <a class="idref" href="mcertikos.mm.MContainer.html#mcontainer"><span class="id" title="definition">mcontainer</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cl_backward_simulation</span> <a class="idref" href="mcertikos.mm.ContainerGenLink.html#init_correct"><span class="id" title="lemma">init_correct</span></a> <a class="idref" href="mcertikos.mm.ContainerGenLink.html#link_correct_aux"><span class="id" title="lemma">link_correct_aux</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="make_program_exists"><span class="id" title="lemma">make_program_exists</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#make_program_exist_type"><span class="id" title="definition">make_program_exist_type</span></a>  <a class="idref" href="mcertikos.mm.ContainerGenLinkSource.html#MContainer_module"><span class="id" title="definition">MContainer_module</span></a> <a class="idref" href="mcertikos.mm.MContainerIntro.html#mcontainerintro"><span class="id" title="definition">mcontainerintro</span></a> <a class="idref" href="mcertikos.mm.MContainer.html#mcontainer"><span class="id" title="definition">mcontainer</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">make_program_exists</span> <a class="idref" href="mcertikos.mm.ContainerGenLink.html#link_correct_aux"><span class="id" title="lemma">link_correct_aux</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.mm.ContainerGenLink.html#WITHCOMPCERTIKOS"><span class="id" title="section">WITHCOMPCERTIKOS</span></a>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

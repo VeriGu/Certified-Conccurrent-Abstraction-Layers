@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.ticketlog.TicketLockOpGenLink</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.ticketlog.TicketLockOpGenLink</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LinkTemplate.html#"><span class="id" title="library">LinkTemplate</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ticketlog.MTicketLockOp.html#"><span class="id" title="library">MTicketLockOp</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ticketlog.TicketLockOpGen.html#"><span class="id" title="library">TicketLockOpGen</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ticketlog.TicketLockOpGenLinkSource.html#"><span class="id" title="library">TicketLockOpGenLinkSource</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ticketlog.MTicketLockIntro.html#"><span class="id" title="library">MTicketLockIntro</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ticketlog.MTicketLockIntroCSource.html#"><span class="id" title="library">MTicketLockIntroCSource</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ticketlog.MTicketLockIntroCode.html#"><span class="id" title="library">MTicketLockIntroCode</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ticketlog.MTicketLockIntroCodeTicketLockInit.html#"><span class="id" title="library">MTicketLockIntroCodeTicketLockInit</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="WITHCOMPCERTIKOS"><span class="id" title="section">WITHCOMPCERTIKOS</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">compcertikos_prf</span>: <a class="idref" href="mcertikos.layerlib.CompCertiKOSproof.html#CompCertiKOS"><span class="id" title="class">CompCertiKOS</span></a>} `{<span class="id" title="var">real_params_prf</span>: <a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">wait_time</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracle.html#WaitTime"><span class="id" title="class">WaitTime</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">oracle_ops0</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleOps0"><span class="id" title="class">MultiOracleOps0</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">oracle_ops</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracle.html#MultiOracleOps"><span class="id" title="class">MultiOracleOps</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">big_ops</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#BigOracleOps"><span class="id" title="class">BigOracleOps</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="init_correct"><span class="id" title="lemma">init_correct</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#init_correct_type"><span class="id" title="definition">init_correct_type</span></a> <a class="idref" href="mcertikos.ticketlog.TicketLockOpGenLinkSource.html#MTicketLockOp_module"><span class="id" title="definition">MTicketLockOp_module</span></a> <a class="idref" href="mcertikos.ticketlog.MTicketLockIntro.html#mticketlockintro"><span class="id" title="definition">mticketlockintro</span></a> <a class="idref" href="mcertikos.ticketlog.MTicketLockOp.html#mticketlockop"><span class="id" title="definition">mticketlockop</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">init_correct</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="link_correct_aux"><span class="id" title="lemma">link_correct_aux</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#link_correct_aux_type"><span class="id" title="definition">link_correct_aux_type</span></a> <a class="idref" href="mcertikos.ticketlog.TicketLockOpGenLinkSource.html#MTicketLockOp_module"><span class="id" title="definition">MTicketLockOp_module</span></a> <a class="idref" href="mcertikos.ticketlog.MTicketLockIntro.html#mticketlockintro"><span class="id" title="definition">mticketlockintro</span></a> <a class="idref" href="mcertikos.ticketlog.MTicketLockOp.html#mticketlockop"><span class="id" title="definition">mticketlockop</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">link_correct_aux</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span> <a class="idref" href="mcertikos.ticketlog.TicketLockOpGen.html#ticket_lock_init_spec_ref"><span class="id" title="lemma">ticket_lock_init_spec_ref</span></a> <a class="idref" href="mcertikos.ticketlog.MTicketLockIntroCodeTicketLockInit.html#MTICKETLOCKINTROTICKETLOCKINIT.ticket_lock_init_code_correct"><span class="id" title="lemma">MTICKETLOCKINTROTICKETLOCKINIT.ticket_lock_init_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span> <a class="idref" href="mcertikos.ticketlog.TicketLockOpGen.html#pass_lock_spec_ref"><span class="id" title="lemma">pass_lock_spec_ref</span></a> <a class="idref" href="mcertikos.ticketlog.MTicketLockIntroCode.html#MTICKETLOCKINTRO.pass_lock_code_correct"><span class="id" title="lemma">MTICKETLOCKINTRO.pass_lock_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">link_cfunction</span> <a class="idref" href="mcertikos.ticketlog.TicketLockOpGen.html#wait_lock_spec_ref"><span class="id" title="lemma">wait_lock_spec_ref</span></a> <a class="idref" href="mcertikos.ticketlog.MTicketLockIntroCode.html#MTICKETLOCKINTRO.wait_lock_code_correct"><span class="id" title="lemma">MTICKETLOCKINTRO.wait_lock_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.ticketlog.TicketLockOpGen.html#passthrough_correct"><span class="id" title="lemma">passthrough_correct</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="cl_backward_simulation"><span class="id" title="lemma">cl_backward_simulation</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#cl_backward_simulation_type"><span class="id" title="definition">cl_backward_simulation_type</span></a> <a class="idref" href="mcertikos.ticketlog.TicketLockOpGenLinkSource.html#MTicketLockOp_module"><span class="id" title="definition">MTicketLockOp_module</span></a> <a class="idref" href="mcertikos.ticketlog.MTicketLockIntro.html#mticketlockintro"><span class="id" title="definition">mticketlockintro</span></a> <a class="idref" href="mcertikos.ticketlog.MTicketLockOp.html#mticketlockop"><span class="id" title="definition">mticketlockop</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cl_backward_simulation</span> <a class="idref" href="mcertikos.ticketlog.TicketLockOpGenLink.html#init_correct"><span class="id" title="lemma">init_correct</span></a> <a class="idref" href="mcertikos.ticketlog.TicketLockOpGenLink.html#link_correct_aux"><span class="id" title="lemma">link_correct_aux</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="make_program_exists"><span class="id" title="lemma">make_program_exists</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#make_program_exist_type"><span class="id" title="definition">make_program_exist_type</span></a> <a class="idref" href="mcertikos.ticketlog.TicketLockOpGenLinkSource.html#MTicketLockOp_module"><span class="id" title="definition">MTicketLockOp_module</span></a> <a class="idref" href="mcertikos.ticketlog.MTicketLockIntro.html#mticketlockintro"><span class="id" title="definition">mticketlockintro</span></a> <a class="idref" href="mcertikos.ticketlog.MTicketLockOp.html#mticketlockop"><span class="id" title="definition">mticketlockop</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">make_program_exists</span> <a class="idref" href="mcertikos.ticketlog.TicketLockOpGenLink.html#link_correct_aux"><span class="id" title="lemma">link_correct_aux</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.ticketlog.TicketLockOpGenLink.html#WITHCOMPCERTIKOS"><span class="id" title="section">WITHCOMPCERTIKOS</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

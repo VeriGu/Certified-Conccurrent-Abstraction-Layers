@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.ipc.IPCIntroGenLink</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.ipc.IPCIntroGenLink</h1>
+
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.HAsmLinkTemplate.html#"><span class="id" title="library">HAsmLinkTemplate</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ipc.PIPCIntro.html#"><span class="id" title="library">PIPCIntro</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ipc.IPCIntroGen.html#"><span class="id" title="library">IPCIntroGen</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ipc.IPCIntroGenLinkSource.html#"><span class="id" title="library">IPCIntroGenLinkSource</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ipc.PHThread.html#"><span class="id" title="library">PHThread</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ipc.PHThreadCSource.html#"><span class="id" title="library">PHThreadCSource</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ipc.PHThreadCode.html#"><span class="id" title="library">PHThreadCode</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.LAsmModuleSemSpec.html#"><span class="id" title="library">LAsmModuleSemSpec</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#"><span class="id" title="library">GlobalOracleProp</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#"><span class="id" title="library">SingleOracle</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="WITHCOMPCERTIKOS"><span class="id" title="section">WITHCOMPCERTIKOS</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">single_oracle_prop</span>: <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#SingleOracleProp"><span class="id" title="class">SingleOracleProp</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">real_params</span> : <a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">multi_oracle_prop</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleProp"><span class="id" title="class">MultiOracleProp</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">compcertkos</span>: <a class="idref" href="mcertikos.layerlib.CompCertiKOSproof.html#CompCertiKOS"><span class="id" title="class">CompCertiKOS</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">multi_oracle_link</span>: !<a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleLink"><span class="id" title="class">MultiOracleLink</span></a>}.<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="HDATA"><span class="id" title="abbreviation">HDATA</span></a> := <a class="idref" href="mcertikos.objects.AbstractDataType.html#RData"><span class="id" title="record">AbstractDataType.RData</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="LDATA"><span class="id" title="abbreviation">LDATA</span></a> := <a class="idref" href="mcertikos.objects.AbstractDataType.html#RData"><span class="id" title="record">AbstractDataType.RData</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="HDATAOps"><span class="id" title="abbreviation">HDATAOps</span></a> := (<span class="id" title="definition">cdata</span> (<span class="id" title="var">cdata_ops</span> := <a class="idref" href="mcertikos.ipc.PIPCIntro.html#pipcintro_data_ops"><span class="id" title="instance">pipcintro_data_ops</span></a>) <a class="idref" href="mcertikos.ipc.IPCIntroGenLink.html#HDATA"><span class="id" title="abbreviation">HDATA</span></a>).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Notation</span> <a name="LDATAOps"><span class="id" title="abbreviation">LDATAOps</span></a> := (<span class="id" title="definition">cdata</span> (<span class="id" title="var">cdata_ops</span> := <a class="idref" href="mcertikos.ipc.PHThread.html#phthread_data_ops"><span class="id" title="instance">phthread_data_ops</span></a>) <a class="idref" href="mcertikos.ipc.IPCIntroGenLink.html#LDATA"><span class="id" title="abbreviation">LDATA</span></a>).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="oplus_monotonic"><span class="id" title="definition">oplus_monotonic</span></a> := <span class="id" title="method">PseudoJoin.oplus_monotonic</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">A</span> := <span class="id" title="record">compatlayer</span> (<span class="id" title="definition">cdata</span> <span class="id" title="var">_</span> (<span class="id" title="var">cdata_ops</span> := <a class="idref" href="mcertikos.ipc.PHThread.html#phthread_data_ops"><span class="id" title="instance">phthread_data_ops</span></a>))).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="oplus_sim_monotonic"><span class="id" title="definition">oplus_sim_monotonic</span></a> := <span class="id" title="method">PseudoJoin.oplus_sim_monotonic</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="right_upper_bound"><span class="id" title="definition">right_upper_bound</span></a> := <span class="id" title="definition">Structures.right_upper_bound</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">A</span> := <span class="id" title="record">compatlayer</span> (<span class="id" title="definition">cdata</span> <span class="id" title="var">_</span> (<span class="id" title="var">cdata_ops</span> := <a class="idref" href="mcertikos.ipc.PHThread.html#phthread_data_ops"><span class="id" title="instance">phthread_data_ops</span></a>))).<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="left_upper_bound"><span class="id" title="definition">left_upper_bound</span></a> := <span class="id" title="definition">Structures.left_upper_bound</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">A</span> := <span class="id" title="record">compatlayer</span> (<span class="id" title="definition">cdata</span> <span class="id" title="var">_</span> (<span class="id" title="var">cdata_ops</span> := <a class="idref" href="mcertikos.ipc.PHThread.html#phthread_data_ops"><span class="id" title="instance">phthread_data_ops</span></a>))).<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="init_correct"><span class="id" title="lemma">init_correct</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#init_correct_type"><span class="id" title="definition">init_correct_type</span></a> <a class="idref" href="mcertikos.ipc.IPCIntroGenLinkSource.html#PIPCIntro_module"><span class="id" title="definition">PIPCIntro_module</span></a> <a class="idref" href="mcertikos.ipc.PHThread.html#phthread"><span class="id" title="definition">phthread</span></a> <a class="idref" href="mcertikos.ipc.PIPCIntro.html#pipcintro"><span class="id" title="definition">pipcintro</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">init_correct</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#init_data_low_level_invariant"><span class="id" title="method">init_data_low_level_invariant</span></a> (<span class="id" title="method">genv_next</span> <span class="id" title="var">s</span>)); <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#init_data_low_level_invariant"><span class="id" title="method">init_data_low_level_invariant</span></a> (<span class="id" title="method">genv_next</span> <span class="id" title="var">s</span>)); <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">edestruct</span> <span class="id" title="var">kctxt_INJECT</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#init_data_low_level_invariant"><span class="id" title="method">init_data_low_level_invariant</span></a> (<span class="id" title="method">genv_next</span> <span class="id" title="var">s</span>)); <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">edestruct</span> <span class="id" title="var">uctxt_INJECT</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#init_data_low_level_invariant"><span class="id" title="method">init_data_low_level_invariant</span></a> (<span class="id" title="method">genv_next</span> <span class="id" title="var">s</span>)); <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">vmcs2</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="var">vmcs1</span>) <span class="id" title="keyword">as</span> <span class="id" title="var">Hvmcs</span> <span class="id" title="tactic">by</span> <span class="id" title="tactic">congruence</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Hvmcs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">VMCS_INJECT</span> <span class="id" title="var">vmid</span> <span class="id" title="var">vmcs1</span> <span class="id" title="var">H0</span> <span class="id" title="var">H1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">VMCS_INJECT</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">edestruct</span> <span class="id" title="var">H3</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">destruct</span> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#init_data_low_level_invariant"><span class="id" title="method">init_data_low_level_invariant</span></a> (<span class="id" title="method">genv_next</span> <span class="id" title="var">s</span>)); <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">repeat</span> <span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assert</span> (<span class="id" title="var">vmx2</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="var">vmx1</span>) <span class="id" title="keyword">as</span> <span class="id" title="var">Hvmx</span> <span class="id" title="tactic">by</span> <span class="id" title="tactic">congruence</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <span class="id" title="var">Hvmx</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">specialize</span> (<span class="id" title="var">VMX_INJECT</span> <span class="id" title="var">vmid</span> <span class="id" title="var">vmx1</span> <span class="id" title="var">H0</span> <span class="id" title="var">H1</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">VMX_INJECT</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intro</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">edestruct</span> <span class="id" title="var">H3</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="link_correct_aux"><span class="id" title="lemma">link_correct_aux</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#link_correct_aux_type"><span class="id" title="definition">link_correct_aux_type</span></a> <a class="idref" href="mcertikos.ipc.IPCIntroGenLinkSource.html#PIPCIntro_module"><span class="id" title="definition">PIPCIntro_module</span></a> <a class="idref" href="mcertikos.ipc.PHThread.html#phthread"><span class="id" title="definition">phthread</span></a> <a class="idref" href="mcertikos.ipc.PIPCIntro.html#pipcintro"><span class="id" title="definition">pipcintro</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">link_correct_aux</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-  <span class="id" title="var">link_cfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.ipc.IPCIntroGenFresh.html#syncsendto_chan_pre_spec_ref"><span class="id" title="lemma">syncsendto_chan_pre_spec_ref</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.ipc.PHThreadCode.html#PIPCINTROCODE.syncsendto_chan_pre_code_correct"><span class="id" title="lemma">PIPCINTROCODE.syncsendto_chan_pre_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;-  <span class="id" title="var">link_cfunction</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.ipc.IPCIntroGenFresh.html#tryreceive_chan_spec_ref"><span class="id" title="lemma">tryreceive_chan_spec_ref</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.ipc.PHThreadCode.html#PIPCINTROCODE.tryreceive_chan_code_correct"><span class="id" title="lemma">PIPCINTROCODE.tryreceive_chan_code_correct</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.ipc.IPCIntroGenPassthrough.html#passthrough_correct"><span class="id" title="lemma">passthrough_correct</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="cl_backward_simulation"><span class="id" title="lemma">cl_backward_simulation</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.HAsmLinkTemplate.html#cl_backward_simulation_type"><span class="id" title="definition">cl_backward_simulation_type</span></a> <a class="idref" href="mcertikos.ipc.IPCIntroGenLinkSource.html#PIPCIntro_module"><span class="id" title="definition">PIPCIntro_module</span></a> <a class="idref" href="mcertikos.ipc.PHThread.html#phthread"><span class="id" title="definition">phthread</span></a> <a class="idref" href="mcertikos.ipc.PIPCIntro.html#pipcintro"><span class="id" title="definition">pipcintro</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">cl_backward_simulation</span> <a class="idref" href="mcertikos.ipc.IPCIntroGenLink.html#init_correct"><span class="id" title="lemma">init_correct</span></a> <a class="idref" href="mcertikos.ipc.IPCIntroGenLink.html#link_correct_aux"><span class="id" title="lemma">link_correct_aux</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Theorem</span> <a name="make_program_exists"><span class="id" title="lemma">make_program_exists</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.layerlib.LinkTemplate.html#make_program_exist_type"><span class="id" title="definition">make_program_exist_type</span></a> <a class="idref" href="mcertikos.ipc.IPCIntroGenLinkSource.html#PIPCIntro_module"><span class="id" title="definition">PIPCIntro_module</span></a> <a class="idref" href="mcertikos.ipc.PHThread.html#phthread"><span class="id" title="definition">phthread</span></a> <a class="idref" href="mcertikos.ipc.PIPCIntro.html#pipcintro"><span class="id" title="definition">pipcintro</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">make_program_exists</span> <a class="idref" href="mcertikos.ipc.IPCIntroGenLink.html#link_correct_aux"><span class="id" title="lemma">link_correct_aux</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.ipc.IPCIntroGenLink.html#WITHCOMPCERTIKOS"><span class="id" title="section">WITHCOMPCERTIKOS</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

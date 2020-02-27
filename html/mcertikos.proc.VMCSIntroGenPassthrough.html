@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.proc.VMCSIntroGenPassthrough</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.proc.VMCSIntroGenPassthrough</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+This file provide the contextual refinement proof between MAL layer and MPTIntro layer
+</div>
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.proc.VMCSIntroGenDef.html#"><span class="id" title="library">VMCSIntroGenDef</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab730"></a><h1 class="section">Definition of the refinement relation</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <a name="Refinement"><span class="id" title="section">Refinement</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">real_params</span>: <a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">multi_oracle_prop</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleProp"><span class="id" title="class">MultiOracleProp</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Section</span> <a name="Refinement.WITHMEM"><span class="id" title="section">WITHMEM</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hstencil</span>: <span class="id" title="class">Stencil</span>}.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hmem</span>: <span class="id" title="class">Mem.MemoryModelX</span>}.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hmwd</span>: <span class="id" title="class">UseMemWithData</span> <a class="idref" href="mcertikos.proc.VMCSIntroGenPassthrough.html#Refinement.WITHMEM.mem"><span class="id" title="variable">mem</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span> <a name="cpu_id_range"><span class="id" title="instance">cpu_id_range</span></a>: <a class="idref" href="mcertikos.objects.AbstractDataType.html#high_level_invariant_impl_CPU_ID_range"><span class="id" title="class">high_level_invariant_impl_CPU_ID_range</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">inv</span> <span class="id" title="var">H</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">assumption</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Global Instance</span>: (<a class="idref" href="mcertikos.flatmem.LoadStoreDef.html#LoadStoreProp"><span class="id" title="class">LoadStoreProp</span></a> (<span class="id" title="var">hflatmem_store</span>:= <a class="idref" href="mcertikos.objects.ObjFlatMem.html#flatmem_store"><span class="id" title="definition">flatmem_store</span></a>) (<span class="id" title="var">lflatmem_store</span>:= <a class="idref" href="mcertikos.objects.ObjFlatMem.html#flatmem_store"><span class="id" title="definition">flatmem_store</span></a>)).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">accessor_prop_tac</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#flatmem_store_exists"><span class="id" title="lemma">flatmem_store_exists</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#flatmem_store_match"><span class="id" title="lemma">flatmem_store_match</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="passthrough_correct"><span class="id" title="lemma">passthrough_correct</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="abbreviation">sim</span> (<span class="id" title="definition">crel</span> <a class="idref" href="mcertikos.proc.VMCSIntroGenDef.html#HDATA"><span class="id" title="abbreviation">HDATA</span></a> <a class="idref" href="mcertikos.proc.VMCSIntroGenDef.html#LDATA"><span class="id" title="abbreviation">LDATA</span></a>) <a class="idref" href="mcertikos.proc.VVMCSIntro.html#vmcsintro_passthrough"><span class="id" title="definition">vmcsintro_passthrough</span></a> <a class="idref" href="mcertikos.proc.VEPTInit.html#eptinit"><span class="id" title="definition">eptinit</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">sim_oplus</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#fload_sim"><span class="id" title="lemma">fload_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjFlatMem.html#fstore_sim"><span class="id" title="lemma">fstore_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjCPU.html#vmxinfo_get_sim"><span class="id" title="lemma">vmxinfo_get_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjLMM0.html#palloc_sim"><span class="id" title="lemma">palloc_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjLMM1.html#setPT_sim"><span class="id" title="lemma">setPT_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjVMMFun.html#ptRead_sim"><span class="id" title="lemma">ptRead_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjLMM0.html#ptResv_sim"><span class="id" title="lemma">ptResv_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjShareMem.html#shared_mem_status_sim"><span class="id" title="lemma">shared_mem_status_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjShareMem.html#offer_shared_mem_sim"><span class="id" title="lemma">offer_shared_mem_sim</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjBigThread.html#biglow_thread_wakeup_sim"><span class="id" title="lemma">biglow_thread_wakeup_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjBigThread.html#biglow_thread_yield_sim"><span class="id" title="lemma">biglow_thread_yield_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjBigThread.html#biglow_thread_sleep_sim"><span class="id" title="lemma">biglow_thread_sleep_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjBigThread.html#biglow_sched_init_sim"><span class="id" title="lemma">biglow_sched_init_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjProc.html#uctx_get_sim"><span class="id" title="lemma">uctx_get_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjProc.html#uctx_set_sim"><span class="id" title="lemma">uctx_set_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjProc.html#biglow_proc_create_sim"><span class="id" title="lemma">biglow_proc_create_sim</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_get_nchildren_sim"><span class="id" title="lemma">container_get_nchildren_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_get_quota_sim"><span class="id" title="lemma">container_get_quota_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_get_usage_sim"><span class="id" title="lemma">container_get_usage_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjContainer.html#container_can_consume_sim"><span class="id" title="lemma">container_can_consume_sim</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjMultiprocessor.html#get_CPU_ID_sim"><span class="id" title="lemma">get_CPU_ID_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjMultiprocessor.html#get_curid_sim"><span class="id" title="lemma">get_curid_sim</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjQLock.html#acquire_lock_SC_sim"><span class="id" title="lemma">acquire_lock_SC_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjQLock.html#release_lock_SC_sim"><span class="id" title="lemma">release_lock_SC_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjCV.html#get_sync_chan_busy_sim"><span class="id" title="lemma">get_sync_chan_busy_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjCV.html#set_sync_chan_busy_sim"><span class="id" title="lemma">set_sync_chan_busy_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjCV.html#ipc_send_body_sim"><span class="id" title="lemma">ipc_send_body_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjCV.html#ipc_receive_body_sim"><span class="id" title="lemma">ipc_receive_body_sim</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjEPT.html#ept_invalidate_mappings_sim"><span class="id" title="lemma">ept_invalidate_mappings_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjEPT.html#ept_add_mapping_sim"><span class="id" title="lemma">ept_add_mapping_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjEPT.html#ept_init_sim"><span class="id" title="lemma">ept_init_sim</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptController.html#cli_sim"><span class="id" title="lemma">cli_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptController.html#sti_sim"><span class="id" title="lemma">sti_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptManagement.html#serial_intr_disable_sim"><span class="id" title="lemma">serial_intr_disable_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.dev.ObjInterruptManagement.html#serial_intr_enable_sim"><span class="id" title="lemma">serial_intr_enable_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.dev.ObjSerialDriver.html#serial_putc_sim"><span class="id" title="lemma">serial_putc_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.dev.ObjConsole.html#cons_buf_read_sim"><span class="id" title="lemma">cons_buf_read_sim</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjCPU.html#hostin_sim"><span class="id" title="lemma">hostin_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjCPU.html#hostout_sim"><span class="id" title="lemma">hostout_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjCPU.html#proc_create_postinit_sim"><span class="id" title="lemma">proc_create_postinit_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjCPU.html#trap_info_get_sim"><span class="id" title="lemma">trap_info_get_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjCPU.html#trap_info_ret_sim"><span class="id" title="lemma">trap_info_ret_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjProc.html#proc_start_user_sim"><span class="id" title="lemma">proc_start_user_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>; <span class="id" title="var">inv</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjProc.html#proc_exit_user_sim"><span class="id" title="lemma">proc_exit_user_sim</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjProc.html#proc_start_user_sim2"><span class="id" title="lemma">proc_start_user_sim2</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span>; <span class="id" title="var">inv</span> <span class="id" title="var">H</span>; <span class="id" title="tactic">auto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">apply</span> <a class="idref" href="mcertikos.objects.ObjProc.html#proc_exit_user_sim2"><span class="id" title="lemma">proc_exit_user_sim2</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">layer_sim_simpl</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.flatmem.LoadStoreSem3.html#load_correct3"><span class="id" title="lemma">load_correct3</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.flatmem.LoadStoreSem3.html#store_correct3"><span class="id" title="lemma">store_correct3</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.proc.VMCSIntroGenPassthrough.html#Refinement.WITHMEM"><span class="id" title="section">WITHMEM</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.proc.VMCSIntroGenPassthrough.html#Refinement"><span class="id" title="section">Refinement</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.objects.cpulocaldef.BigStepGlobalOracle</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.objects.cpulocaldef.BigStepGlobalOracle</h1>
+
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Maps</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#"><span class="id" title="library">AuxStateDataType</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.flatmem.FlatMemory.html#"><span class="id" title="library">FlatMemory</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Memory</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.AuxLemma.html#"><span class="id" title="library">AuxLemma</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.Constant.html#"><span class="id" title="library">Constant</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.GlobIdent.html#"><span class="id" title="library">GlobIdent</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracle.html#"><span class="id" title="library">GlobalOracle</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Integers</span>.<br/>
+
+<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="BigLockEvent"><span class="id" title="inductive">BigLockEvent</span></a> :=<br/>
+| <a name="BWAIT_LOCK"><span class="id" title="constructor">BWAIT_LOCK</span></a> (<span class="id" title="var">curid</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">n</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>)<br/>
+| <a name="BGET_LOCK"><span class="id" title="constructor">BGET_LOCK</span></a> (<span class="id" title="var">curid</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>)<br/>
+| <a name="BREL_LOCK"><span class="id" title="constructor">BREL_LOCK</span></a> (<span class="id" title="var">curid</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>)  (<span class="id" title="var">s</span>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#SyncChanPool"><span class="id" title="definition">SyncChanPool</span></a>)  .<br/>
+
+<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="BigSharedMemEvent"><span class="id" title="inductive">BigSharedMemEvent</span></a> :=<br/>
+| <a name="BPALLOCE"><span class="id" title="constructor">BPALLOCE</span></a> (<span class="id" title="var">curid</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">b</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>)<br/>
+| <a name="BBUFFERE"><span class="id" title="constructor">BBUFFERE</span></a> (<span class="id" title="var">curid</span> <span class="id" title="var">cv_id</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">msg</span> : <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#PageBuffer"><span class="id" title="definition">PageBuffer</span></a>) <br/>
+| <a name="BTDSPAWN"><span class="id" title="constructor">BTDSPAWN</span></a> (<span class="id" title="var">curid</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">new_id</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">q</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">ofs</span>: <span class="id" title="abbreviation">int</span>) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">buc</span>: <span class="id" title="definition">block</span>) (<span class="id" title="var">ofs_uc</span>: <span class="id" title="abbreviation">int</span>) <br/>
+| <a name="BTDYIELD"><span class="id" title="constructor">BTDYIELD</span></a> (<span class="id" title="var">curid</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) <br/>
+| <a name="BTDSLEEP"><span class="id" title="constructor">BTDSLEEP</span></a> (<span class="id" title="var">slp_id</span> <span class="id" title="var">cv_id</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>)   <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">s</span>: <a class="idref" href="mcertikos.layerlib.AuxStateDataType.html#SyncChanPool"><span class="id" title="definition">SyncChanPool</span></a>)  <br/>
+<br/>
+| <a name="BTDWAKE"><span class="id" title="constructor">BTDWAKE</span></a> (<span class="id" title="var">curid</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">cv_id</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>)<br/>
+| <a name="BTDWAKE_DIFF"><span class="id" title="constructor">BTDWAKE_DIFF</span></a> (<span class="id" title="var">curid</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">cv_id</span> <span class="id" title="var">wk_id</span> <span class="id" title="var">cpu_id</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>)<br/>
+<br/>
+.<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="BigOracleEventUnit"><span class="id" title="inductive">BigOracleEventUnit</span></a> :=<br/>
+| <a name="TBLOCK"><span class="id" title="constructor">TBLOCK</span></a> (<span class="id" title="var">lock_id</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">e</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#BigLockEvent"><span class="id" title="inductive">BigLockEvent</span></a>)<br/>
+<br/>
+| <a name="TBSHARED"><span class="id" title="constructor">TBSHARED</span></a> (<span class="id" title="var">e</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#BigSharedMemEvent"><span class="id" title="inductive">BigSharedMemEvent</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="BigOracleEvent"><span class="id" title="inductive">BigOracleEvent</span></a> :=<br/>
+| <a name="TBEVENT"><span class="id" title="constructor">TBEVENT</span></a> (<span class="id" title="var">i</span>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">e</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#BigOracleEventUnit"><span class="id" title="inductive">BigOracleEventUnit</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="BigOracleEventType"><span class="id" title="inductive">BigOracleEventType</span></a> :=<br/>
+| <a name="EBLOCK"><span class="id" title="constructor">EBLOCK</span></a><br/>
+<br/>
+| <a name="EBSHARED"><span class="id" title="constructor">EBSHARED</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Function</span> <span class="id" title="var">GetBigOracleEventType</span> (<span class="id" title="var">e</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#BigOracleEventUnit"><span class="id" title="inductive">BigOracleEventUnit</span></a>) :=<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#e"><span class="id" title="variable">e</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#TBLOCK"><span class="id" title="constructor">TBLOCK</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> ⇒ <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#EBLOCK"><span class="id" title="constructor">EBLOCK</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#TBSHARED"><span class="id" title="constructor">TBSHARED</span></a> <span class="id" title="var">_</span> ⇒ <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#EBSHARED"><span class="id" title="constructor">EBSHARED</span></a><br/>
+&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">Definition</span> <a name="BigLog"><span class="id" title="definition">BigLog</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#list"><span class="id" title="inductive">list</span></a> <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#BigOracleEvent"><span class="id" title="inductive">BigOracleEvent</span></a>.<br/>
+<span class="id" title="keyword">Definition</span> <a name="BigOracle"><span class="id" title="definition">BigOracle</span></a> := <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a> → <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#BigLog"><span class="id" title="definition">BigLog</span></a> → <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#BigLog"><span class="id" title="definition">BigLog</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Inductive</span> <a name="BigLogType"><span class="id" title="inductive">BigLogType</span></a> :=<br/>
+| <a name="BigUndef"><span class="id" title="constructor">BigUndef</span></a><br/>
+| <a name="BigDef"><span class="id" title="constructor">BigDef</span></a> (<span class="id" title="var">l</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#BigLog"><span class="id" title="definition">BigLog</span></a>).<br/>
+
+<br/>
+<span class="id" title="keyword">Class</span> <a name="BigOracleOps"><span class="id" title="record">BigOracleOps</span></a> :=<br/>
+&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="big_oracle0"><span class="id" title="projection">big_oracle0</span></a>: <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#BigOracle"><span class="id" title="definition">BigOracle</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="big_oracle_env_fun"><span class="id" title="projection">big_oracle_env_fun</span></a>: <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nat"><span class="id" title="inductive">nat</span></a>  → <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>  → <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>  → <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#BigOracle"><span class="id" title="definition">BigOracle</span></a> → <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#BigLog"><span class="id" title="definition">BigLog</span></a> → <a class="idref" href="mcertikos.objects.cpulocaldef.BigStepGlobalOracle.html#BigLog"><span class="id" title="definition">BigLog</span></a> <br/>
+&nbsp;&nbsp;}.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

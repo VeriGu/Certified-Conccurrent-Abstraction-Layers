@@ -1,0 +1,289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.conlib.conmtlib.SingleConfiguration</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.conlib.conmtlib.SingleConfiguration</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab60"></a><h1 class="section">Configuration for single-processor linking</h1>
+
+
+<div class="paragraph"> </div>
+
+  This file defines the class <span class="inlinecode"><span class="id" title="var">SingleConfiguration</span></span>. In order to make
+  our per-processor thread linking proof general and avoid having to
+  deal with irrelevant details of our concrete layers, the proofs are
+  based on an abstract interface to the logs, oracles, abstract
+  states, thread configuration, etc. of the machines involved. This
+  file specifies that abstract interface. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="library">Coqlib</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="library">Integers</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="library">Values</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="library">MemoryX</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="library">Globalenvs</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="library">Asm</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <span class="id" title="library">Decision</span>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.conlib.conmtlib.AlgebraicMem.html#"><span class="id" title="library">AlgebraicMem</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#"><span class="id" title="library">SingleAbstractDataType</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Export</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#"><span class="id" title="library">SingleOracle</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#"><span class="id" title="library">GlobalOracleProp</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.clib.RealParams.html#"><span class="id" title="library">RealParams</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The <span class="inlinecode"><span class="id" title="var">SingleConfiguration</span></span> class gathers everything. 
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="SINGLE_CONF_DEF"><span class="id" title="section">SINGLE_CONF_DEF</span></a>.<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a name="SingleConfiguration"><span class="id" title="record">SingleConfiguration</span></a> `{<span class="id" title="var">spl_data</span>: <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#SingleData"><span class="id" title="class">SingleData</span></a>} <span class="id" title="var">mem</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`{<span class="id" title="var">spl_mem_ops</span>: <span class="id" title="class">Mem.MemoryModelOps</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#mem"><span class="id" title="variable">mem</span></a>} :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="spl_threads_ops"><span class="id" title="projection">spl_threads_ops</span></a> :&gt; <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#ThreadsConfigurationOps"><span class="id" title="class">ThreadsConfigurationOps</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="spl_oracle_ops"><span class="id" title="projection">spl_oracle_ops</span></a> :&gt; <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#SingleOracleOps"><span class="id" title="class">SingleOracleOps</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="spl_oracle_prf"><span class="id" title="projection">spl_oracle_prf</span></a> :&gt; <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#SingleOracle"><span class="id" title="class">SingleOracle</span></a> (<span class="id" title="var">single_data</span> := <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#spl_data"><span class="id" title="variable">spl_data</span></a>) (<span class="id" title="var">single_oracle_ops</span> := <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#spl_oracle_ops"><span class="id" title="method">spl_oracle_ops</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="var">threads_conf_ops</span> := <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#spl_threads_ops"><span class="id" title="method">spl_threads_ops</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="spl_threads_prf"><span class="id" title="projection">spl_threads_prf</span></a> :&gt; <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#ThreadsConfiguration"><span class="id" title="class">ThreadsConfiguration</span></a> (<span class="id" title="var">s_oracle</span> := <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#spl_oracle_prf"><span class="id" title="method">spl_oracle_prf</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="spl_oracle_prf_prop"><span class="id" title="projection">spl_oracle_prf_prop</span></a> :&gt; <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#SingleOracleProp"><span class="id" title="class">SingleOracleProp</span></a> (<span class="id" title="var">thread_conf_prf</span> := <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#spl_threads_prf"><span class="id" title="method">spl_threads_prf</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="spl_mem_prf"><span class="id" title="projection">spl_mem_prf</span></a> :&gt; <span class="id" title="class">Mem.MemoryModelX</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#mem"><span class="id" title="variable">mem</span></a>;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="spl_algebraic_mem"><span class="id" title="projection">spl_algebraic_mem</span></a> :&gt; <a class="idref" href="mcertikos.conlib.conmtlib.AlgebraicMem.html#AlgebraicMemory"><span class="id" title="class">AlgebraicMemory</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#SINGLE_CONF_DEF"><span class="id" title="section">SINGLE_CONF_DEF</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab61"></a><h2 class="section">Derived definitions</h2>
+
+</div>
+<div class="code">
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="WITH_SINGLE_CONFIG"><span class="id" title="section">WITH_SINGLE_CONFIG</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">sc</span>: <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#SingleConfiguration"><span class="id" title="class">SingleConfiguration</span></a>}.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab62"></a><h3 class="section">Initial thread states</h3>
+
+<div class="paragraph"> </div>
+
+ From <span class="inlinecode"><span class="id" title="var">prim_thread_init_pc</span></span> in <span class="inlinecode"><span class="id" title="var">SingleOracle</span></span> and the
+    topology of threads identifiers, we can define the following
+    functions for computing initial states of threads.
+
+<div class="paragraph"> </div>
+
+    First, we extend <span class="inlinecode"><span class="id" title="var">prim_thread_initialization</span></span> to work with
+    arbitrary log events. 
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="thread_init_pc"><span class="id" title="definition">thread_init_pc</span></a> {<span class="id" title="var">F</span> <span class="id" title="var">V</span>} (<span class="id" title="var">ge</span>: <span class="id" title="record">Genv.t</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#F"><span class="id" title="variable">F</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#V"><span class="id" title="variable">V</span></a>) (<span class="id" title="var">e</span> : <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogEvent"><span class="id" title="inductive">LogEvent</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#e"><span class="id" title="variable">e</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LEvent"><span class="id" title="constructor">LEvent</span></a> <span class="id" title="var">_</span> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogPrim"><span class="id" title="constructor">LogPrim</span></a> <span class="id" title="var">f</span> <span class="id" title="var">args</span> <span class="id" title="var">new_id</span> <span class="id" title="var">_</span>) ⇒ <span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#prim_thread_init_pc"><span class="id" title="method">prim_thread_init_pc</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#ge"><span class="id" title="variable">ge</span></a> <span class="id" title="var">f</span> <span class="id" title="var">args</span> <span class="id" title="keyword">with</span> <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">pc</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><span class="id" title="var">new_id</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">pc</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="thread_init_pc_of"><span class="id" title="definition">thread_init_pc_of</span></a> {<span class="id" title="var">F</span> <span class="id" title="var">V</span>} <span class="id" title="var">ge</span> (<span class="id" title="var">i</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Numbers.BinNums.html#Z"><span class="id" title="inductive">Z</span></a>) (<span class="id" title="var">e</span> : <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#LogEvent"><span class="id" title="inductive">LogEvent</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <span class="id" title="inductive">val</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#thread_init_pc"><span class="id" title="definition">thread_init_pc</span></a> (<span class="id" title="var">F</span>:=<a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#F"><span class="id" title="variable">F</span></a>) (<span class="id" title="var">V</span>:=<a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#V"><span class="id" title="variable">V</span></a>) <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#ge"><span class="id" title="variable">ge</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#e"><span class="id" title="variable">e</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">(</span></a><span class="id" title="var">j</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">,</span></a> <span class="id" title="var">pc</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#44400027531d4bc3f586a1997dc874c0"><span class="id" title="notation">)</span></a> ⇒ <span class="id" title="keyword">if</span> <span class="id" title="definition">decide</span> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#i"><span class="id" title="variable">i</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <span class="id" title="var">j</span>) <span class="id" title="keyword">then</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">pc</span> <span class="id" title="keyword">else</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Using <span class="inlinecode"><span class="id" title="var">thread_init_pc</span></span>, we can extract the initial program
+    counter for a thread from any log. The initial state of the main
+    thread is hardcoded to point to main() as set by <span class="inlinecode"><span class="id" title="var">make_program</span></span>,
+    and is already available with an empty log. For other threads,
+    this function will compute their initial states by examining the
+    log for a corresponding spawn event. 
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Fixpoint</span> <a name="initial_thread_pc"><span class="id" title="definition">initial_thread_pc</span></a> {<span class="id" title="var">F</span> <span class="id" title="var">V</span>} (<span class="id" title="var">ge</span>: <span class="id" title="record">Genv.t</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#F"><span class="id" title="variable">F</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#V"><span class="id" title="variable">V</span></a>) <span class="id" title="var">i</span> (<span class="id" title="var">l</span> : <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracleDef.html#Log"><span class="id" title="definition">Log</span></a>) : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <span class="id" title="inductive">val</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#l"><span class="id" title="variable">l</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">e</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <span class="id" title="var">l&acute;</span> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#initial_thread_pc"><span class="id" title="definition">initial_thread_pc</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#ge"><span class="id" title="variable">ge</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#i"><span class="id" title="variable">i</span></a> <span class="id" title="var">l&acute;</span> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">pc</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">pc</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a> ⇒ <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#thread_init_pc_of"><span class="id" title="definition">thread_init_pc_of</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#ge"><span class="id" title="variable">ge</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#i"><span class="id" title="variable">i</span></a> <span class="id" title="var">e</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> ⇒<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <span class="id" title="definition">decide</span> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#i"><span class="id" title="variable">i</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#main_thread"><span class="id" title="method">main_thread</span></a>) <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#left"><span class="id" title="constructor">left</span></a> <span class="id" title="var">_</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<span class="id" title="definition">symbol_offset</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#ge"><span class="id" title="variable">ge</span></a> 1%<span class="id" title="var">positive</span> <span class="id" title="definition">Int.zero</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Specif.html#right"><span class="id" title="constructor">right</span></a> <span class="id" title="var">_</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="initial_regset_state"><span class="id" title="definition">initial_regset_state</span></a> <span class="id" title="var">pc</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">(</span><span class="id" title="definition">Pregmap.init</span> <span class="id" title="constructor">Vundef</span><span class="id" title="notation">)</span> <span class="id" title="notation">#</span> <span class="id" title="constructor">PC</span> <span class="id" title="notation">&lt;-</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#pc"><span class="id" title="variable">pc</span></a> <span class="id" title="notation">#</span> <span class="id" title="constructor">ESP</span> <span class="id" title="notation">&lt;-</span> <span class="id" title="definition">Vzero</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="initial_thread_state"><span class="id" title="definition">initial_thread_state</span></a> {<span class="id" title="var">F</span> <span class="id" title="var">V</span>} (<span class="id" title="var">ge</span>: <span class="id" title="record">Genv.t</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#F"><span class="id" title="variable">F</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#V"><span class="id" title="variable">V</span></a>) <span class="id" title="var">i</span> <span class="id" title="var">l</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <span class="id" title="definition">regset</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#initial_thread_pc"><span class="id" title="definition">initial_thread_pc</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#ge"><span class="id" title="variable">ge</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#i"><span class="id" title="variable">i</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#l"><span class="id" title="variable">l</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">pc</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#initial_regset_state"><span class="id" title="definition">initial_regset_state</span></a> <span class="id" title="var">pc</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+Before we "return" into a (non-main) thread that is scheduled
+    for the first time, the saved context has a slightly different
+    format, where the code pointer is stored in <span class="inlinecode"><span class="id" title="var">RA</span></span>. 
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="initial_regset_kctxt"><span class="id" title="definition">initial_regset_kctxt</span></a> <span class="id" title="var">pc</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">(</span><span class="id" title="definition">Pregmap.init</span> <span class="id" title="constructor">Vundef</span><span class="id" title="notation">)</span> <span class="id" title="notation">#</span> <span class="id" title="constructor">RA</span> <span class="id" title="notation">&lt;-</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#pc"><span class="id" title="variable">pc</span></a> <span class="id" title="notation">#</span> <span class="id" title="constructor">ESP</span> <span class="id" title="notation">&lt;-</span> <span class="id" title="definition">Vzero</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="initial_thread_kctxt"><span class="id" title="definition">initial_thread_kctxt</span></a> {<span class="id" title="var">F</span> <span class="id" title="var">V</span>} (<span class="id" title="var">ge</span>: <span class="id" title="record">Genv.t</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#F"><span class="id" title="variable">F</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#V"><span class="id" title="variable">V</span></a>) <span class="id" title="var">i</span> <span class="id" title="var">l</span> : <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#option"><span class="id" title="inductive">option</span></a> <span class="id" title="definition">regset</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#initial_thread_pc"><span class="id" title="definition">initial_thread_pc</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#ge"><span class="id" title="variable">ge</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#i"><span class="id" title="variable">i</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#l"><span class="id" title="variable">l</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <span class="id" title="var">pc</span> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#initial_regset_kctxt"><span class="id" title="definition">initial_regset_kctxt</span></a> <span class="id" title="var">pc</span>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a> ⇒ <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#None"><span class="id" title="constructor">None</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+The following lemma establishes the relationship between these
+    two versions of the initial states. 
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">ExtensionalityAxioms</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <span class="id" title="library">Conventions</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Let</span> <a name="WITH_SINGLE_CONFIG.do_ret"><span class="id" title="variable">do_ret</span></a> <span class="id" title="var">rs</span> :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">(</span><span class="id" title="definition">undef_regs</span> (<span class="id" title="constructor">CR</span> <span class="id" title="constructor">ZF</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <span class="id" title="constructor">CR</span> <span class="id" title="constructor">CF</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <span class="id" title="constructor">CR</span> <span class="id" title="constructor">PF</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <span class="id" title="constructor">CR</span> <span class="id" title="constructor">SF</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <span class="id" title="constructor">CR</span> <span class="id" title="constructor">OF</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(<span class="id" title="definition">undef_regs</span> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Lists.List.html#map"><span class="id" title="definition">map</span></a> <span class="id" title="definition">preg_of</span> <span class="id" title="definition">destroyed_at_call</span>) <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#rs"><span class="id" title="variable">rs</span></a>)<span class="id" title="notation">)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">#</span> <span class="id" title="constructor">EAX</span> <span class="id" title="notation">&lt;-</span> <span class="id" title="constructor">Vundef</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">#</span> <span class="id" title="constructor">PC</span> <span class="id" title="notation">&lt;-</span> <span class="id" title="notation">(</span><a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#rs"><span class="id" title="variable">rs</span></a> <span class="id" title="constructor">RA</span><span class="id" title="notation">)</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="notation">#</span> <span class="id" title="constructor">RA</span> <span class="id" title="notation">&lt;-</span> <span class="id" title="constructor">Vundef</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="initial_regset_state_kctxt"><span class="id" title="lemma">initial_regset_state_kctxt</span></a> <span class="id" title="var">pc</span>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#WITH_SINGLE_CONFIG.do_ret"><span class="id" title="variable">do_ret</span></a> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#initial_regset_kctxt"><span class="id" title="definition">initial_regset_kctxt</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#pc"><span class="id" title="variable">pc</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#initial_regset_state"><span class="id" title="definition">initial_regset_state</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#pc"><span class="id" title="variable">pc</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">apply</span> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Logic.FunctionalExtensionality.html#functional_extensionality"><span class="id" title="lemma">functional_extensionality</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">r</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> <span class="id" title="var">r</span> <span class="id" title="keyword">as</span> [ | [] | [] | | [] | ]; <span class="id" title="tactic">try</span> <span class="id" title="tactic">reflexivity</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="initial_thread_state_kctxt"><span class="id" title="lemma">initial_thread_state_kctxt</span></a> {<span class="id" title="var">F</span> <span class="id" title="var">V</span>} (<span class="id" title="var">ge</span>: <span class="id" title="record">Genv.t</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#F"><span class="id" title="variable">F</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#V"><span class="id" title="variable">V</span></a>) <span class="id" title="var">i</span> <span class="id" title="var">l</span> <span class="id" title="var">rs</span>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#initial_thread_state"><span class="id" title="definition">initial_thread_state</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#ge"><span class="id" title="variable">ge</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#i"><span class="id" title="variable">i</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#rs"><span class="id" title="variable">rs</span></a> →<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">∃</span></a> <span class="id" title="var">rs&acute;</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#84eb6d2849dbf3581b1c0c05add5f2d8"><span class="id" title="notation">,</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#initial_thread_kctxt"><span class="id" title="definition">initial_thread_kctxt</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#ge"><span class="id" title="variable">ge</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#i"><span class="id" title="variable">i</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#l"><span class="id" title="variable">l</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#Some"><span class="id" title="constructor">Some</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#rs&acute;"><span class="id" title="variable">rs&acute;</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#d82a7d96d3659d805ffe732283716822"><span class="id" title="notation">∧</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#rs"><span class="id" title="variable">rs</span></a> <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Logic.html#1c39bf18749e5cc609e83c0a0ba5a372"><span class="id" title="notation">=</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#WITH_SINGLE_CONFIG.do_ret"><span class="id" title="variable">do_ret</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#rs&acute;"><span class="id" title="variable">rs&acute;</span></a>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">unfold</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#initial_thread_kctxt"><span class="id" title="definition">initial_thread_kctxt</span></a>, <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#initial_thread_state"><span class="id" title="definition">initial_thread_state</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">destruct</span> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#initial_thread_pc"><span class="id" title="definition">initial_thread_pc</span></a> <span class="id" title="var">_</span> <span class="id" title="var">_</span> <span class="id" title="var">_</span>); <span class="id" title="tactic">try</span> <span class="id" title="tactic">discriminate</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">intros</span> <span class="id" title="var">Hrs</span>; <span class="id" title="tactic">inversion</span> <span class="id" title="var">Hrs</span>; <span class="id" title="tactic">clear</span> <span class="id" title="var">Hrs</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eexists</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">rewrite</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#initial_regset_state_kctxt"><span class="id" title="lemma">initial_regset_state_kctxt</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+As for the initial memory, in the TAsm machine and up we need to
+    use <span class="inlinecode"><span class="id" title="var">mem_lift_nextblock</span></span> in non-main threads so as to account for
+    the effect of the initial "yield back" event. 
+</div>
+<div class="code">
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Definition</span> <a name="init_mem_lift_nextblock"><span class="id" title="definition">init_mem_lift_nextblock</span></a> (<span class="id" title="var">m</span>: <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#WITH_SINGLE_CONFIG.mem"><span class="id" title="variable">mem</span></a>) :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">match</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#init_log"><span class="id" title="method">init_log</span></a> <span class="id" title="keyword">with</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#nil"><span class="id" title="constructor">nil</span></a> ⇒ <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#m"><span class="id" title="variable">m</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| <span class="id" title="var">_</span><a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Datatypes.html#0a8150c3c4df34d205c5ed9a427e2ed5"><span class="id" title="notation">::</span></a><span class="id" title="var">_</span> ⇒ <a class="idref" href="mcertikos.conlib.conmtlib.AlgebraicMem.html#mem_lift_nextblock"><span class="id" title="method">mem_lift_nextblock</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#m"><span class="id" title="variable">m</span></a> (<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.PArith.BinPos.html#Pos.to_nat"><span class="id" title="definition">Pos.to_nat</span></a> (<a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#last_nb"><span class="id" title="definition">last_nb</span></a> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#init_log"><span class="id" title="method">init_log</span></a>) <a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.Init.Peano.html#9482aae3d3b06e249765c1225dbb8cbb"><span class="id" title="notation">-</span></a><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class="idref" href="http://coq.inria.fr/distrib/8.4pl6/stdlib/Coq.PArith.BinPos.html#Pos.to_nat"><span class="id" title="definition">Pos.to_nat</span></a> (<span class="id" title="method">Mem.nextblock</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#m"><span class="id" title="variable">m</span></a>))<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">end</span>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#WITH_SINGLE_CONFIG"><span class="id" title="section">WITH_SINGLE_CONFIG</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Section</span> <a name="SINGLE_Link_CONF_DEF"><span class="id" title="section">SINGLE_Link_CONF_DEF</span></a>.<br/>
+
+<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Class</span> <a name="SingleLinkConfiguration"><span class="id" title="record">SingleLinkConfiguration</span></a> `{<span class="id" title="var">spl_data</span>: <a class="idref" href="mcertikos.conlib.conmtlib.SingleAbstractDataType.html#SingleData"><span class="id" title="class">SingleData</span></a>} <span class="id" title="var">mem</span><br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`{<span class="id" title="var">spl_mem_ops</span>: <span class="id" title="class">Mem.MemoryModelOps</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#mem"><span class="id" title="variable">mem</span></a>} :=<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="spl_conf_prf"><span class="id" title="projection">spl_conf_prf</span></a> :&gt; <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#SingleConfiguration"><span class="id" title="class">SingleConfiguration</span></a> (<span class="id" title="var">spl_data</span> :=<a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#spl_data"><span class="id" title="variable">spl_data</span></a>) <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#mem"><span class="id" title="variable">mem</span></a> (<span class="id" title="var">spl_mem_ops</span>:=<a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#spl_mem_ops"><span class="id" title="variable">spl_mem_ops</span></a>);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a name="spl_oracle_link_prf_prop"><span class="id" title="projection">spl_oracle_link_prf_prop</span></a> :&gt; <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#SingleOracleLinkProp"><span class="id" title="class">SingleOracleLinkProp</span></a> (<span class="id" title="var">thread_conf_prf</span> := <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#spl_threads_prf"><span class="id" title="method">spl_threads_prf</span></a>)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;}.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleConfiguration.html#SINGLE_Link_CONF_DEF"><span class="id" title="section">SINGLE_Link_CONF_DEF</span></a>.<br/>
+
+<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>

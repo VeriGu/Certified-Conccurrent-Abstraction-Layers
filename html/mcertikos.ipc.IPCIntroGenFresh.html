@@ -1,0 +1,103 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="coqdoc.css" rel="stylesheet" type="text/css" />
+<title>mcertikos.ipc.IPCIntroGenFresh</title>
+</head>
+
+<body>
+
+<div id="page">
+
+<div id="header">
+</div>
+
+<div id="main">
+
+<h1 class="libtitle">Library mcertikos.ipc.IPCIntroGenFresh</h1>
+
+<div class="code">
+
+<br/>
+</div>
+
+<div class="doc">
+This file provide the contextual refinement proof between PKContextNew layer and PThreadIntro layer
+</div>
+<div class="code">
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ipc.IPCIntroGenDef.html#"><span class="id" title="library">IPCIntroGenDef</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.ipc.IPCIntroGenSpec.html#"><span class="id" title="library">IPCIntroGenSpec</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.layerlib.XOmega.html#"><span class="id" title="library">XOmega</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.objects.ObjSyncIPC.html#"><span class="id" title="library">ObjSyncIPC</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#"><span class="id" title="library">GlobalOracleProp</span></a>.<br/>
+<span class="id" title="keyword">Require</span> <span class="id" title="keyword">Import</span> <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#"><span class="id" title="library">SingleOracle</span></a>.<br/>
+
+<br/>
+</div>
+
+<div class="doc">
+<a name="lab774"></a><h1 class="section">Definition of the refinement relation</h1>
+
+</div>
+<div class="code">
+<span class="id" title="keyword">Section</span> <a name="Refinement"><span class="id" title="section">Refinement</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">single_oracle_prop</span>: <a class="idref" href="mcertikos.conlib.conmtlib.SingleOracle.html#SingleOracleProp"><span class="id" title="class">SingleOracleProp</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">real_params</span> : <a class="idref" href="mcertikos.clib.RealParams.html#RealParams"><span class="id" title="class">RealParams</span></a>}.<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">multi_oracle_prop</span>: <a class="idref" href="mcertikos.objects.cpulocaldef.GlobalOracleProp.html#MultiOracleProp"><span class="id" title="class">MultiOracleProp</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">Section</span> <a name="Refinement.WITHMEM"><span class="id" title="section">WITHMEM</span></a>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hstencil</span>: <span class="id" title="class">Stencil</span>}.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hmem</span>: <span class="id" title="class">Mem.MemoryModelX</span>}.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Context</span> `{<span class="id" title="var">Hmwd</span>: <span class="id" title="class">UseMemWithData</span> <a class="idref" href="mcertikos.ipc.IPCIntroGenFresh.html#Refinement.WITHMEM.mem"><span class="id" title="variable">mem</span></a>}.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Ltac</span> <span class="id" title="var">pattern2_refinement_simpl</span>:=  <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">pattern2_refinement_simpl&acute;</span> (@<span class="id" title="method">relate_AbData</span>).<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="syncsendto_chan_pre_spec_ref"><span class="id" title="lemma">syncsendto_chan_pre_spec_ref</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">compatsim</span> (<span class="id" title="definition">crel</span> <a class="idref" href="mcertikos.ipc.IPCIntroGenDef.html#HDATA"><span class="id" title="abbreviation">HDATA</span></a> <a class="idref" href="mcertikos.ipc.IPCIntroGenDef.html#LDATA"><span class="id" title="abbreviation">LDATA</span></a>) (<span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjSyncIPC.html#thread_syncsendto_chan_pre_spec"><span class="id" title="definition">thread_syncsendto_chan_pre_spec</span></a>) <a class="idref" href="mcertikos.ipc.IPCIntroGenSpec.html#thread_syncsendto_chan_pre_spec_low"><span class="id" title="definition">thread_syncsendto_chan_pre_spec_low</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">compatsim_simpl</span> (@<span class="id" title="method">match_AbData</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">exploit</span> <a class="idref" href="mcertikos.objects.ObjSyncIPC.html#thread_syncsendto_chan_pre_exist"><span class="id" title="lemma">thread_syncsendto_chan_pre_exist</span></a>; <span class="id" title="tactic">eauto</span> 1. <span class="id" title="tactic">intros</span> (<span class="id" title="var">labd&acute;</span> &amp; <span class="id" title="var">HP</span> &amp; <span class="id" title="var">HM</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">refine_split</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">unfold</span> <a class="idref" href="mcertikos.objects.ObjSyncIPC.html#thread_syncsendto_chan_pre_spec"><span class="id" title="definition">thread_syncsendto_chan_pre_spec</span></a> <span class="id" title="keyword">in</span> <span class="id" title="var">HP</span>; <span class="id" title="var">subdestruct</span>; <span class="id" title="var">now</span> <span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.objects.ObjSyncIPC.html#thread_syncsendto_chan_pre_match"><span class="id" title="lemma">thread_syncsendto_chan_pre_match</span></a>. <span class="id" title="tactic">eapply</span> <span class="id" title="var">H1</span>. <span class="id" title="tactic">eapply</span> <span class="id" title="var">match_match</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Lemma</span> <a name="tryreceive_chan_spec_ref"><span class="id" title="lemma">tryreceive_chan_spec_ref</span></a>:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="definition">compatsim</span> (<span class="id" title="definition">crel</span> <a class="idref" href="mcertikos.ipc.IPCIntroGenDef.html#HDATA"><span class="id" title="abbreviation">HDATA</span></a> <a class="idref" href="mcertikos.ipc.IPCIntroGenDef.html#LDATA"><span class="id" title="abbreviation">LDATA</span></a>) (<span class="id" title="definition">gensem</span> <a class="idref" href="mcertikos.objects.ObjSyncIPC.html#thread_tryreceive_chan_spec"><span class="id" title="definition">thread_tryreceive_chan_spec</span></a>) <a class="idref" href="mcertikos.ipc.IPCIntroGenSpec.html#thread_tryreceive_chan_spec_low"><span class="id" title="definition">thread_tryreceive_chan_spec_low</span></a>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Proof</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">compatsim_simpl</span> (@<span class="id" title="method">match_AbData</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">exploit</span> <a class="idref" href="mcertikos.objects.ObjSyncIPC.html#thread_tryreceive_chan_exist"><span class="id" title="lemma">thread_tryreceive_chan_exist</span></a>; <span class="id" title="tactic">eauto</span> 1. <span class="id" title="tactic">intros</span> (<span class="id" title="var">labd&acute;</span> &amp; <span class="id" title="var">HP</span> &amp; <span class="id" title="var">HM</span>).<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="var">refine_split</span>; <span class="id" title="tactic">try</span> <span class="id" title="tactic">econstructor</span>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="var">functional</span> <span class="id" title="tactic">inversion</span> <span class="id" title="var">HP</span>; <span class="id" title="var">now</span> <span class="id" title="tactic">constructor</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- <span class="id" title="tactic">eapply</span> <a class="idref" href="mcertikos.objects.ObjSyncIPC.html#thread_tryreceive_chan_match"><span class="id" title="lemma">thread_tryreceive_chan_match</span></a>; <span class="id" title="tactic">eauto</span>.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="id" title="keyword">Qed</span>.<br/>
+
+<br/>
+&nbsp;&nbsp;<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.ipc.IPCIntroGenFresh.html#Refinement.WITHMEM"><span class="id" title="section">WITHMEM</span></a>.<br/>
+
+<br/>
+<span class="id" title="keyword">End</span> <a class="idref" href="mcertikos.ipc.IPCIntroGenFresh.html#Refinement"><span class="id" title="section">Refinement</span></a>.<br/>
+</div>
+</div>
+
+<div id="footer">
+<hr/><a href="index.html">Index</a><hr/>This page has been generated by <a href="http://coq.inria.fr/">coqdoc</a>
+</div>
+
+</div>
+
+</body>
+</html>
